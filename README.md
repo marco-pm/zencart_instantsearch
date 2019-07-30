@@ -1,5 +1,5 @@
 # Instant Search v1.0.2
-Just like googles instant search feature I’ve made one for zencart. Instant search is a new search enhancement that shows results as you type. 
+Just like googles instant search feature I’ve made one for zen cart. Instant search is a new search enhancement that shows results as you type. 
 
 Tried and tested and works on all major browsers including smart phones.
 
@@ -16,3 +16,6 @@ How It Works
 
  * Instant search uses the jQuery JavaScript Library. 
  * You can change the style and layout of the instant search via stylesheet_instantSearch.css.
+ 
+ 
+Unmodified upload..  Still planning on adding and editing.

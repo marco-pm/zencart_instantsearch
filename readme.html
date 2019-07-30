@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Instant Search</title>
+</head>
+
+<body>
+<p><strong>Instant Search  v1.0.2</strong><br />
+Just like googles instant search feature I’ve made one for zencart. Instant search is a new search enhancement that shows results as you type. </p>
+<p>Tried and tested and works on all major browsers including smart phones.</p>
+<p>This contribution is subject to version 2.0 of the GPL license, that is bundled with this package in the file LICENSE, and is available <a href="http://www.zen-cart.com/license/2_0.txt">here</a>.</p>
+<p>These files are submitted for public distribution via the Zen Cart forum. It would be great if you can provide your feedback or support via the support thread at the <a href="http://www.zen-cart.com/forum/showthread.php?p=1083721#post1083721">Zen Cart forum</a> where it can benefit  all users of this add-on module. </p>
+<p><br />
+<strong>Installation</strong><br /> 
+None of the core Zencart files are affected, so in theory it shouldn't affect any future upgrades. Tested with ZC1.5.5f and ZC1.5.6 using PHP7.1.11 and php7.2.4 as well, subjected to minor sql injection attacks without failing.
+</p>
+<p>Change the template from <em>YOUR_TEMPLATE</em> to your template name you are using!!! Then copy the files in the <em>INSTALL</em> folder to the equivalent places in your site. They already have the correct folder structure so a single drag and drop  into the root directory for your store will put the files in the correct locations.</p>
+<ul>
+  <li>searches.php</li>
+  <li>includes/templates/<em>YOUR_TEMPLATE</em>/css/stylesheet_instantSearch.css</li>
+  <li>includes/templates/<em>YOUR_TEMPLATE</em>/jscript/jscript_instantSearch.js</li>
+</ul>
+<p>Intent Search is based on jQuery and needs it installed to work correctly.  ZC1.5.5x comes with jQuery setup in the responsive template.  You need to make sure jQuery is loaded before any script requiring it. Instant Search was tested using jQuery v3.2.1 and v1.12.4</p>
+<p>&nbsp;</p>
+<p><strong>How It Works</strong><br />
+</p>
+<ol>
+  <li>When the page loads up <em>jscript_instantSearch.js</em> adds a <em>keyup</em> listeners to the search boxes.</li>
+  <li>When the user starts to key in a few letters <em>jscript_instantSearch.js</em> sends the data to searches.php.</li>
+  <li><em>searches.php</em> uses sql to gather matching search results.</li>
+  <li><em>searches.php</em> sends these results back to <em>jscript_instantSearch.js</em>.</li>
+  <li><em>jscript_instantSearch.js</em> then creates the instant search box with the results on the web page.</li>
+</ol>
+<ul>
+  <li>Instant search uses the jQuery JavaScript Library. Check out <a href="http://jquery.com/">http://jquery.com/</a></li>
+  <li>You can change the style and layout of the instant search via <em>stylesheet_instantSearch.css</em>.</li>
+</ul>
+<p><strong>Version History</strong><br />
+v1.0.2 update by davewest</p>
+<ul>
+  <li>Added switches in search.php with comments for easy edits.</li>
+  <li>Cleaned up SQL and added multi-language abilities</li>
+  <li>Cleaned up product links for correct info page based on product type</li>
+  <li>Products and Categories disabled will not show.</li>
+</ul>
+<p> Created by Ayoob G <br />v1.0.1 update:</p>
+<ul>
+  <li>A fairly minor release to the search results, it will ignore disabled or zero stock products.<br />
+  </li>
+</ul>
+<p>  <br />
+v1.0.0 current version.</p>
+</body>
+</html>
