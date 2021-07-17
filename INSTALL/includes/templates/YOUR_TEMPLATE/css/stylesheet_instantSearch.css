@@ -3,79 +3,75 @@ edit the position of the search box by uncommenting and changing the left and to
 Also make sure you set autoPosition = false in jscript_instantSearch.js*/
 
 .resultsContainer {
-	display: none;
-	position:absolute;
-	/*left:100px;*/
-	/*top:100px;*/
-	z-index:10000;
-	text-align: left;
-	float:left;
-	vertical-align:bottom;
-	font-family : Arial, Helvetica, sans-serif;
-	font-size : 13px;
-	font-weight : bold;
-	background : #fff;
-	width : 250px;
-	border : 1px solid #ccc;
-	background-color : #fff;
-	margin : 0;
-	padding : 0;
-	-moz-box-shadow: 0px 2px 8px #000000;
-	-webkit-box-shadow: 0px 2px 8px #000000;
-	box-shadow: 0px 2px 8px #000000;
+  display: none;
+  position: absolute;
+  /*left: 100px;*/
+  /*top: 100px;*/
+  z-index: 10000;
+  text-align: left;
+  float: left;
+  vertical-align: bottom;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  background: #fff;
+  width: 250px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  margin: 0;
+  padding: 5px;
+  -moz-box-shadow: 0px 2px 8px #000000;
+  -webkit-box-shadow: 0px 2px 8px #000000;
+  box-shadow: 0px 2px 8px #000000;
 }
 
-.resultsContainer ul {
-	margin : 0;
-	padding : 0;
-	list-style-type : none;
-	
-}
-
-.resultsContainer li {
-	margin : 0;
-	padding : 0;
+.resultsContainer .resultWrapper {
+  display: flex;
+  align-items: center;
 }
 
 .resultsContainer a {
-	display : block;
-	color : #000;
-	background-color : #fff;
-	padding : 0.1em 0.4em;
-	text-decoration : none;
-	overflow:hidden;
-	height:18px;
-	
+  display: block;
+  color: #000;
+  background-color: #fff;
+  padding: 0.1em 0.4em;
+  text-decoration: none;
+  overflow: hidden;
 }
 
 .resultsContainer a:hover {
-	background-color : #eee;
-	color : #000000;
+  background-color : #eee;
+  color: #000000;
 }
 
-.thinFont {
-	font-weight : lighter;
+.resultsContainer img {
+  height: 40px;
+  max-width: 40px;
+  margin-right: 10px;
 }
 
-.alignRight{
-	display : inline-block;
-	float : right;
-	font-weight : lighter;
-	font-size : 70%;
-	margin-top : 2px;
-	padding-left:40px;
+.resultsContainer .productModel {
+  font-size: 0.8em;
+}
+
+.resultsContainer .boldFont {
+  font-weight: bold;
 }
 
 /* added for more and header search box */
 
 .searchMore {
-	font-weight : bold;
-	/*font-size : 70%; */
-	color:#3071a9;
+  font-weight: bold;
+  /*font-size : 70%; */
+  color:#3071a9;
 }
 
 #navMainSearch .resultsContainer a {
-	color : #000;
-	background-color : #fff;
-	text-decoration : none;
+  color: #000;
+  background-color: #fff;
+  text-decoration: none;
+}
+
+#navMainSearch .resultsContainer a:hover {
+  background-color : #eee;
+  color: #000000;
 }
