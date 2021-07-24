@@ -58,7 +58,7 @@ class zcAjaxInstantSearch extends base
                     $totalMatches    = 0;
                     $findSum         = null; // sum of first occurrences of words in the product name
 
-                    // check if product model is an exact corrispondence
+                    // check if product model is an exact match
                     if (strtolower(trim(preg_replace('/\s+/', ' ', $productModel))) === strtolower(trim(preg_replace('/\s+/', ' ', $wordSearch)))) {
                         $totalMatches++;
                     }
@@ -70,7 +70,7 @@ class zcAjaxInstantSearch extends base
                             $totalMatches++;
                             $findSum += $wordPos;
 
-                            if (preg_match("/\b$word\b/i", $productName)) { // exact words correspondences have a higher priority
+                            if (preg_match("/\b$word\b/i", $productName)) { // exact words matches have a higher priority
                                 $totalMatches++;
                             }
                         } elseif (stripos($productModel, $word) === 0) { // search for word at the beginning of the product model
