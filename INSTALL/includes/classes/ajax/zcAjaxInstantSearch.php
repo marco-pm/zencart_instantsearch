@@ -33,7 +33,7 @@ class zcAjaxInstantSearch extends base
                 $wordSearchPlus = preg_replace('/\s/', '|', $wordSearchPlus);
             }
 
-            $sqlProduct = "SELECT p.products_id, p.products_model, p.products_image, pd.products_name, pd.products_viewed
+            $sqlProduct = "SELECT p.products_id, p.products_model, p.products_image, pd.products_viewed
                            FROM " . TABLE_PRODUCTS_DESCRIPTION . " as pd, " . TABLE_PRODUCTS . " as p 
                            WHERE p.products_id = pd.products_id
                            AND p.products_status <> 0
@@ -49,7 +49,7 @@ class zcAjaxInstantSearch extends base
 
                 foreach ($dbProducts as $dbProduct) {
                     $productId       = $dbProduct['products_id'];
-                    $productName     = $dbProduct['products_name'];
+                    $productName     = zen_get_products_name($dbProduct['products_id']);
                     $productModel    = $dbProduct['products_model'];
                     $productImg      = $dbProduct['products_image'];
                     $productViews    = $dbProduct['products_viewed'];
