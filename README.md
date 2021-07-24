@@ -1,4 +1,4 @@
-# Instant Search+ 1.0.0
+# Instant Search+ 1.0.1
 Instant Search for Zen Cart, based on [Instant Search](https://github.com/torvista/InstantSearch) plugin.
 
 Tested on Zen Cart 1.5.7c (responsive classic template), PHP 7.3/7.4.
