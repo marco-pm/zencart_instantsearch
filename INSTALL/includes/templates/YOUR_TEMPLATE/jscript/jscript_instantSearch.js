@@ -89,7 +89,6 @@ $(function() {
                                              </div>
                                            </a>`;
                         });
-                        resultsContainer.outerWidth(inputBox.outerWidth());
                         resultsContainer.html(resultHtml);
                         if (!resultsContainer.is(':visible')) {
                             if (autoPosition === true) {
@@ -97,6 +96,7 @@ $(function() {
                             }
                             resultsContainer.slideDown(200);
                         }
+                        resultsContainer.outerWidth(inputboxCurrent.outerWidth());
                     } else {
                         resultsContainer.hide();
                     }

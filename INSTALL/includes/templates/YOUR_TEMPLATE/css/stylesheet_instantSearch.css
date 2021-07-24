@@ -3,7 +3,7 @@ edit the position of the search box by uncommenting and changing the left and to
 Also make sure you set autoPosition = false in jscript_instantSearch.js*/
 
 .resultsContainer {
-  box-sizing:border-box;
+  box-sizing: border-box;
   display: none;
   position: absolute;
   /*left: 100px;*/
@@ -15,9 +15,8 @@ Also make sure you set autoPosition = false in jscript_instantSearch.js*/
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   background: #fff;
-  width: 250px;
+  min-width: 250px;
   border: 1px solid #ccc;
-  background-color: #fff;
   margin: 0;
   padding: 5px;
   -moz-box-shadow: 0 2px 8px #000000;
