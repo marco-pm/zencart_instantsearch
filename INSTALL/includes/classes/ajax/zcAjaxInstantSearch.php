@@ -40,6 +40,8 @@ class zcAjaxInstantSearch extends base
                            AND ((pd.products_name REGEXP :wordSearchPlus:) OR (p.products_model REGEXP :wordSearchPlus:) OR (LEFT(pd.products_name, LENGTH(:wordSearch:)) SOUNDS LIKE :wordSearch:))
                            AND language_id = '" . (int)$_SESSION['languages_id'] . "'";
 
+            $this->notify('NOTIFY_INSTANT_SEARCH_QUERY', $sqlProduct);
+
             $sqlProduct = $db->bindVars($sqlProduct, ':wordSearch:', $wordSearch, 'string');
             $sqlProduct = $db->bindVars($sqlProduct, ':wordSearchPlus:', $wordSearchPlus, 'string');
 
