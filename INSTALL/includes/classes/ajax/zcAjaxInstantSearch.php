@@ -7,7 +7,7 @@
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  * @version $Id: searches.php 5 2018-09-01 18:34:47Z davewest $
  * 
- * Instant Search+ 1.0.0
+ * Instant Search+ 1.0.2
  */
 
 class zcAjaxInstantSearch extends base
@@ -24,11 +24,13 @@ class zcAjaxInstantSearch extends base
 
         if ($wordSearch !== '' && strlen($wordSearch) < self::MAX_WORDSEARCH_LENGTH) { // if not empty and not too long
 
+            $wordSearchPlus = preg_quote($wordSearch, '&');
+
             if (strlen($wordSearch) <= 2) {
-                $wordSearchPlus = "^" . $wordSearch;
+                $wordSearchPlus = "^" . $wordSearchPlus;
                 $wordSearchPlusArray = [$wordSearch];
             } else {
-                $wordSearchPlus = trim(preg_replace('/\s+/', ' ', $wordSearch));
+                $wordSearchPlus = trim(preg_replace('/\s+/', ' ', $wordSearchPlus));
                 $wordSearchPlusArray = explode(' ', $wordSearchPlus);
                 $wordSearchPlus = preg_replace('/\s/', '|', $wordSearchPlus);
             }
