@@ -90,7 +90,9 @@ class zcAjaxInstantSearch extends base
                         'views' => $productViews,
                         'fsum'  => $findSum ?? self::MAX_WORDSEARCH_LENGTH
                     ];
-                    $this->notify('INSTANT_SEARCH_PRIOR_ADD_RESULT', $productId, $result);
+
+                    $this->notify('NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT', $productId, $result);
+                    
                     $results[] = $result;
                 }
 
