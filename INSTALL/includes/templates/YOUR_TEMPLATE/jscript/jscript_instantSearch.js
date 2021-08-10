@@ -35,7 +35,7 @@ $(function() {
     });
 
     inputBox.on('focus', function() {
-        if (inputboxCurrent) {
+        if (inputboxCurrent && $(inputboxCurrent).val() !== "") {
             let resultsContainer = inputboxCurrent.prev();
             resultsContainer.delay(200).slideDown(200);
         }
@@ -90,7 +90,7 @@ $(function() {
                                            </a>`;
                         });
                         resultsContainer.html(resultHtml);
-                        if (!resultsContainer.is(':visible')) {
+                        if (!resultsContainer.is(':visible') && $(inputboxCurrent).val() === searchWord) {
                             if (autoPosition === true) {
                                 autoPositionContainer(inputboxCurrent, resultsContainer);
                             }
