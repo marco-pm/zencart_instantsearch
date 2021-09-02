@@ -51,9 +51,9 @@ $(function() {
     inputBox.on('keyup', function() {
         inputboxCurrent = $(this);
         const resultsContainer = $(this).prev();
-        let searchWord = $(this).val();
+        const typedSearchWord = $(this).val();
 
-        searchWord = searchWord.replace(/^\s+/, "").replace(/  +/g, ' ');
+        searchWord = typedSearchWord.replace(/^\s+/, "").replace(/  +/g, ' ');
         if (searchWord === "") {
             resultsContainer.hide();
         } else {
@@ -90,7 +90,7 @@ $(function() {
                                            </a>`;
                         });
                         resultsContainer.html(resultHtml);
-                        if (!resultsContainer.is(':visible') && $(inputboxCurrent).val() === searchWord) {
+                        if (!resultsContainer.is(':visible') && $(inputboxCurrent).val() === typedSearchWord) {
                             if (autoPosition === true) {
                                 autoPositionContainer(inputboxCurrent, resultsContainer);
                             }
