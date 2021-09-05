@@ -27,7 +27,6 @@ class zcAjaxInstantSearch extends base
             $wordSearchPlus = preg_quote($wordSearch, '&');
 
             if (strlen($wordSearch) <= 2) {
-                $wordSearchPlus = "^" . $wordSearchPlus;
                 $wordSearchPlusArray = [$wordSearch];
             } else {
                 $wordSearchPlus = trim(preg_replace('/\s+/', ' ', $wordSearchPlus));
