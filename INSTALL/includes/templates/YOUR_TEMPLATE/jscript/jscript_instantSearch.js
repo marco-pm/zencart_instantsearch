@@ -48,7 +48,7 @@ $(function() {
         }
     });
 
-    inputBox.on('keyup', function() {
+    inputBox.on('input', function() {
         inputboxCurrent = $(this);
         const resultsContainer = $(this).prev();
         const typedSearchWord = $(this).val();
