@@ -65,13 +65,15 @@ class zcAjaxInstantSearch extends base
                     }
 
                     foreach ($wordSearchPlusArray as $word) {
+                        $word = stripslashes($word);
                         $wordPos = stripos($productName, $word);
                         
                         if ($wordPos !== false) { // search for word anywhere in the product name
                             $totalMatches++;
                             $findSum += $wordPos;
 
-                            if (preg_match("/\b$word\b/i", $productName)) { // exact words matches have a higher priority
+                            $mWord = preg_quote($word, '/');
+                            if (preg_match("/\b$mWord\b/i", $productName)) { // exact words matches have a higher priority
                                 $totalMatches++;
                             }
                         } elseif (stripos($productModel, $word) === 0) { // search for word at the beginning of the product model
