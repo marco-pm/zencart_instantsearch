@@ -5,7 +5,7 @@ Also make sure you set autoPosition = false in jscript_instantSearch.js*/
 .resultsContainer {
   box-sizing: border-box;
   display: none;
-  position: absolute;
+  position: fixed;
   /*left: 100px;*/
   /*top: 100px;*/
   z-index: 10000;
