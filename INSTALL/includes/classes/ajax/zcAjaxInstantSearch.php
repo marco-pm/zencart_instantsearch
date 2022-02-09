@@ -5,9 +5,8 @@
  * @copyright Portions Copyright 2003-2006 The Zen Cart Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: searches.php 5 2018-09-01 18:34:47Z davewest $
  * 
- * Instant Search+ 1.0.4
+ * Instant Search 1.1.0
  */
 
 class zcAjaxInstantSearch extends base
