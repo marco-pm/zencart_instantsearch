@@ -177,6 +177,7 @@ class zcAjaxInstantSearch extends base
                     default:
                         $result['link']  = zen_href_link(zen_get_info_page($id), 'products_id=' . $id);
                         $result['model'] = $this->highlightSearchWord($wordSearchPlus, ($model));
+                        $result['price'] = zen_get_products_display_price($id);
                         break;
 
                     case 'category':
@@ -201,7 +202,7 @@ class zcAjaxInstantSearch extends base
 
     protected function highlightSearchWord($word, $text)
     {
-        return preg_replace('/(' . $word . ')/i', '<span class="boldFont">$1</span>', $text);
+        return preg_replace('/(' . $word . ')/i', '<strong>$1</strong>', $text);
     }
 
 }
