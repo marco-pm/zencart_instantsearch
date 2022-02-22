@@ -11,9 +11,9 @@
 
 class zcAjaxInstantSearch extends base
 {
-    protected const MAX_WORDSEARCH_LENGTH = 100;
-    protected const MAX_RESULTS           = 5;
-
+    /**
+     * Ajax instant search function.
+     */
     public function instantSearch()
     {
         global $template;
@@ -21,7 +21,7 @@ class zcAjaxInstantSearch extends base
         $wordSearch = ($_POST['query'] ?? '');
         $instantSearchResults = [];
 
-        if ($wordSearch !== '' && strlen($wordSearch) < self::MAX_WORDSEARCH_LENGTH) { // if not empty and not too long
+        if ($wordSearch !== '' && strlen($wordSearch) <= INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH) { // if not empty and not too long
 
             $wordSearchPlus = preg_quote($wordSearch, '&');
 
@@ -37,10 +37,14 @@ class zcAjaxInstantSearch extends base
             $instantSearchResults = $this->execInstantSearchForType('product', $wordSearch, $wordSearchPlus, $wordSearchPlusArray);
 
             // search categories
-            array_push($instantSearchResults, ...$this->execInstantSearchForType('category', $wordSearch, $wordSearchPlus, $wordSearchPlusArray));
+            if (INSTANT_SEARCH_INCLUDE_CATEGORIES === 'true') {
+                array_push($instantSearchResults, ...$this->execInstantSearchForType('category', $wordSearch, $wordSearchPlus, $wordSearchPlusArray));
+            }
 
             // search manufacturers
-            array_push($instantSearchResults, ...$this->execInstantSearchForType('manufacturer', $wordSearch, $wordSearchPlus, $wordSearchPlusArray));
+            if (INSTANT_SEARCH_INCLUDE_MANUFACTURERS === 'true') {
+                array_push($instantSearchResults, ...$this->execInstantSearchForType('manufacturer', $wordSearch, $wordSearchPlus, $wordSearchPlusArray));
+            }
 
             // order by number of matches (desc),
             // then by words that occur first in the title,
@@ -52,17 +56,20 @@ class zcAjaxInstantSearch extends base
                     [$prod1['mtch'], $prod2['fsum'], $prod1['views']];
             });
 
-            $instantSearchResults = array_slice($instantSearchResults, 0, self::MAX_RESULTS);
+            $instantSearchResults = array_slice($instantSearchResults, 0, INSTANT_SEARCH_MAX_NUMBER_OF_RESULTS);
 
             ob_start();
             require $template->get_template_dir('tpl_ajax_instant_search_results.php', DIR_WS_TEMPLATE, FILENAME_DEFAULT, 'templates') . '/tpl_ajax_instant_search_results.php';
             return ob_get_clean();
         }
 
-        return null;
+        return [];
     }
 
-    protected function execInstantSearchForType($type, $wordSearch, $wordSearchPlus, $wordSearchPlusArray): array
+    /**
+     * Executes the instant search on database for $type, where $type can be "product", "category" or "manufacturer".
+     */
+    protected function execInstantSearchForType($type, $wordSearch, $wordSearchPlus, $wordSearchPlusArray)
     {
         global $db;
         $instantSearchResults = [];
@@ -76,9 +83,9 @@ class zcAjaxInstantSearch extends base
                         WHERE p.products_status <> 0
                         AND (
                                 (pd.products_name REGEXP :wordSearchPlus:) OR
-                                (p.products_model REGEXP :wordSearchPlus:) OR
-                                (LEFT(pd.products_name, LENGTH(:wordSearch:)) SOUNDS LIKE :wordSearch:)
-                            )
+                                (LEFT(pd.products_name, LENGTH(:wordSearch:)) SOUNDS LIKE :wordSearch:)" .
+                                (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? " OR (p.products_model REGEXP :wordSearchPlus:)" : "") .
+                            ")
                         AND pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
                 break;
 
@@ -126,7 +133,7 @@ class zcAjaxInstantSearch extends base
                         $views = $sqlResult['products_viewed'];
 
                         // check if product model is an exact match
-                        if (strtolower(trim(preg_replace('/\s+/', ' ', $model))) === strtolower(trim(preg_replace('/\s+/', ' ', $wordSearch)))) {
+                        if (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' && strtolower(trim(preg_replace('/\s+/', ' ', $model))) === strtolower(trim(preg_replace('/\s+/', ' ', $wordSearch)))) {
                             $totalMatches++;
                         }
                         break;
@@ -158,7 +165,7 @@ class zcAjaxInstantSearch extends base
                         if (preg_match("/\b$mWord\b/i", $name)) { // exact words matches have a higher priority
                             $totalMatches++;
                         }
-                    } elseif ($type === 'product' && stripos($model, $word) === 0) { // search for word at the beginning of the product model
+                    } elseif ($type === 'product' && INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' && stripos($model, $word) === 0) { // search for word at the beginning of the product model
                         $totalMatches++;
                     }
                 }
@@ -166,28 +173,30 @@ class zcAjaxInstantSearch extends base
                 // Prepare results
                 $result = [
                     'name'  => $this->highlightSearchWord($wordSearchPlus, strip_tags($name)),
-                    'img'   => zen_image(DIR_WS_IMAGES . strip_tags($img), strip_tags($name)),
+                    'img'   => INSTANT_SEARCH_DISPLAY_IMAGE === 'true' ? zen_image(DIR_WS_IMAGES . strip_tags($img), strip_tags($name)) : '',
                     'mtch'  => $totalMatches,
                     'views' => $views,
-                    'fsum'  => $findSum ?? self::MAX_WORDSEARCH_LENGTH
+                    'fsum'  => $findSum ?? INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH
                 ];
 
                 switch ($type) {
                     case 'product':
                     default:
                         $result['link']  = zen_href_link(zen_get_info_page($id), 'products_id=' . $id);
-                        $result['model'] = $this->highlightSearchWord($wordSearchPlus, ($model));
-                        $result['price'] = zen_get_products_display_price($id);
+                        $result['model'] = INSTANT_SEARCH_DISPLAY_PRODUCT_MODEL === 'true'
+                            ? (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? $this->highlightSearchWord($wordSearchPlus, $model) : $model)
+                            : '';
+                        $result['price'] = INSTANT_SEARCH_DISPLAY_PRODUCT_PRICE === 'true' ? zen_get_products_display_price($id) : '';
                         break;
 
                     case 'category':
                         $result['link']  = zen_href_link(FILENAME_DEFAULT, 'cPath=' . $id);
-                        $result['count'] = zen_count_products_in_category($id);
+                        $result['count'] = INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT === 'true' ? zen_count_products_in_category($id) : '';
                         break;
 
                     case 'manufacturer':
                         $result['link']  = zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $id);
-                        $result['count'] = zen_count_products_for_manufacturer($id);
+                        $result['count'] = INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT === 'true' ? zen_count_products_for_manufacturer($id) : '';
                         break;
                 }
 
@@ -200,9 +209,11 @@ class zcAjaxInstantSearch extends base
         return $instantSearchResults;
     }
 
+    /**
+     * Formats in bold the $word occurrences in $text.
+     */
     protected function highlightSearchWord($word, $text)
     {
         return preg_replace('/(' . $word . ')/i', '<strong>$1</strong>', $text);
     }
-
 }

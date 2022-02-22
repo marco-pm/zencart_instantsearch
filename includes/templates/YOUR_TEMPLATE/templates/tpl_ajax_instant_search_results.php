@@ -3,9 +3,11 @@
 foreach ($instantSearchResults as $result) { ?>
     <a href="<?php echo $result['link']; ?>">
         <div class="resultWrapper">
-            <div class="resultWrapper__img">
-                <?php echo $result['img']; ?>
-            </div>
+            <?php if ($result['img']) { ?>
+                <div class="resultWrapper__img">
+                    <?php echo $result['img']; ?>
+                </div>
+            <?php } ?>
             <div class="resultWrapper__infoWrapper">
                 <div class="resultWrapper__infoWrapper__nameModelWrapper">
                     <?php echo $result['name']; ?>
