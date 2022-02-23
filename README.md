@@ -17,7 +17,7 @@ See the [readme.html](readme.html).
   * enable/disable plugin
   * max # of results to be displayed
   * enable/disable display of images, model, price
-  * enable/disable search on product's model, category, manufactuerer
+  * enable/disable search on product's model, category, manufacturer
 * Optional search on categories and manufacturers
 * Code refactoring
 * Various code and visual improvements
