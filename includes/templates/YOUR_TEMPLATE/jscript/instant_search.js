@@ -4,14 +4,15 @@
  * @copyright Portions Copyright 2003-2006 The Zen Cart Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * 
- * Instant Search 2.0.0
+ *
+ * Instant Search 2.0.1
  */
 
 const searchBoxSelector = 'input[name="keyword"]';
 let runningRequest = false;
 let request;
 let inputboxCurrent;
+let inputTimer;
 
 $(function() {
     let inputBox = $(searchBoxSelector);
@@ -57,36 +58,39 @@ $(function() {
             if (runningRequest) {
                 request.abort();
             }
-            runningRequest = true;
-            let data = new FormData();
-            data.append('query', searchWord);
-            request = jQuery.ajax({
-                type: 'POST',
-                url: 'ajax.php?act=ajaxInstantSearch&method=instantSearch',
-                dataType: 'json',
-                contentType: false,
-                cache: false,
-                processData: false,
-                data: data,
-                success: function(data) {
-                    if (data.length > 0) {
-                        resultsContainer.html(data);
-                        if (!resultsContainer.is(':visible') && $(inputboxCurrent).val() === typedSearchWord) {
-                            autoPositionContainer(inputboxCurrent, resultsContainer);
-                            resultsContainer.slideDown(200);
-                        }
-                        resultsContainer.outerWidth(inputboxCurrent.outerWidth());
-                        if (resultsContainer.width() > 250) {
-                            resultsContainer.addClass('resultsContainer--lg');
+            clearTimeout(inputTimer);
+            inputTimer = setTimeout(() => {
+                runningRequest = true;
+                let data = new FormData();
+                data.append('query', searchWord);
+                request = jQuery.ajax({
+                    type: 'POST',
+                    url: 'ajax.php?act=ajaxInstantSearch&method=instantSearch',
+                    dataType: 'json',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    data: data,
+                    success: function (data) {
+                        if (data.length > 0) {
+                            resultsContainer.html(data);
+                            if (!resultsContainer.is(':visible') && $(inputboxCurrent).val() === typedSearchWord) {
+                                autoPositionContainer(inputboxCurrent, resultsContainer);
+                                resultsContainer.slideDown(200);
+                            }
+                            resultsContainer.outerWidth(inputboxCurrent.outerWidth());
+                            if (resultsContainer.width() > 250) {
+                                resultsContainer.addClass('resultsContainer--lg');
+                            } else {
+                                resultsContainer.removeClass('resultsContainer--lg');
+                            }
                         } else {
-                            resultsContainer.removeClass('resultsContainer--lg');
+                            resultsContainer.hide();
                         }
-                    } else {
-                        resultsContainer.hide();
+                        runningRequest = false;
                     }
-                    runningRequest = false;
-                }
-            });
+                });
+            }, searchInputWaitTime);
         }
     });
 });
