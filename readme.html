@@ -122,19 +122,20 @@
                     <p>Once the user starts typing in any search input box (header search, sidebox search, etc.), the keywords are searched into the database and the results immediately displayed in a dropdown that appears below the input box.</p>
                     <p>There are several configuration options available in the Admin (<em>Configuration > Instant Search</em>):</p>
                     <ul>
-                        <li>Enable Instant Search</li>
-                        <li>Max # of results displayed</li>
-                        <li>Max length of input text</li>
-                        <li>Display images</li>
-                        <li>Search also into product's model *</li>
-                        <li>Display the product's model</li>
-                        <li>Display the product's price</li>
-                        <li>Search also into categories *</li>
-                        <li>Display categories count *</li>
-                        <li>Search also into manufacturers *</li>
-                        <li>Display manufacturers count *</li>
+                        <li class="mt-2">Enable Instant Search</li>
+                        <li class="mt-2">Max # of results displayed<br><em>Maximum number of results displayed in the dropdown. Too many and it's useless.</em></li>
+                        <li class="mt-2">Max length of input text<br><em>Maximum length of text for Instant Search. If the text entered by the user has more characters than this value, the instant search won't be performed.</em></li>
+                        <li class="mt-2">Waiting time after typing<br><em>Waiting time (in milliseconds) after the user has stopped typing before the search is performed. Increase this value a little if you want to avoid too many POST requests on your server in a short interval.</em></li>
+                        <li class="mt-2">Display images</li>
+                        <li class="mt-2">Search also into product's model <strong>*</strong></li>
+                        <li class="mt-2">Display the product's model</li>
+                        <li class="mt-2">Display the product's price</li>
+                        <li class="mt-2">Search also into categories <strong>*</strong></li>
+                        <li class="mt-2">Display categories count <strong>*</strong><br><em>Display also the number of products for the matched categories (only if "Search also into categories" is set to True).</em></li>
+                        <li class="mt-2">Search also into manufacturers <strong>*</strong></li>
+                        <li class="mt-2">Display manufacturers count <strong>*</strong><br><em>Display also the number of products for the matched manufacturers (only if "Search also into manufacturers" is set to True).</em></li>
                     </ul>
-                    <p>If your store has a lot of products and the Instant Search is slow, you may consider setting some or all of the settings marked with * to <em>False</em>, in order to improve the search performance.</p>
+                    <p>If your store has a lot of products and the Instant Search is slow, you may consider setting some or all of the settings marked with <strong>*</strong> to <em>False</em>, in order to improve the search performance.</p>
                 </section>
 
                 <section>
