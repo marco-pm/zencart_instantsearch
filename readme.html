@@ -12,6 +12,10 @@
             position: static;
         }
 
+        #main-container {
+            padding-top: 120px;
+        }
+
         @media (min-width: 768px) {
             #navbar-contents {
                 position: fixed;
@@ -33,33 +37,35 @@
 </head>
 <body data-bs-spy="scroll" data-bs-target="#navbar-contents" data-bs-offset="100">
     <header>
-        <nav id="navbar-header" class="navbar position-fixed navbar-light bg-light shadow-sm justify-content-center align-items-center container-fluid">
+        <nav id="navbar-header" class="navbar position-fixed navbar-light bg-light shadow-sm justify-content-center align-items-center container-fluid py-3">
             <div class="container">
-            <h1 class="mb-1 fs-4">Instant Search plugin 2.0.0 for Zen Cart</h1>
+            <h1 class="mb-1 fs-4">Instant Search plugin 2.0.1 for Zen Cart</h1>
                 <div class="float-md-right text-center text-md-right mt-2 mt-md-0">
-                    <i class="bi-github me-1 align-top"></i> <a href="https://github.com/marco-pm/zencart_instantsearch" target="_blank" class="link-secondary text-decoration-none me-4">GitHub Repository</a>
-                    <i class="bi-layout-text-sidebar-reverse me-1 align-top"></i> <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" class="link-secondary text-decoration-none">Support Thread</a>
+                    <i class="bi-github me-1 align-top"></i> <a href="https://github.com/marco-pm/zencart_instantsearch" target="_blank" rel="noopener noreferrer" class="link-secondary text-decoration-none me-4">GitHub Repository</a>
+                    <i class="bi-layout-text-sidebar-reverse me-1 align-top"></i> <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" rel="noopener noreferrer" class="link-secondary text-decoration-none">Support Thread</a>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container" style="padding-top:100px">
+    <div class="container" id="main-container">
         <div class="row">
             <aside class="col-md-4 col-xxl-3">
                 <nav id="navbar-contents" class="navbar navbar-light bg-light flex-column align-items-stretch p-3 shadow-sm mt-4 mt-sm-3 mb-3 my-md-0">
                     <nav class="nav nav-pills flex-column">
                         <a class="nav-link link-secondary" href="#item-prerequisites">Prerequisites</a>
-                        <a class="nav-link link-secondary" href="#item-installation">Installation</a>
+                        <a class="nav-link link-secondary" href="#item-first-time-installation">Installation</a>
                         <nav class="nav nav-pills flex-column">
-                            <a class="nav-link link-secondary ms-3 my-1" href="#item-upgrade">Upgrading from versions 1.x</a>
-                            <a class="nav-link link-secondary ms-3 my-1" href="#item-install">Install</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-upgrade-1">Upgrading from versions 1.x</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-upgrade-2">Upgrading from versions 2.x</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-first-time-install">First-time install</a>
                         </nav>
                         <a class="nav-link link-secondary" href="#item-use">Use</a>
                         <nav class="nav nav-pills flex-column">
                             <a class="nav-link link-secondary ms-3 my-1" href="#item-notifications">(For developers) Notifications</a>
                         </nav>
                         <a class="nav-link link-secondary" href="#item-uninstall">Uninstall</a>
+                        <a class="nav-link link-secondary" href="#item-files-list">Files list</a>
                         <a class="nav-link link-secondary" href="#item-changelog">Changelog</a>
                     </nav>
                 </nav>
@@ -75,121 +81,133 @@
                 </section>
 
                 <section>
-                <h1 id="item-installation" class="display-1 fs-2 pb-2 pt-5">Installation</h1>
-                <h2 id="item-upgrade" class="fs-4 pt-1 pb-3">Upgrading from versions 1.x</h2>
-                <p>If you're currently using a 1.x version of the plugin, REMOVE the following plugin's files before installing:</p>
-                <ul class="text-break">
-                    <li>(up to version 1.0.2) <span class="font-monospace">searches.php</span></li>
-                    <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instantSearch.js</span></li>
-                    <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/css/stylesheet_instantSearch.css</span></li>
-                </ul>
-                <p>Then proceed to the install (next paragraph).</p>
-                <p>If you're using observers to watch the plugin's notifications, note that the passed variables have changed. See <a href="#item-notifications" class="link-secondary">Notifications</a>.</p>
+                    <h1 id="item-first-time-installation" class="display-1 fs-2 pb-2 pt-5">Installation</h1>
+                    <h2 id="item-upgrade-1" class="fs-4 pt-1 pb-3">Upgrading from versions 1.x</h2>
+                    <p>If you're currently using a 1.x version of the plugin:</p>
+                    <ol>
+                        <li>REMOVE the following plugin's files before installing:
+                            <ul class="text-break mt-3">
+                                <li>(up to version 1.0.2) <span class="font-monospace">searches.php</span></li>
+                                <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instantSearch.js</span></li>
+                                <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/css/stylesheet_instantSearch.css</span></li>
+                            </ul>
+                        </li>
+                        <li class="mt-3">Do a <a href="#item-first-time-install" class="link-secondary">first-time install</a>.</li>
+                    </ol>
+                    <p>If you're using observers to watch the plugin's notifications, note that the passed variables have changed. See <a href="#item-notifications" class="link-secondary">Notifications</a>.</p>
                 </section>
 
                 <section>
-                <h2 id="item-install" class="fs-4 py-3">Install</h2>
-                <ol>
-                    <li>Copy the files to your site's file system.<br>
-                        Rename <span class="font-monospace">YOUR_TEMPLATE</span> to match the name of your site's template.<br>
-                        DON'T rename the <span class="font-monospace">admin</span> subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v2.0.0</span>.
-                    <ul class="mt-2 text-break">
-                        <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
-                        <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
-                        <li><span class="font-monospace">includes/functions/extra_functions/instant_search_functions.php</span></li>
-                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/instant_search.js</span></li>
-                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instant_search.php</span></li>
-                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/css/stylesheet_instant_search.css</span></li>
-                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
-                        <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.0/Installer/ScriptedInstaller.php</span></li>
-                        <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.0/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
-                        <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.0/manifest.php</span></li>
+                    <h2 id="item-upgrade-2" class="fs-4 py-3">Upgrading from versions 2.x</h2>
+                    <p>If you're currently using a 2.x version of the plugin: in Zen Cart 1.5.7 the plugin upgrade functionality is not active yet, therefore you must uninstall the current plugin version and install the new one via the Plugin Manager.</p>
+                    <ol>
+                        <li class="mt-3">Write down your current Instant Search settings in the admin (<em>Configuration > Instant Search</em>), because they will be lost once you uninstall the current plugin. Re-apply them after the installation.</li>
+                        <li class="mt-3">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
+                        <li class="mt-3">Do a <a href="#item-first-time-install" class="link-secondary">first-time install</a>.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h2 id="item-first-time-install" class="fs-4 py-3">First-time install</h2>
+                    <ol>
+                        <li>Copy the <a href="#item-files-list" class="link-secondary">files</a> to your site's file system.<br>
+                            Rename <span class="font-monospace">YOUR_TEMPLATE</span> to match the name of your site's template.<br>
+                            DON'T rename the <span class="font-monospace">admin</span> subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v2.0.1</span>.
+                        <li class="mt-3">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h1 id="item-use" class="display-1 fs-2 mt-6 pb-2 pt-5">Use</h1>
+                    <p>Once the user starts typing in any search input box (header search, sidebox search, etc.), the keywords are searched into the database and the results immediately displayed in a dropdown that appears below the input box.</p>
+                    <p>There are several configuration options available in the Admin (<em>Configuration > Instant Search</em>):</p>
+                    <ul>
+                        <li>Enable Instant Search</li>
+                        <li>Max # of results displayed</li>
+                        <li>Max length of input text</li>
+                        <li>Display images</li>
+                        <li>Search also into product's model *</li>
+                        <li>Display the product's model</li>
+                        <li>Display the product's price</li>
+                        <li>Search also into categories *</li>
+                        <li>Display categories count *</li>
+                        <li>Search also into manufacturers *</li>
+                        <li>Display manufacturers count *</li>
                     </ul>
-                    <li class="mt-3">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
-                </ol>
+                    <p>If your store has a lot of products and the Instant Search is slow, you may consider setting some or all of the settings marked with * to <em>False</em>, in order to improve the search performance.</p>
                 </section>
 
                 <section>
-                <h1 id="item-use" class="display-1 fs-2 mt-6 pb-2 pt-5">Use</h1>
-                <p>Once the user starts typing in any search input box (header search, sidebox search, etc.), the keywords are searched into the database and the results immediately displayed in a dropdown that appears below the input box.</p>
-                <p>There are several configuration options available in the Admin (<em>Configuration > Instant Search)</em>:</p>
-                <ul>
-                    <li>Enable Instant Search</li>
-                    <li>Max # of results displayed</li>
-                    <li>Max length of input text</li>
-                    <li>Display images</li>
-                    <li>Search also into product's model *</li>
-                    <li>Display the product's model</li>
-                    <li>Display the product's price</li>
-                    <li>Search also into categories *</li>
-                    <li>Display categories count *</li>
-                    <li>Search also into manufacturers *</li>
-                    <li>Display manufacturers count *</li>
-                </ul>
-                <p>If your store has a lot of products and the Instant Search is slow, you may consider setting some or all of the settings marked with * to <em>False</em>, in order to improve the search performance.</p>
-                </section>
-
-                <section>
-                <h2 id="item-notifications" class="fs-4 py-3">(For developers) Notifications</h2>
-                <p>The class <span class="font-monospace">zcAjaxInstantSearch</span> triggers two notifications for observers:</p>
-                <ul>
-                    <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_QUERY</span>. The second variable is the sql query that is going to be executed to search for the keywords on the db.</li>
-                    <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT</span>. The second variable is the id of the current result (product, category or manufacturer); the third variable is the <span class="font-monospace">$result</span> array that contains the result data to be displayed.</li>
-                </ul>
-                <p>Both notifications pass as first, read-only variable the current <span class="font-monospace">$type</span> of the search, where <span class="font-monospace">$type</span> can be <span class="font-monospace">product</span>, <span class="font-monospace">category</span> or <span class="font-monospace">manufacturer</span>.</p>
-                </section>
-
-                <section>
-                <h1 id="item-uninstall" class="display-1 fs-2 pb-2 pt-5">Uninstall</h1>
-                <ol>
-                    <li class="mt-3">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
-                    <li class="mt-3">Remove the files from your site's file system.
-                    <ul class="mt-2 text-break">
-                        <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
-                        <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
-                        <li><span class="font-monospace">includes/functions/extra_functions/instant_search_functions.php</span></li>
-                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/instant_search.js</span></li>
-                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instant_search.php</span></li>
-                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/css/stylesheet_instant_search.css</span></li>
-                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
-                        <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.0/Installer/ScriptedInstaller.php</span></li>
-                        <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.0/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
-                        <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.0/manifest.php</span></li>
+                    <h2 id="item-notifications" class="fs-4 py-3">(For developers) Notifications</h2>
+                    <p>The class <span class="font-monospace">zcAjaxInstantSearch</span> triggers two notifications for observers:</p>
+                    <ul>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_QUERY</span>. The second variable is the sql query that is going to be executed to search for the keywords on the db.</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT</span>. The second variable is the id of the current result (product, category or manufacturer); the third variable is the <span class="font-monospace">$result</span> array that contains the result data to be displayed.</li>
                     </ul>
-                </ol>
+                    <p>Both notifications pass as first, read-only variable the current <span class="font-monospace">$type</span> of the search, where <span class="font-monospace">$type</span> can be <span class="font-monospace">product</span>, <span class="font-monospace">category</span> or <span class="font-monospace">manufacturer</span>.</p>
                 </section>
 
                 <section>
-                <h1 id="item-changelog" class="display-1 fs-2 pb-2 pt-5">Changelog</h1>
-                <h2 id="item-v2" class="fs-4 py-3">v2.0.0 (2022-02-23)</h2>
-                <ul>
-                    <li>Added configuration options in the Admin
-                        <ul>
-                            <li>Enable Instant Search</li>
-                            <li>Max # of results displayed</li>
-                            <li>Max length of input text</li>
-                            <li>Display images</li>
-                            <li>Search also into product's model</li>
-                            <li>Display the product's model</li>
-                            <li>Display the product's price</li>
-                            <li>Search also into categories</li>
-                            <li>Display categories count</li>
-                            <li>Search also into manufacturers</li>
-                            <li>Display manufacturers count</li>
+                    <h1 id="item-uninstall" class="display-1 fs-2 pb-2 pt-5">Uninstall</h1>
+                    <ol>
+                        <li class="mt-3">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
+                        <li class="mt-3">Remove the <a href="#item-files-list" class="link-secondary">files</a> from your site's file system.
+                    </ol>
+                </section>
+
+                <section>
+                    <h1 id="item-files-list" class="display-1 fs-2 pb-2 pt-5">Files list</h1>
+                        <ul class="mt-2 text-break">
+                            <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
+                            <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
+                            <li><span class="font-monospace">includes/functions/extra_functions/instant_search_functions.php</span></li>
+                            <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/instant_search.js</span></li>
+                            <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instant_search.php</span></li>
+                            <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/css/stylesheet_instant_search.css</span></li>
+                            <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
+                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.1/Installer/ScriptedInstaller.php</span></li>
+                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.1/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
+                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.1/manifest.php</span></li>
                         </ul>
-                    </li>
-                    <li>Optional search on categories and manufacturers</li>
-                    <li>Code refactoring</li>
-                    <li>Various code and visual improvements</li>
-                </ul>
+                </section>
 
-                <h2 id="item-v110" class="fs-4 py-3">v1.1.0 (2022-02-09)</h2>
-                <ul>
-                    <li>Now uses a ZC AJAX class</li>
-                    <li>Searches only into the product name and the product model (for now)</li>
-                    <li>Improved word search and results sorting</li>
-                    <li>Displays the product image, name and model on the results</li>
-                </ul>
+                <section>
+                    <h1 id="item-changelog" class="display-1 fs-2 pb-2 pt-5">Changelog</h1>
+                    <h2 id="item-v201" class="fs-4 py-3">v2.0.1 (2022-03-04)</h2>
+                    <ul>
+                        <li>Added waiting time configuration option (fixes <a href="https://github.com/marco-pm/zencart_instantsearch/issues/11" target="_blank" rel="noopener noreferrer" class="link-secondary">#11</a>)</li>
+                        <li>Removed old css rules</li>
+                    </ul>
+
+                    <h2 id="item-v200" class="fs-4 py-3">v2.0.0 (2022-02-23)</h2>
+                    <ul>
+                        <li>Added configuration options in the Admin
+                            <ul>
+                                <li>Enable Instant Search</li>
+                                <li>Max # of results displayed</li>
+                                <li>Max length of input text</li>
+                                <li>Display images</li>
+                                <li>Search also into product's model</li>
+                                <li>Display the product's model</li>
+                                <li>Display the product's price</li>
+                                <li>Search also into categories</li>
+                                <li>Display categories count</li>
+                                <li>Search also into manufacturers</li>
+                                <li>Display manufacturers count</li>
+                            </ul>
+                        </li>
+                        <li>Optional search on categories and manufacturers</li>
+                        <li>Code refactoring</li>
+                        <li>Various code and visual improvements</li>
+                    </ul>
+
+                    <h2 id="item-v110" class="fs-4 py-3">v1.1.0 (2022-02-09)</h2>
+                    <ul>
+                        <li>Now uses a ZC AJAX class</li>
+                        <li>Searches only into the product name and the product model (for now)</li>
+                        <li>Improved word search and results sorting</li>
+                        <li>Displays the product image, name and model on the results</li>
+                    </ul>
                 </section>
             </article>
         </div>

@@ -12,6 +12,10 @@ The support thread on the Zen Cart forums is located [here](https://www.zen-cart
 See the [readme.html](readme.html).
 
 # Changelog
+## v2.0.1
+* Added waiting time configuration option
+* Removed old css rules
+
 ## v2.0.0
 * Added configuration options in the Admin
   * enable/disable plugin
