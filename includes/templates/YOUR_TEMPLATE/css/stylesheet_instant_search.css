@@ -96,21 +96,3 @@
 .resultWrapper__infoWrapper__priceCountWrapper__count {
     opacity: 0.75;
 }
-
-/* added for more and header search box */
-
-.searchMore {
-    font-weight: bold;
-    color: #3071a9;
-}
-
-#navMainSearch .resultsContainer a {
-    color: #000;
-    background-color: #fff;
-    text-decoration: none;
-}
-
-#navMainSearch .resultsContainer a:hover {
-    background-color : #eee;
-    color: #000;
-}
