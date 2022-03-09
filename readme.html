@@ -85,7 +85,7 @@
                     <h2 id="item-upgrade-1" class="fs-4 pt-1 pb-3">Upgrading from versions 1.x</h2>
                     <p>If you're currently using a 1.x version of the plugin:</p>
                     <ol>
-                        <li>REMOVE the following plugin's files before installing:
+                        <li>REMOVE the following plugin's files from your site's file system before installing:
                             <ul class="text-break mt-3">
                                 <li>(up to version 1.0.2) <span class="font-monospace">searches.php</span></li>
                                 <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instantSearch.js</span></li>
@@ -125,7 +125,7 @@
                         <li class="mt-2">Enable Instant Search</li>
                         <li class="mt-2">Max # of results displayed<br><em>Maximum number of results displayed in the dropdown. Too many and it's useless.</em></li>
                         <li class="mt-2">Max length of input text<br><em>Maximum length of text for Instant Search. If the text entered by the user has more characters than this value, the instant search won't be performed.</em></li>
-                        <li class="mt-2">Waiting time after typing<br><em>Waiting time (in milliseconds) after the user has stopped typing before the search is performed. Increase this value a little if you want to avoid too many POST requests on your server in a short interval.</em></li>
+                        <li class="mt-2">Wait time after typing<br><em>Wait time (in milliseconds) after the user has stopped typing before the search is performed. Increase this value a little if you want to avoid too many AJAX requests (and therefore database queries) on your server in a short interval.</em></li>
                         <li class="mt-2">Display images</li>
                         <li class="mt-2">Search also into product's model <strong>*</strong></li>
                         <li class="mt-2">Display the product's model</li>
@@ -176,7 +176,7 @@
                     <h1 id="item-changelog" class="display-1 fs-2 pb-2 pt-5">Changelog</h1>
                     <h2 id="item-v201" class="fs-4 py-3">v2.0.1 (2022-03-04)</h2>
                     <ul>
-                        <li>Added waiting time configuration option (fixes <a href="https://github.com/marco-pm/zencart_instantsearch/issues/11" target="_blank" rel="noopener noreferrer" class="link-secondary">#11</a>)</li>
+                        <li>Added debouncing with configurable wait time (fixes <a href="https://github.com/marco-pm/zencart_instantsearch/issues/11" target="_blank" rel="noopener noreferrer" class="link-secondary">#11</a>)</li>
                         <li>Removed old css rules</li>
                     </ul>
 

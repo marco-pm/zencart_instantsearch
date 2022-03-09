@@ -13,7 +13,7 @@ See the [readme.html](readme.html).
 
 # Changelog
 ## v2.0.1
-* Added waiting time configuration option
+* Added debouncing with configurable wait time
 * Removed old css rules
 
 ## v2.0.0
