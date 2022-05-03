@@ -82,8 +82,7 @@ class zcAjaxInstantSearch extends base
                         LEFT JOIN " . TABLE_PRODUCTS . " p ON p.products_id = pd.products_id
                         WHERE p.products_status <> 0
                         AND (
-                                (pd.products_name REGEXP :wordSearchPlus:) OR
-                                (LEFT(pd.products_name, LENGTH(:wordSearch:)) SOUNDS LIKE :wordSearch:)" .
+                                (pd.products_name REGEXP :wordSearchPlus:)" .
                                 (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? " OR (p.products_model REGEXP :wordSearchPlus:)" : "") .
                             ")
                         AND pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
@@ -109,9 +108,6 @@ class zcAjaxInstantSearch extends base
 
         $this->notify('NOTIFY_INSTANT_SEARCH_QUERY', $type, $sql);
 
-        if ($type === 'product') {
-            $sql = $db->bindVars($sql, ':wordSearch:', $wordSearch, 'string');
-        }
         $sql = $db->bindVars($sql, ':wordSearchPlus:', $wordSearchPlus, 'string');
 
         $sqlResults = $db->Execute($sql);
