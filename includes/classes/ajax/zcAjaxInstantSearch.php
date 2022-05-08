@@ -85,7 +85,7 @@ class zcAjaxInstantSearch extends base
                                 (pd.products_name REGEXP :wordSearchPlus:)" .
                                 (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? " OR (p.products_model REGEXP :wordSearchPlus:)" : "") .
                             ")
-                        AND pd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+                        AND pd.language_id = :languagesId:";
                 break;
 
             case 'category':
@@ -94,7 +94,7 @@ class zcAjaxInstantSearch extends base
                         LEFT JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON cd.categories_id = c.categories_id
                         WHERE c.categories_status <> 0
                         AND (cd.categories_name REGEXP :wordSearchPlus:)
-                        AND cd.language_id = '" . (int)$_SESSION['languages_id'] . "'";
+                        AND cd.language_id = :languagesId:";
                 break;
 
             case 'manufacturer':
@@ -109,6 +109,7 @@ class zcAjaxInstantSearch extends base
         $this->notify('NOTIFY_INSTANT_SEARCH_QUERY', $type, $sql);
 
         $sql = $db->bindVars($sql, ':wordSearchPlus:', $wordSearchPlus, 'string');
+        $sql = $db->bindVars($sql, ':languagesId:', $_SESSION['languages_id'], 'integer');
 
         $sqlResults = $db->Execute($sql);
 
