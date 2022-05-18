@@ -211,6 +211,6 @@ class zcAjaxInstantSearch extends base
      */
     protected function highlightSearchWord($word, $text)
     {
-        return preg_replace('/(' . $word . ')/i', '<strong>$1</strong>', $text);
+        return preg_replace('/(' . str_replace('/', '\/', $word) . ')/i', '<strong>$1</strong>', $text);
     }
 }
