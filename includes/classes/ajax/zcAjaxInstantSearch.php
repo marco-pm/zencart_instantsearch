@@ -77,7 +77,7 @@ class zcAjaxInstantSearch extends base
         switch ($type) {
             case 'product':
             default:
-                $sql = "SELECT p.products_id, p.products_model, p.products_image, pd.products_viewed
+                $sql = "SELECT p.products_id, pd.products_name, p.products_model, p.products_image, pd.products_viewed
                         FROM " . TABLE_PRODUCTS_DESCRIPTION . " pd
                         LEFT JOIN " . TABLE_PRODUCTS . " p ON p.products_id = pd.products_id
                         WHERE p.products_status <> 0
@@ -89,7 +89,7 @@ class zcAjaxInstantSearch extends base
                 break;
 
             case 'category':
-                $sql = "SELECT c.categories_id, c.categories_image
+                $sql = "SELECT c.categories_id, cd.categories_name, c.categories_image
                         FROM " . TABLE_CATEGORIES . " c
                         LEFT JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON cd.categories_id = c.categories_id
                         WHERE c.categories_status <> 0
@@ -124,7 +124,7 @@ class zcAjaxInstantSearch extends base
                     case 'product':
                     default:
                         $id    = $sqlResult['products_id'];
-                        $name  = zen_get_products_name($id);
+                        $name  = $sqlResult['products_name'];
                         $img   = $sqlResult['products_image'];
                         $model = $sqlResult['products_model'];
                         $views = $sqlResult['products_viewed'];
@@ -137,7 +137,7 @@ class zcAjaxInstantSearch extends base
 
                     case 'category':
                         $id    = $sqlResult['categories_id'];
-                        $name  = zen_get_category_name($id, (int)$_SESSION['languages_id']);
+                        $name  = $sqlResult['categories_name'];
                         $img   = $sqlResult['categories_image'];
                         $views = 0;
                         break;
