@@ -5,7 +5,7 @@
  * @copyright Portions Copyright 2003-2006 The Zen Cart Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * 
+ *
  * Instant Search 2.0.1
  */
 
@@ -19,19 +19,13 @@ class zcAjaxInstantSearch extends base
         global $template;
 
         $wordSearch = ($_POST['query'] ?? '');
+        $wordSearchLength = strlen($wordSearch);
         $instantSearchResults = [];
 
-        if ($wordSearch !== '' && strlen($wordSearch) <= INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH) { // if not empty and not too long
-
-            $wordSearchPlus = preg_quote($wordSearch, '&');
-
-            if (strlen($wordSearch) <= 2) {
-                $wordSearchPlusArray = [$wordSearch];
-            } else {
-                $wordSearchPlus = trim(preg_replace('/\s+/', ' ', $wordSearchPlus));
-                $wordSearchPlusArray = explode(' ', $wordSearchPlus);
-                $wordSearchPlus = preg_replace('/\s/', '|', $wordSearchPlus);
-            }
+        if ($wordSearch !== ''  && $wordSearchLength >= INSTANT_SEARCH_MIN_WORDSEARCH_LENGTH && $wordSearchLength <= INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH) {
+            $wordSearchPlus = trim(preg_replace('/\s+/', ' ', preg_quote($wordSearch, '&')));
+            $wordSearchPlusArray = explode(' ', $wordSearchPlus);
+            $wordSearchPlus = preg_replace('/\s/', '|', $wordSearchPlus);
 
             // search products
             $instantSearchResults = $this->execInstantSearchForType('product', $wordSearch, $wordSearchPlus, $wordSearchPlusArray);
@@ -83,8 +77,8 @@ class zcAjaxInstantSearch extends base
                         WHERE p.products_status <> 0
                         AND (
                                 (pd.products_name REGEXP :wordSearchPlus:)" .
-                                (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? " OR (p.products_model REGEXP :wordSearchPlus:)" : "") .
-                            ")
+                    (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? " OR (p.products_model REGEXP :wordSearchPlus:)" : "") .
+                    ")
                         AND pd.language_id = :languagesId:";
                 break;
 
