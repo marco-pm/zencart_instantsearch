@@ -71,14 +71,20 @@ class zcAjaxInstantSearch extends base
         switch ($type) {
             case 'product':
             default:
-                $sql = "SELECT p.products_id, pd.products_name, p.products_model, p.products_image, pd.products_viewed
+                $sql = "SELECT DISTINCT p.products_id, pd.products_name, p.products_model, p.products_image, pd.products_viewed
                         FROM " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                        LEFT JOIN " . TABLE_PRODUCTS . " p ON p.products_id = pd.products_id
+                        LEFT JOIN " . TABLE_PRODUCTS . " p ON p.products_id = pd.products_id " .
+                        (INSTANT_SEARCH_INCLUDE_OPTIONS_VALUES === 'true'
+                            ? "LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON pa.products_id = p.products_id 
+                               LEFT JOIN " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov ON pov.products_options_values_id = pa.options_values_id AND pov.language_id = :languagesId: "
+                            : ""
+                        ) . "
                         WHERE p.products_status <> 0
                         AND (
                                 (pd.products_name REGEXP :wordSearchPlus:)" .
-                    (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? " OR (p.products_model REGEXP :wordSearchPlus:)" : "") .
-                    ")
+                                (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? " OR (p.products_model REGEXP :wordSearchPlus:)" : "") .
+                                (INSTANT_SEARCH_INCLUDE_OPTIONS_VALUES === 'true' ? " OR (pov.products_options_values_name REGEXP :wordSearchPlus:)" : "") . "
+                            )
                         AND pd.language_id = :languagesId:";
                 break;
 

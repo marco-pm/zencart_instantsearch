@@ -37,7 +37,8 @@ class ScriptedInstaller extends ScriptedInstallBase
                 ('Search also into categories', 'INSTANT_SEARCH_INCLUDE_CATEGORIES', 'false', 'Search also into the categories name.', $cgi, now(), 180, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
                 ('Display categories count', 'INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT', 'true', 'Display also the number of products for the matched categories (only if <em>Search also into categories</em> is set to True). Set to False to improve instant search performance.', $cgi, now(), 190, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
                 ('Search also into manufacturers', 'INSTANT_SEARCH_INCLUDE_MANUFACTURERS', 'false', 'Search also into the manufacturers name.', $cgi, now(), 200, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
-                ('Display manufacturers count', 'INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT', 'true', 'Display also the number of products for the matched manufacturers (only if <em>Search also into manufacturers</em> is set to True). Set to False to improve instant search performance.', $cgi, now(), 210, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')
+                ('Display manufacturers count', 'INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT', 'true', 'Display also the number of products for the matched manufacturers (only if <em>Search also into manufacturers</em> is set to True). Set to False to improve instant search performance.', $cgi, now(), 210, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
+                ('Search also into product\'s attributes', 'INSTANT_SEARCH_INCLUDE_OPTIONS_VALUES', 'false', 'Search also into the product\'s attributes (option values). Set to False to improve instant search performance.', $cgi, now(), 220, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')
             ";
 
         $this->executeInstallerSql($sql);
