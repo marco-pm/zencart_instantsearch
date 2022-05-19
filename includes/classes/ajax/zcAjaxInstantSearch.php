@@ -18,7 +18,7 @@ class zcAjaxInstantSearch extends base
     {
         global $template;
 
-        $wordSearch = ($_POST['query'] ?? '');
+        $wordSearch = zen_db_input($_POST['query'] ?? '');
         $wordSearchLength = strlen($wordSearch);
         $instantSearchResults = [];
 
