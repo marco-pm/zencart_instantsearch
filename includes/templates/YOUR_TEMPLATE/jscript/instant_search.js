@@ -52,7 +52,7 @@ $(function() {
         const typedSearchWord = $(this).val();
 
         let searchWord = typedSearchWord.replace(/^\s+/, "").replace(/  +/g, ' ');
-        if (searchWord === "") {
+        if (searchWord === "" || $(this).val().length < searchInputMinLength) {
             resultsContainer.hide();
         } else {
             if (runningRequest) {
