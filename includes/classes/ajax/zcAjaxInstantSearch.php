@@ -6,7 +6,7 @@
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  *
- * Instant Search 2.0.1
+ * Instant Search 2.0.2
  */
 
 class zcAjaxInstantSearch extends base
@@ -170,7 +170,7 @@ class zcAjaxInstantSearch extends base
                 // Prepare results
                 $result = [
                     'name'  => $this->highlightSearchWord($wordSearchPlus, strip_tags($name)),
-                    'img'   => INSTANT_SEARCH_DISPLAY_IMAGE === 'true' ? zen_image(DIR_WS_IMAGES . strip_tags($img), strip_tags($name)) : '',
+                    'img'   => INSTANT_SEARCH_DISPLAY_IMAGE === 'true' ? zen_image(DIR_WS_IMAGES . strip_tags($img), strip_tags($name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) : '',
                     'mtch'  => $totalMatches,
                     'views' => $views,
                     'fsum'  => $findSum ?? INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH
