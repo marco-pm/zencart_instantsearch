@@ -52,6 +52,10 @@ class zcAjaxInstantSearch extends base
 
             $instantSearchResults = array_slice($instantSearchResults, 0, INSTANT_SEARCH_MAX_NUMBER_OF_RESULTS);
 
+            foreach ($instantSearchResults as $i => $instantSearchResult) {
+                $instantSearchResults[$i] = $this->formatSearchResult($instantSearchResult, $wordSearchPlus);
+            }
+
             ob_start();
             require $template->get_template_dir('tpl_ajax_instant_search_results.php', DIR_WS_TEMPLATE, FILENAME_DEFAULT, 'templates') . '/tpl_ajax_instant_search_results.php';
             return ob_get_clean();
@@ -139,6 +143,7 @@ class zcAjaxInstantSearch extends base
                         $id    = $sqlResult['categories_id'];
                         $name  = $sqlResult['categories_name'];
                         $img   = $sqlResult['categories_image'];
+                        $model = '';
                         $views = 0;
                         break;
 
@@ -146,6 +151,7 @@ class zcAjaxInstantSearch extends base
                         $id    = $sqlResult['manufacturers_id'];
                         $name  = $sqlResult['manufacturers_name'];
                         $img   = $sqlResult['manufacturers_image'];
+                        $model = '';
                         $views = 0;
                         break;
                 }
@@ -167,43 +173,58 @@ class zcAjaxInstantSearch extends base
                     }
                 }
 
-                // Prepare results
                 $result = [
-                    'name'  => $this->highlightSearchWord($wordSearchPlus, strip_tags($name)),
-                    'img'   => INSTANT_SEARCH_DISPLAY_IMAGE === 'true' ? zen_image(DIR_WS_IMAGES . strip_tags($img), strip_tags($name), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) : '',
+                    'type'  => $type,
+                    'id'    => $id,
+                    'name'  => $name,
+                    'img'   => $img,
+                    'model' => $model,
                     'mtch'  => $totalMatches,
                     'views' => $views,
                     'fsum'  => $findSum ?? INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH
                 ];
-
-                switch ($type) {
-                    case 'product':
-                    default:
-                        $result['link']  = zen_href_link(zen_get_info_page($id), 'products_id=' . $id);
-                        $result['model'] = INSTANT_SEARCH_DISPLAY_PRODUCT_MODEL === 'true'
-                            ? (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? $this->highlightSearchWord($wordSearchPlus, $model) : $model)
-                            : '';
-                        $result['price'] = INSTANT_SEARCH_DISPLAY_PRODUCT_PRICE === 'true' ? zen_get_products_display_price($id) : '';
-                        break;
-
-                    case 'category':
-                        $result['link']  = zen_href_link(FILENAME_DEFAULT, 'cPath=' . $id);
-                        $result['count'] = INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT === 'true' ? zen_count_products_in_category($id) : '';
-                        break;
-
-                    case 'manufacturer':
-                        $result['link']  = zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $id);
-                        $result['count'] = INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT === 'true' ? zen_count_products_for_manufacturer($id) : '';
-                        break;
-                }
-
-                $this->notify('NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT', $type, $id, $result);
 
                 $instantSearchResults[] = $result;
             }
         }
 
         return $instantSearchResults;
+    }
+
+    /**
+     * Prepare the search result for display.
+     */
+    protected function formatSearchResult($result, $wordSearchPlus)
+    {
+        $formattedResult = [
+            'name'  => $this->highlightSearchWord($wordSearchPlus, strip_tags($result['name'])),
+            'img'   => INSTANT_SEARCH_DISPLAY_IMAGE === 'true' ? zen_image(DIR_WS_IMAGES . strip_tags($result['img']), strip_tags($result['img']), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT) : '',
+        ];
+
+        switch ($result['type']) {
+            case 'product':
+            default:
+                $formattedResult['link']  = zen_href_link(zen_get_info_page($result['id']), 'products_id=' . $result['id']);
+                $formattedResult['model'] = INSTANT_SEARCH_DISPLAY_PRODUCT_MODEL === 'true'
+                    ? (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' ? $this->highlightSearchWord($wordSearchPlus, $result['model']) : $result['model'])
+                    : '';
+                $formattedResult['price'] = INSTANT_SEARCH_DISPLAY_PRODUCT_PRICE === 'true' ? zen_get_products_display_price($result['id']) : '';
+                break;
+
+            case 'category':
+                $formattedResult['link']  = zen_href_link(FILENAME_DEFAULT, 'cPath=' . $result['id']);
+                $formattedResult['count'] = INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT === 'true' ? zen_count_products_in_category($result['id']) : '';
+                break;
+
+            case 'manufacturer':
+                $formattedResult['link']  = zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $result['id']);
+                $formattedResult['count'] = INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT === 'true' ? zen_count_products_for_manufacturer($result['id']) : '';
+                break;
+        }
+
+        $this->notify('NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT', $result['type'], $result, $formattedResult);
+
+        return $formattedResult;
     }
 
     /**

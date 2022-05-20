@@ -124,21 +124,20 @@
                     <p>There are several configuration options available in the Admin (<em>Configuration > Instant Search</em>):</p>
                     <ul>
                         <li class="mt-2">Enable Instant Search</li>
-                        <li class="mt-2">Max # of results displayed<br><em>Maximum number of results displayed in the dropdown. Too many and it's useless.</em></li>
-                        <li class="mt-2">Min length of input text<br><em>Minimum length of text for Instant Search. If the text entered by the user has fewer characters than this value, the instant search won't be performed.</em></li>
-                        <li class="mt-2">Max length of input text<br><em>Maximum length of text for Instant Search. If the text entered by the user has more characters than this value, the instant search won't be performed.</em></li>
-                        <li class="mt-2">Wait time after typing<br><em>Wait time (in milliseconds) after the user has stopped typing before the search is performed. Increase this value a little if you want to avoid too many AJAX requests (and therefore database queries) on your server in a short interval.</em></li>
-                        <li class="mt-2">Display images</li>
-                        <li class="mt-2">Search also into product's model <strong>*</strong></li>
-                        <li class="mt-2">Display the product's model</li>
-                        <li class="mt-2">Display the product's price</li>
-                        <li class="mt-2">Search also into categories <strong>*</strong></li>
-                        <li class="mt-2">Display categories count <strong>*</strong><br><em>Display also the number of products for the matched categories (only if "Search also into categories" is set to True).</em></li>
-                        <li class="mt-2">Search also into manufacturers <strong>*</strong></li>
-                        <li class="mt-2">Display manufacturers count <strong>*</strong><br><em>Display also the number of products for the matched manufacturers (only if "Search also into manufacturers" is set to True).</em></li>
-                        <li class="mt-2">Search also into product's attributes <strong>*</strong></li>
+                        <li class="mt-2">Maximum number of results to display<br><em>Maximum number of results displayed in the dropdown.</em></li>
+                        <li class="mt-2">Minimum length of input text<br><em>Minimum number of characters that must be entered before Instant Search is initiated.</em></li>
+                        <li class="mt-2">Maximum length of input text<br><em>Maximum string length allowed for Instant Search. If the search string length exceeds this value, the instant search will not be performed.</em></li>
+                        <li class="mt-2">Search Delay<br><em>Delay the execution of the instant search query by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries while the user is typing.</em></li>
+                        <li class="mt-2">Display images<br><em>Display the product/category/manufacturer's image in the results.</em></li>
+                        <li class="mt-2">Display the product's price<br><em>Display the product's price in the results.</em></li>
+                        <li class="mt-2">Search Product's model<br><em>Include the product\'s model in the search. Set to false to improve Instant Search performance.</em></li>
+                        <li class="mt-2">Display the product's model<br><em>Display the product's model in the results.</em></li>
+                        <li class="mt-2">Search Categories<br><em>Include category names in the search/results. Set to false to improve Instant Search performance.</em></li>
+                        <li class="mt-2">Display Categories count<br><em>Display the number of products in the matched categories results (only if "Search also into categories" is set to true).</em></li>
+                        <li class="mt-2">Search Manufacturers<br><em>Include manufacturer names in the search/results. Set to false to improve Instant Search performance.</em></li>
+                        <li class="mt-2">Display Manufacturers count<br><em>Display the number of products for the matched manufacturers (only if "Search also into manufacturers" is set to true).</em></li>
+                        <li class="mt-2">Search product's attributes values<br><em>Include product attribute values in the search. Set to false to improve Instant Search performance.</em></li>
                     </ul>
-                    <p>If your store has a lot of products and the Instant Search is slow, you may consider setting some or all of the settings marked with <strong>*</strong> to <em>False</em>, in order to improve the search performance.</p>
                 </section>
 
                 <section>
@@ -146,7 +145,7 @@
                     <p>The class <span class="font-monospace">zcAjaxInstantSearch</span> triggers two notifications for observers:</p>
                     <ul>
                         <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_QUERY</span>. The second variable is the sql query that is going to be executed to search for the keywords on the db.</li>
-                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT</span>. The second variable is the id of the current result (product, category or manufacturer); the third variable is the <span class="font-monospace">$result</span> array that contains the result data to be displayed.</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT</span>. The second variable is the unformatted array (db data) of the current <span class="font-monospace">$result</span>; the third variable is the <span class="font-monospace">$formattedResult</span> array that contains the result data to be displayed.</li>
                     </ul>
                     <p>Both notifications pass as first, read-only variable the current <span class="font-monospace">$type</span> of the search, where <span class="font-monospace">$type</span> can be <span class="font-monospace">product</span>, <span class="font-monospace">category</span> or <span class="font-monospace">manufacturer</span>.</p>
                 </section>
@@ -179,6 +178,7 @@
                     <h1 id="item-changelog" class="display-1 fs-2 pb-2 pt-5">Changelog</h1>
                     <h2 id="item-v202" class="fs-4 py-3">v2.0.2 (2022-05-20)</h2>
                     <ul>
+                        <li>Improved search performance</li>
                         <li>Added option for searching into product's attributes (<a href="https://github.com/marco-pm/zencart_instantsearch/issues/11" target="_blank" rel="noopener noreferrer" class="link-secondary">#9</a>)</li>
                         <li>Added option for minimum search term length (<a href="https://github.com/marco-pm/zencart_instantsearch/issues/11" target="_blank" rel="noopener noreferrer" class="link-secondary">#12</a>)</li>
                         <li>Bug fixes</li>

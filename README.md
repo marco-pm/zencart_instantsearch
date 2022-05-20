@@ -13,6 +13,7 @@ See the [readme.html](readme.html).
 
 # Changelog
 ## v2.0.2
+* Improved search performance
 * Added option for searching into product's attributes
 * Added option for minimum search term length
 * Bug fixes
