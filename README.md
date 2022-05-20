@@ -12,7 +12,7 @@ The support thread on the Zen Cart forums is located [here](https://www.zen-cart
 See the [readme.html](readme.html).
 
 # Changelog
-## v2.0.2
+## v2.1.0
 * Improved search performance
 * Added option for searching into product's attributes
 * Added option for minimum search term length

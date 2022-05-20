@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'pluginVersion' => 'v2.0.2',
+    'pluginVersion' => 'v2.1.0',
     'pluginName' => 'Instant Search',
     'pluginDescription' => 'Shows search results as you type.',
     'pluginAuthor' => 'marcopm',

@@ -39,7 +39,7 @@
     <header>
         <nav id="navbar-header" class="navbar position-fixed navbar-light bg-light shadow-sm justify-content-center align-items-center container-fluid py-3">
             <div class="container">
-            <h1 class="mb-1 fs-4">Instant Search plugin 2.0.2 for Zen Cart</h1>
+            <h1 class="mb-1 fs-4">Instant Search plugin 2.1.0 for Zen Cart</h1>
                 <div class="float-md-right text-center text-md-right mt-2 mt-md-0">
                     <i class="bi-github me-1 align-top"></i> <a href="https://github.com/marco-pm/zencart_instantsearch" target="_blank" rel="noopener noreferrer" class="link-secondary text-decoration-none me-4">GitHub Repository</a>
                     <i class="bi-layout-text-sidebar-reverse me-1 align-top"></i> <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" rel="noopener noreferrer" class="link-secondary text-decoration-none">Support Thread</a>
@@ -113,7 +113,7 @@
                     <ol>
                         <li>Copy the <a href="#item-files-list" class="link-secondary">files</a> to your site's file system.<br>
                             Rename <span class="font-monospace">YOUR_TEMPLATE</span> to match the name of your site's template.<br>
-                            DON'T rename the <span class="font-monospace">admin</span> subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v2.0.2</span>.
+                            DON'T rename the <span class="font-monospace">admin</span> subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v2.1.0</span>.
                         <li class="mt-3">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
                     </ol>
                 </section>
@@ -130,7 +130,7 @@
                         <li class="mt-2">Search Delay<br><em>Delay the execution of the instant search query by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries while the user is typing.</em></li>
                         <li class="mt-2">Display images<br><em>Display the product/category/manufacturer's image in the results.</em></li>
                         <li class="mt-2">Display the product's price<br><em>Display the product's price in the results.</em></li>
-                        <li class="mt-2">Search Product's model<br><em>Include the product\'s model in the search. Set to false to improve Instant Search performance.</em></li>
+                        <li class="mt-2">Search Product's model<br><em>Include the product's model in the search. Set to false to improve Instant Search performance.</em></li>
                         <li class="mt-2">Display the product's model<br><em>Display the product's model in the results.</em></li>
                         <li class="mt-2">Search Categories<br><em>Include category names in the search/results. Set to false to improve Instant Search performance.</em></li>
                         <li class="mt-2">Display Categories count<br><em>Display the number of products in the matched categories results (only if "Search also into categories" is set to true).</em></li>
@@ -168,20 +168,21 @@
                             <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instant_search.php</span></li>
                             <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/css/stylesheet_instant_search.css</span></li>
                             <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
-                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.1/Installer/ScriptedInstaller.php</span></li>
-                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.1/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
-                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.0.1/manifest.php</span></li>
+                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.1.0/Installer/ScriptedInstaller.php</span></li>
+                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.1.0/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
+                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.1.0/manifest.php</span></li>
                         </ul>
                 </section>
 
                 <section>
                     <h1 id="item-changelog" class="display-1 fs-2 pb-2 pt-5">Changelog</h1>
-                    <h2 id="item-v202" class="fs-4 py-3">v2.0.2 (2022-05-20)</h2>
+                    <h2 id="item-v202" class="fs-4 py-3">v2.1.0 (2022-05-20)</h2>
                     <ul>
                         <li>Improved search performance</li>
                         <li>Added option for searching into product's attributes (<a href="https://github.com/marco-pm/zencart_instantsearch/issues/11" target="_blank" rel="noopener noreferrer" class="link-secondary">#9</a>)</li>
                         <li>Added option for minimum search term length (<a href="https://github.com/marco-pm/zencart_instantsearch/issues/11" target="_blank" rel="noopener noreferrer" class="link-secondary">#12</a>)</li>
                         <li>Bug fixes</li>
+                        <li>Note that the second and third variables of the <span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT</span> notification have slightly changed, see <a href="#item-notifications" class="link-secondary">Notifications</a>.</li>
                     </ul>
 
                     <h2 id="item-v201" class="fs-4 py-3">v2.0.1 (2022-03-04)</h2>
