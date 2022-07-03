@@ -177,7 +177,7 @@ class zcAjaxInstantSearch extends base
                     'type'  => $type,
                     'id'    => $id,
                     'name'  => $name,
-                    'img'   => $img,
+                    'img'   => ($img ?? ''),
                     'model' => $model,
                     'mtch'  => $totalMatches,
                     'views' => $views,
