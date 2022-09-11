@@ -19,7 +19,7 @@ class zcAjaxInstantSearch extends base
         global $template;
 
         $instantSearchResults = [];
-        $wordSearch = !empty($_POST['query']) && !empty(trim($_POST['query'])) ? trim($_POST['query']) : '';
+        $wordSearch = trim($_POST['query'] ?? '');
         $wordSearchLength = strlen($wordSearch);
 
         if ($wordSearch !== '' && $wordSearchLength >= INSTANT_SEARCH_MIN_WORDSEARCH_LENGTH && $wordSearchLength <= INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH) {
