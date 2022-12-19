@@ -75,11 +75,12 @@ class zcAjaxInstantSearch extends base
         switch ($type) {
             case 'product':
             default:
-                $sql = "SELECT DISTINCT p.products_id, pd.products_name, p.products_model, p.products_image, pd.products_viewed
+                $sql = "SELECT DISTINCT p.products_id, pd.products_name, p.products_model, p.products_image, cpv.views
                         FROM " . TABLE_PRODUCTS_DESCRIPTION . " pd
-                        LEFT JOIN " . TABLE_PRODUCTS . " p ON p.products_id = pd.products_id " .
+                        LEFT JOIN " . TABLE_PRODUCTS . " p ON p.products_id = pd.products_id
+                        LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (p.products_id = cpv.product_id AND cpv.language_id = :languagesId:) " .
                         (INSTANT_SEARCH_INCLUDE_OPTIONS_VALUES === 'true'
-                            ? "LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON pa.products_id = p.products_id 
+                            ? "LEFT JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " pa ON pa.products_id = p.products_id
                                LEFT JOIN " . TABLE_PRODUCTS_OPTIONS_VALUES . " pov ON pov.products_options_values_id = pa.options_values_id AND pov.language_id = :languagesId: "
                             : ""
                         ) . "
@@ -131,7 +132,7 @@ class zcAjaxInstantSearch extends base
                         $name  = $sqlResult['products_name'];
                         $img   = $sqlResult['products_image'];
                         $model = $sqlResult['products_model'];
-                        $views = $sqlResult['products_viewed'];
+                        $views = $sqlResult['views'];
 
                         // check if product model is an exact match
                         if (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' && strtolower(trim(preg_replace('/\s+/', ' ', $model))) === strtolower(trim(preg_replace('/\s+/', ' ', $wordSearch)))) {
@@ -177,10 +178,10 @@ class zcAjaxInstantSearch extends base
                     'type'  => $type,
                     'id'    => $id,
                     'name'  => $name,
-                    'img'   => ($img ?? ''),
+                    'img'   => $img ?? '',
                     'model' => $model,
                     'mtch'  => $totalMatches,
-                    'views' => $views,
+                    'views' => $views ?? 0,
                     'fsum'  => $findSum ?? INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH
                 ];
 
