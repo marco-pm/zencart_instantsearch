@@ -33,13 +33,6 @@ $(function() {
         }
     });
 
-    inputBox.on('focus', function() {
-        if (inputboxCurrent && $(inputboxCurrent).val() !== "") {
-            const resultsContainer = $('#resultsContainer' + inputboxCurrent.index(searchBoxSelector));
-            resultsContainer.delay(200).slideDown(200);
-        }
-    });
-
     $(window).on('resize', function() {
         if (inputboxCurrent) {
             const resultsContainer = $(`#resultsContainer${inputboxCurrent.index(searchBoxSelector)}`);
@@ -47,7 +40,7 @@ $(function() {
         }
     });
 
-    inputBox.on('input', function() {
+    inputBox.on('input focus', function() {
         inputboxCurrent = $(this);
         const resultsContainer = $(`#resultsContainer${inputboxCurrent.index(searchBoxSelector)}`);
         const typedSearchWord = $(this).val();
