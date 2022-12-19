@@ -9,25 +9,26 @@
  */
 
 const searchBoxSelector = 'input[name="keyword"]';
+const resultsContainerSelector = '#resultsContainer';
 let runningRequest = false;
 let request;
 let inputboxCurrent;
 let inputTimer;
 
 $(function() {
-    let inputBox = $(searchBoxSelector);
+    const inputBox = $(searchBoxSelector);
     inputBox.attr('autocomplete', 'off');
 
     inputBox.each(function(index) {
         let offset = $(this).offset();
         $('body').append('<div id="resultsContainer' + index + '" class="resultsContainer"></div>');
-        $('#resultsContainer' + index).css('left', offset.left + 'px');
-        $('#resultsContainer' + index).css('top', ($(this).outerHeight(true) + offset.top) + 'px');
+        $(resultsContainerSelector + index).css('left', offset.left + 'px');
+        $(resultsContainerSelector + index).css('top', ($(this).outerHeight(true) + offset.top) + 'px');
     });
 
     inputBox.on('blur', function() {
         if (inputboxCurrent) {
-            const resultsContainer = $('#resultsContainer' + inputboxCurrent.index(searchBoxSelector));
+            const resultsContainer = $(`#resultsContainer${inputboxCurrent.index(searchBoxSelector)}`);
             resultsContainer.delay(300).slideUp(200);
         }
     });
@@ -41,14 +42,14 @@ $(function() {
 
     $(window).on('resize', function() {
         if (inputboxCurrent) {
-            const resultsContainer = $('#resultsContainer' + inputboxCurrent.index(searchBoxSelector));
+            const resultsContainer = $(`#resultsContainer${inputboxCurrent.index(searchBoxSelector)}`);
             resultsContainer.hide();
         }
     });
 
     inputBox.on('input', function() {
         inputboxCurrent = $(this);
-        const resultsContainer = $('#resultsContainer' + inputboxCurrent.index(searchBoxSelector));
+        const resultsContainer = $(`#resultsContainer${inputboxCurrent.index(searchBoxSelector)}`);
         const typedSearchWord = $(this).val();
 
         let searchWord = typedSearchWord.replace(/^\s+/, "").replace(/  +/g, ' ');
@@ -63,7 +64,7 @@ $(function() {
                 runningRequest = true;
                 let data = new FormData();
                 data.append('query', searchWord);
-                request = jQuery.ajax({
+                request = $.ajax({
                     type: 'POST',
                     url: 'ajax.php?act=ajaxInstantSearch&method=instantSearch',
                     dataType: 'json',
