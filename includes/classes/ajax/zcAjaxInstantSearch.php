@@ -16,61 +16,44 @@ class zcAjaxInstantSearch extends base
      */
     public function instantSearch()
     {
-        global $template;
-
-        $instantSearchResults = [];
         $wordSearch = trim($_POST['query'] ?? '');
         $wordSearchLength = strlen($wordSearch);
 
-        if ($wordSearch !== '' && $wordSearchLength >= INSTANT_SEARCH_MIN_WORDSEARCH_LENGTH && $wordSearchLength <= INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH) {
+        if ($wordSearch !== '' &&
+            $wordSearchLength >= INSTANT_SEARCH_MIN_WORDSEARCH_LENGTH &&
+            $wordSearchLength <= INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH
+        ) {
             $wordSearchPlus = trim(preg_replace('/\s+/', ' ', preg_quote($wordSearch, '&')));
             $wordSearchPlusArray = explode(' ', $wordSearchPlus);
             $wordSearchPlus = preg_replace('/\s/', '|', $wordSearchPlus);
 
             // search products
-            $instantSearchResults = $this->execInstantSearchForType('product', $wordSearch, $wordSearchPlus, $wordSearchPlusArray);
+            $dbResults = $this->findDbResults('product', $wordSearchPlus);
 
             // search categories
             if (INSTANT_SEARCH_INCLUDE_CATEGORIES === 'true') {
-                array_push($instantSearchResults, ...$this->execInstantSearchForType('category', $wordSearch, $wordSearchPlus, $wordSearchPlusArray));
+                array_push($dbResults, ...$this->findDbResults('category', $wordSearchPlus));
             }
 
             // search manufacturers
             if (INSTANT_SEARCH_INCLUDE_MANUFACTURERS === 'true') {
-                array_push($instantSearchResults, ...$this->execInstantSearchForType('manufacturer', $wordSearch, $wordSearchPlus, $wordSearchPlusArray));
+                array_push($dbResults, ...$this->findDbResults('manufacturer', $wordSearchPlus));
             }
 
-            // order by number of matches (desc),
-            // then by words that occur first in the title,
-            // then by number of views (desc)
-            usort($instantSearchResults, static function($prod1, $prod2) {
-                return
-                    [$prod2['mtch'], $prod1['fsum'], $prod2['views']]
-                    <=>
-                    [$prod1['mtch'], $prod2['fsum'], $prod1['views']];
-            });
+            $rankedResults = $this->rankResults($dbResults, $wordSearch, $wordSearchPlusArray);
+            $rankedResults = array_slice($rankedResults, 0, INSTANT_SEARCH_MAX_NUMBER_OF_RESULTS);
 
-            $instantSearchResults = array_slice($instantSearchResults, 0, INSTANT_SEARCH_MAX_NUMBER_OF_RESULTS);
-
-            foreach ($instantSearchResults as $i => $instantSearchResult) {
-                $instantSearchResults[$i] = $this->formatSearchResult($instantSearchResult, $wordSearchPlus);
-            }
-
-            ob_start();
-            require $template->get_template_dir('tpl_ajax_instant_search_results.php', DIR_WS_TEMPLATE, FILENAME_DEFAULT, 'templates') . '/tpl_ajax_instant_search_results.php';
-            return ob_get_clean();
+            return $this->formatResults($rankedResults, $wordSearchPlus);
         }
 
         return [];
     }
 
-    /**
-     * Executes the instant search on database for $type, where $type can be "product", "category" or "manufacturer".
-     */
-    protected function execInstantSearchForType($type, $wordSearch, $wordSearchPlus, $wordSearchPlusArray)
+    protected function findDbResults($type, $wordSearchPlus)
     {
         global $db;
-        $instantSearchResults = [];
+
+        $dbResults = [];
 
         switch ($type) {
             case 'product':
@@ -117,14 +100,8 @@ class zcAjaxInstantSearch extends base
         $sql = $db->bindVars($sql, ':languagesId:', $_SESSION['languages_id'], 'integer');
 
         $sqlResults = $db->Execute($sql);
-
         if ($sqlResults->RecordCount() > 0) {
-
             foreach ($sqlResults as $sqlResult) {
-
-                $totalMatches = 0;
-                $findSum      = null; // sum of first occurrences of words in the name
-
                 switch ($type) {
                     case 'product':
                     default:
@@ -133,11 +110,6 @@ class zcAjaxInstantSearch extends base
                         $img   = $sqlResult['products_image'];
                         $model = $sqlResult['products_model'];
                         $views = $sqlResult['views'];
-
-                        // check if product model is an exact match
-                        if (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' && strtolower(trim(preg_replace('/\s+/', ' ', $model))) === strtolower(trim(preg_replace('/\s+/', ' ', $wordSearch)))) {
-                            $totalMatches++;
-                        }
                         break;
 
                     case 'category':
@@ -157,45 +129,96 @@ class zcAjaxInstantSearch extends base
                         break;
                 }
 
-                foreach ($wordSearchPlusArray as $word) {
-                    $word = stripslashes($word);
-                    $wordPos = stripos($name, $word);
-
-                    if ($wordPos !== false) { // search for word anywhere in the name
-                        $totalMatches++;
-                        $findSum += $wordPos;
-
-                        $mWord = preg_quote($word, '/');
-                        if (preg_match("/\b$mWord\b/i", $name)) { // exact words matches have a higher priority
-                            $totalMatches++;
-                        }
-                    } elseif ($type === 'product' && INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' && stripos($model, $word) === 0) { // search for word at the beginning of the product model
-                        $totalMatches++;
-                    }
-                }
-
                 $result = [
                     'type'  => $type,
                     'id'    => $id,
                     'name'  => $name,
                     'img'   => $img ?? '',
                     'model' => $model,
-                    'mtch'  => $totalMatches,
                     'views' => $views ?? 0,
-                    'fsum'  => $findSum ?? INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH
                 ];
 
-                $instantSearchResults[] = $result;
+                $dbResults[] = $result;
             }
         }
 
-        return $instantSearchResults;
+        return $dbResults;
+    }
+
+    protected function rankResults($dbResults, $wordSearch, $wordSearchPlusArray)
+    {
+        $rankedResults = [];
+
+        if (count($dbResults) > 0) {
+            $rankedResults = $dbResults;
+
+            foreach ($rankedResults as $k => $rankedResult) {
+                $rank = 0; // result relevance
+                $findSum = null; // sum of first occurrences of words in the name
+
+                // check if product model is an exact match
+                if (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' &&
+                    !empty($rankedResult['model']) &&
+                    strtolower(trim(preg_replace('/\s+/', ' ', $rankedResult['model']))) === strtolower(trim(preg_replace('/\s+/', ' ', $wordSearch)))
+                ) {
+                    $rank++;
+                }
+
+                foreach ($wordSearchPlusArray as $word) {
+                    $word = stripslashes($word);
+                    $wordPos = stripos($rankedResult['name'], $word);
+
+                    if ($wordPos !== false) { // search for word anywhere in the name
+                        $rank++;
+                        $findSum += $wordPos;
+
+                        $mWord = preg_quote($word, '/');
+                        if (preg_match("/\b$mWord\b/i", $rankedResult['name'])) { // exact words matches have a higher priority
+                            $rank++;
+                        }
+                    } elseif (INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL === 'true' &&
+                        !empty($rankedResult['model']) &&
+                        stripos($rankedResult['model'], $word) === 0) { // search for word at the beginning of the product model
+                        $rank++;
+                    }
+                }
+
+                $rankedResults[$k]['rank'] = $rank;
+                $rankedResults[$k]['fsum'] = $findSum ?? INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH;
+            }
+
+            // order results by relevance (desc),
+            // then by words that occur first in the title,
+            // then by number of views (desc)
+            usort($rankedResults, static function ($result1, $result2) {
+                return
+                    [$result2['rank'], $result1['fsum'], $result2['views']]
+                    <=>
+                    [$result1['rank'], $result2['fsum'], $result1['views']];
+            });
+
+        }
+
+        return $rankedResults;
+    }
+
+    public function formatResults($instantSearchResults, $wordSearchPlus)
+    {
+        global $template;
+
+        foreach ($instantSearchResults as $i => $instantSearchResult) {
+            $instantSearchResults[$i] = $this->formatResult($instantSearchResult, $wordSearchPlus);
+        }
+
+        ob_start();
+        require $template->get_template_dir('tpl_ajax_instant_search_results.php', DIR_WS_TEMPLATE, FILENAME_DEFAULT, 'templates') . '/tpl_ajax_instant_search_results.php';
+        return ob_get_clean();
     }
 
     /**
      * Prepare the search result for display.
      */
-    protected function formatSearchResult($result, $wordSearchPlus)
+    protected function formatResult($result, $wordSearchPlus)
     {
         $formattedResult = [
             'name'  => $this->highlightSearchWord($wordSearchPlus, strip_tags($result['name'])),
