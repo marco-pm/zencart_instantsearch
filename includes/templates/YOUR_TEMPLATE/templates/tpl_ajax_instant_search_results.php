@@ -1,6 +1,6 @@
 <?php
 
-foreach ($instantSearchResults as $result) { ?>
+foreach ($this->results as $result) { ?>
     <a href="<?php echo $result['link']; ?>">
         <div class="resultWrapper">
             <?php if (!empty($result['img'])) { ?>
