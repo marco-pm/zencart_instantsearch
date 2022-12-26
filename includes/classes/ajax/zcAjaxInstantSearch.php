@@ -277,7 +277,7 @@ class zcAjaxInstantSearch extends base
         $formattedResult = [
             'name' => $this->highlightSearchWords(strip_tags($result['name'])),
             'img'  => INSTANT_SEARCH_DISPLAY_IMAGE === 'true'
-                ? zen_image(DIR_WS_IMAGES . strip_tags($result['img']), strip_tags($result['img']), SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT)
+                ? zen_image(DIR_WS_IMAGES . strip_tags($result['img']), strip_tags($result['img']), INSTANT_SEARCH_IMAGE_WIDTH, INSTANT_SEARCH_IMAGE_HEIGHT)
                 : '',
         ];
 

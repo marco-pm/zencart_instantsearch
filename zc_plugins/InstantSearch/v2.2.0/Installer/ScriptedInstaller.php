@@ -85,7 +85,9 @@ class ScriptedInstaller extends ScriptedInstallBase
                 ('Display Product Price', 'INSTANT_SEARCH_DISPLAY_PRODUCT_PRICE', 'true', 'Display the product\'s price in the results.', $cgi, now(), 450, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
                 ('Display Product Model', 'INSTANT_SEARCH_DISPLAY_PRODUCT_MODEL', 'false', 'Display the product\'s model in the results.', $cgi, now(), 500, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
                 ('Display Category Count', 'INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT', 'true', 'Display the number of products for the matched categories (only if <em>Search Categories</em> is set to true).', $cgi, now(), 550, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
-                ('Display Manufacturer Count', 'INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT', 'true', 'Display the number of products for the matched manufacturers (only if <em>Search Manufacturers</em> is set to true).', $cgi, now(), 600, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')
+                ('Display Manufacturer Count', 'INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT', 'true', 'Display the number of products for the matched manufacturers (only if <em>Search Manufacturers</em> is set to true).', $cgi, now(), 600, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
+                ('Image width', 'INSTANT_SEARCH_IMAGE_WIDTH', '100', 'Width of the product/category/manufacturer\'s image displayed in the results.', $cgi, now(), 650, NULL, NULL),
+                ('Image height', 'INSTANT_SEARCH_IMAGE_HEIGHT', '80', 'Height of the product/category/manufacturer\'s image displayed in the results.', $cgi, now(), 700, NULL, NULL)
             ";
         $this->executeInstallerSql($sql);
     }
