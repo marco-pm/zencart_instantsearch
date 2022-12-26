@@ -5,102 +5,111 @@
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  *
- * Instant Search 2.1.0
+ * Instant Search 2.2.0
  */
 
+const {slideDown, slideUp, slideToggle} = window.domSlider
 const searchBoxSelector = 'input[name="keyword"]';
-const resultsContainerSelector = '#resultsContainer';
-let runningRequest = false;
-let request;
-let inputboxCurrent;
+let controller;
+let inputBoxCurrent;
 let inputTimer;
 
-$(function() {
-    const inputBox = $(searchBoxSelector);
-    inputBox.attr('autocomplete', 'off');
+document.addEventListener('DOMContentLoaded', () => {
+    const inputBox = document.querySelectorAll(searchBoxSelector);
 
-    inputBox.each(function(index) {
-        let offset = $(this).offset();
-        $('body').append('<div id="resultsContainer' + index + '" class="resultsContainer"></div>');
-        $(resultsContainerSelector + index).css('left', offset.left + 'px');
-        $(resultsContainerSelector + index).css('top', ($(this).outerHeight(true) + offset.top) + 'px');
-    });
+    for (let i = 0; i < inputBox.length; i++) {
+        let offset = inputBox[i].getBoundingClientRect();
+        let resultsContainer = document.createElement('div');
 
-    inputBox.on('blur', function() {
-        if (inputboxCurrent) {
-            const resultsContainer = $(`#resultsContainer${inputboxCurrent.index(searchBoxSelector)}`);
-            resultsContainer.delay(300).slideUp(200);
-        }
-    });
+        inputBox[i].setAttribute('autocomplete', 'off');
 
-    $(window).on('resize', function() {
-        if (inputboxCurrent) {
-            const resultsContainer = $(`#resultsContainer${inputboxCurrent.index(searchBoxSelector)}`);
-            resultsContainer.hide();
-        }
-    });
+        // add a results container to the DOM for each search input
+        resultsContainer.setAttribute('id', 'instantSearchResultsContainer' + i);
+        resultsContainer.setAttribute('class', 'instantSearchResultsContainer');
+        resultsContainer.style.left = offset.left + window.scrollX + 'px';
+        resultsContainer.style.top = offset.top + window.scrollY + inputBox[i].clientHeight + 'px';
+        document.body.appendChild(resultsContainer);
 
-    inputBox.on('input focus', function() {
-        inputboxCurrent = $(this);
-        const resultsContainer = $(`#resultsContainer${inputboxCurrent.index(searchBoxSelector)}`);
-        const typedSearchWord = $(this).val();
-
-        let searchWord = typedSearchWord.replace(/^\s+/, "").replace(/  +/g, ' ');
-        if (searchWord === "" || searchWord.length < searchInputMinLength) {
-            resultsContainer.hide();
-        } else {
-            if (runningRequest) {
-                request.abort();
+        // hide the results container on blur
+        inputBox[i].addEventListener('blur', function() {
+            if (inputBoxCurrent) {
+                const resultsContainer = document.querySelector(`#instantSearchResultsContainer${i}`);
+                slideUp({element: resultsContainer, delay: 300, slideSpeed: 200});
             }
-            clearTimeout(inputTimer);
-            inputTimer = setTimeout(() => {
-                runningRequest = true;
-                let data = new FormData();
-                data.append('query', searchWord);
-                request = $.ajax({
-                    type: 'POST',
-                    url: 'ajax.php?act=ajaxInstantSearch&method=instantSearch',
-                    dataType: 'json',
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    data: data,
-                    success: function (data) {
-                        if (data.length > 0) {
-                            resultsContainer.html(data);
-                            if (!resultsContainer.is(':visible') && $(inputboxCurrent).val() === typedSearchWord) {
-                                autoPositionContainer(inputboxCurrent, resultsContainer);
-                                resultsContainer.slideDown(200);
+        });
+
+        // perform the search and shows the results container on input and focus
+        ['input', 'focus'].forEach(event => inputBox[i].addEventListener(event, function() {
+            inputBoxCurrent = inputBox[i];
+            const resultsContainer = document.querySelector(`#instantSearchResultsContainer${i}`);
+            const typedSearchWord = this.value;
+
+            let searchWord = typedSearchWord.replace(/^\s+/, "").replace(/  +/g, ' ');
+            if (searchWord === "" || searchWord.length < searchInputMinLength) {
+                resultsContainer.style.display = 'none';
+            } else {
+                if (controller) {
+                    controller.abort();
+                }
+                clearTimeout(inputTimer);
+                inputTimer = setTimeout(async () => {
+                    controller = new AbortController();
+                    const signal = controller.signal;
+                    let data = new FormData();
+                    data.append('query', searchWord);
+
+                    try {
+                        const response = await fetch('ajax.php?act=ajaxInstantSearch&method=instantSearch', {
+                            method: 'POST',
+                            headers: {
+                                "X-Requested-With": "XMLHttpRequest",
+                            },
+                            body: data,
+                            signal
+                        });
+                        const responseData = await response.json();
+                        if (responseData.length > 0) {
+                            resultsContainer.innerHTML = responseData;
+                            if (inputBoxCurrent.value === typedSearchWord) {
+                                autoPositionContainer(inputBoxCurrent, resultsContainer);
+                                slideDown({element: resultsContainer, slideSpeed: 200});
                             }
-                            resultsContainer.outerWidth(inputboxCurrent.outerWidth());
-                            if (resultsContainer.width() > 250) {
-                                resultsContainer.addClass('resultsContainer--lg');
+                            resultsContainer.style.width = inputBoxCurrent.offsetWidth + 'px';
+                            if (resultsContainer.offsetWidth > 250) {
+                                resultsContainer.classList.add('instantSearchResultsContainer--lg');
                             } else {
-                                resultsContainer.removeClass('resultsContainer--lg');
+                                resultsContainer.classList.remove('instantSearchResultsContainer--lg');
                             }
                         } else {
-                            resultsContainer.hide();
+                            resultsContainer.style.display = 'none';
                         }
-                        runningRequest = false;
+                    } catch (e) {
+                        if (e instanceof DOMException && e.name === "AbortError") {
+                            // do nothing
+                        } else {
+                            console.error(e);
+                        }
                     }
-                });
-            }, searchInputWaitTime);
-        }
-    });
+                }, searchInputWaitTime);
+            }
+        }));
+    }
 });
 
-function autoPositionContainer(inputBoxCurr, resltsContainer) {
-    const offsetInput = inputBoxCurr.offset();
-    const overFlow = offsetInput.left + resltsContainer.outerWidth(true);
-    const winWidth = $(document).width();
+function autoPositionContainer(inputBox, container) {
+    const offsetInputBox = inputBox.getBoundingClientRect();
+    const inputBoxLeft = offsetInputBox.left + window.scrollX;
+    const inputBoxTop = offsetInputBox.top + window.scrollY;
+    const xOverflow = inputBoxLeft + container.offsetWidth;
+    const winWidth = document.documentElement.clientWidth;
 
     let leftVal;
-    if (overFlow > winWidth) {
-        let dif = overFlow - winWidth;
-        leftVal = (((offsetInput.left - dif) < 0) ? 0 : (offsetInput.left - dif));
+    if (xOverflow > winWidth) {
+        let dif = xOverflow - winWidth;
+        leftVal = (((inputBoxLeft - dif) < 0) ? 0 : (inputBoxLeft - dif));
     } else {
-        leftVal = offsetInput.left;
+        leftVal = inputBoxLeft;
     }
-    resltsContainer.css('left', leftVal + 'px');
-    resltsContainer.css('top', (inputBoxCurr.outerHeight(true) + offsetInput.top) + 'px');
+    container.style.left = leftVal + 'px';
+    container.style.top = (inputBox.offsetHeight + inputBoxTop) + 'px';
 }
