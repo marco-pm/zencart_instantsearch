@@ -114,10 +114,10 @@ class zcAjaxInstantSearch extends base
                 case 'product_name_description':
                     $sql = "SELECT pd.products_id, pd.products_name, p.products_image,
                             MATCH(pd.products_name) AGAINST(:searchBooleanQuery IN BOOLEAN MODE) AS name_relevance_boolean,
-                            MATCH(pd.products_name) AGAINST(:searchQuery WITH QUERY EXPANSION) AS name_relevance_natural, " .
+                            MATCH(pd.products_name) AGAINST(:searchQuery WITH QUERY EXPANSION) AS name_relevance_natural" .
                             (
                                 INSTANT_SEARCH_INCLUDE_PRODUCT_DESCRIPTION === 'true'
-                                ? "MATCH(pd.products_description) AGAINST(:searchQuery WITH QUERY EXPANSION) AS description_relevance"
+                                ? ", MATCH(pd.products_description) AGAINST(:searchQuery WITH QUERY EXPANSION) AS description_relevance"
                                 : ""
                             ) . "
                             FROM " . TABLE_PRODUCTS_DESCRIPTION . " pd
@@ -321,6 +321,6 @@ class zcAjaxInstantSearch extends base
      */
     protected function highlightSearchWords(string $text): string
     {
-        return preg_replace('/(' . str_replace('/', '\/', $this->searchQueryRegexp) . ')/i', '<strong>$1</strong>', $text);
+        return preg_replace('/(' . str_replace('/', '\/', $this->searchQueryRegexp) . ')/i', '<span style="font-weight: normal">$1</span>', $text);
     }
 }
