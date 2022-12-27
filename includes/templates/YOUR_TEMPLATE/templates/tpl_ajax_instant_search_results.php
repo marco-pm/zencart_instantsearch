@@ -1,5 +1,12 @@
 <?php
 
+$nameModelClass = '';
+if (INSTANT_SEARCH_HIGHLIGHT_TEXT === 'query') {
+    $nameModelClass = ' resultWrapper__infoWrapper__nameModelWrapper--highlightQuery';
+} elseif (INSTANT_SEARCH_HIGHLIGHT_TEXT === 'suggestion') {
+    $nameModelClass = ' resultWrapper__infoWrapper__nameModelWrapper--highlightSuggestion';
+}
+
 foreach ($this->results as $result) { ?>
     <a href="<?php echo $result['link']; ?>">
         <div class="resultWrapper">
@@ -9,7 +16,7 @@ foreach ($this->results as $result) { ?>
                 </div>
             <?php } ?>
             <div class="resultWrapper__infoWrapper">
-                <div class="resultWrapper__infoWrapper__nameModelWrapper">
+                <div class="resultWrapper__infoWrapper__nameModelWrapper<?php echo $nameModelClass; ?>">
                     <?php echo $result['name']; ?>
                     <?php if (!empty($result['model'])) { ?>
                         <div class="resultWrapper__infoWrapper__nameModelWrapper__model">

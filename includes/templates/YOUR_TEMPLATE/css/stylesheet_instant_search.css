@@ -66,6 +66,22 @@
     width: 65%;
 }
 
+.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper--highlightQuery {
+    font-weight: bold;
+}
+
+.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper--highlightQuery span {
+    font-weight: normal;
+}
+
+.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper--highlightSuggestion {
+    font-weight: normal;
+}
+
+.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper--highlightSuggestion span {
+    font-weight: bold;
+}
+
 .instantSearchResultsContainer--lg .resultWrapper__infoWrapper__priceCountWrapper {
     width: 35%;
     display: flex;
