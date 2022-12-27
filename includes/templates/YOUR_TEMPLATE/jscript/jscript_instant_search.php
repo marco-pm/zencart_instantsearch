@@ -1,4 +1,8 @@
 <?php
+/**
+ * Instant Search 3.0.0
+ */
+
 if (defined('INSTANT_SEARCH_ENABLE') && INSTANT_SEARCH_ENABLE === 'true') { ?>
     <script>
         const searchInputWaitTime = parseInt(<?php echo INSTANT_SEARCH_INPUT_WAIT_TIME; ?>);

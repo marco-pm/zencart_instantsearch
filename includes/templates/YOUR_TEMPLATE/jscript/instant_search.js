@@ -5,7 +5,7 @@
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  *
- * Instant Search 2.2.0
+ * Instant Search 3.0.0
  */
 
 const {slideDown, slideUp, slideToggle} = window.domSlider

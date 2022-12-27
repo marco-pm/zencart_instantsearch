@@ -74,8 +74,8 @@ class ScriptedInstaller extends ScriptedInstallBase
                 VALUES
                 ('Enable Instant Search', 'INSTANT_SEARCH_ENABLE', 'true', 'Enable Instant Search', $cgi, now(), 0, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
                 ('Maximum Number of Results', 'INSTANT_SEARCH_MAX_NUMBER_OF_RESULTS', '5', 'Maximum number of results displayed in the dropdown.', $cgi, now(), 50, NULL, NULL),
-                ('Minimum Length of Input Text', 'INSTANT_SEARCH_MIN_WORDSEARCH_LENGTH', '3', 'Minimum number of characters that must be entered before Instant Search is initiated.', $cgi, now(), 100, NULL, NULL),
-                ('Maximum Length of Input Text', 'INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH', '100', 'Maximum string length allowed for Instant Search. If the search string length exceeds this value, the instant search will not be performed.', $cgi, now(), 150, NULL, NULL),
+                ('Minimum Length of Search Query', 'INSTANT_SEARCH_MIN_WORDSEARCH_LENGTH', '3', 'Minimum number of characters that must be entered before Instant Search is initiated.', $cgi, now(), 100, NULL, NULL),
+                ('Maximum Length of Search Query', 'INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH', '100', 'Maximum string length allowed for Instant Search. If the search string length exceeds this value, the instant search will not be performed.', $cgi, now(), 150, NULL, NULL),
                 ('Search Delay', 'INSTANT_SEARCH_INPUT_WAIT_TIME', '50', 'Delay the execution of the instant search query by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries while the user is typing.', $cgi, now(), 200, NULL, NULL),
                 ('Search Product Description', 'INSTANT_SEARCH_INCLUDE_PRODUCT_DESCRIPTION', 'true', 'Search also into the product descriptions. Set to false to improve Instant Search performance.', $cgi, now(), 220, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
                 ('Search Product Model', 'INSTANT_SEARCH_INCLUDE_PRODUCT_MODEL', 'true', 'Search also into the product models.', $cgi, now(), 250, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),

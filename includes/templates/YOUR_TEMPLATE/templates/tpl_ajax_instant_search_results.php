@@ -1,4 +1,7 @@
 <?php
+/**
+ * Instant Search 3.0.0
+ */
 
 $nameModelClass = '';
 if (INSTANT_SEARCH_HIGHLIGHT_TEXT === 'query') {
