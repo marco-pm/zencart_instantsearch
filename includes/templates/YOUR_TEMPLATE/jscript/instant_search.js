@@ -9,7 +9,6 @@
  */
 
 const {slideDown, slideUp, slideToggle} = window.domSlider
-const searchBoxSelector = 'input[name="keyword"]';
 const resultsContainerSelector = 'instantSearchResultsContainer';
 let controller;
 let inputBoxCurrent;

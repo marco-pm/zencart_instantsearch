@@ -86,8 +86,9 @@ class ScriptedInstaller extends ScriptedInstallBase
                 ('Display Product Model', 'INSTANT_SEARCH_DISPLAY_PRODUCT_MODEL', 'false', 'Display the product\'s model in the results.', $cgi, now(), 500, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
                 ('Display Category Count', 'INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT', 'true', 'Display the number of products for the matched categories (only if <em>Search Categories</em> is set to true).', $cgi, now(), 550, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
                 ('Display Manufacturer Count', 'INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT', 'true', 'Display the number of products for the matched manufacturers (only if <em>Search Manufacturers</em> is set to true).', $cgi, now(), 600, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
-                ('Image width', 'INSTANT_SEARCH_IMAGE_WIDTH', '100', 'Width of the product/category/manufacturer\'s image displayed in the results.', $cgi, now(), 650, NULL, NULL),
-                ('Image height', 'INSTANT_SEARCH_IMAGE_HEIGHT', '80', 'Height of the product/category/manufacturer\'s image displayed in the results.', $cgi, now(), 700, NULL, NULL)
+                ('Image Width', 'INSTANT_SEARCH_IMAGE_WIDTH', '100', 'Width of the product/category/manufacturer\'s image displayed in the results.', $cgi, now(), 650, NULL, NULL),
+                ('Image Height', 'INSTANT_SEARCH_IMAGE_HEIGHT', '80', 'Height of the product/category/manufacturer\'s image displayed in the results.', $cgi, now(), 700, NULL, NULL),
+                ('Input Box Selector', 'INSTANT_SEARCH_INPUT_BOX_SELECTOR', 'input[name=\"keyword\"]', 'CSS selector of the search input box(es). You might need to change it if you\'re using a custom template and the results dropdown is not showing. Default: <code>input[name=\"keyword\"]</code>', $cgi, now(), 750, NULL, NULL)
             ";
         $this->executeInstallerSql($sql);
     }
