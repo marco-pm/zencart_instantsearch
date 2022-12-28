@@ -153,12 +153,16 @@ class zcAjaxInstantSearch extends base
                     $sql = "SELECT p.products_id, p.products_image
                             FROM " . TABLE_PRODUCTS . " p
                             JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
-                            LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (p.products_id = cpv.product_id AND cpv.language_id = :languageId)
+                            LEFT JOIN (
+                                SELECT SUM(views) AS tviews, product_id, language_id
+                                FROM " . TABLE_COUNT_PRODUCT_VIEWS . " cpv
+                                GROUP BY product_id, language_id
+                            ) cpv ON (p.products_id = cpv.product_id AND cpv.language_id = :languageId)
                             WHERE p.products_status <> 0
                             AND pd.products_name " . ($type === 'product_name_begins' ? "LIKE :searchBeginsQuery" : "REGEXP :regexpQuery") . "
                             AND pd.language_id = :languageId " .
                             ($foundIds !== '' ? "AND p.products_id NOT IN (" . $foundIds . ") " : "") . "
-                            ORDER BY cpv.views DESC, p.products_sort_order, pd.products_name
+                            ORDER BY cpv.tviews DESC, p.products_sort_order, pd.products_name
                             LIMIT " . $resultsLimit;
                     break;
 
