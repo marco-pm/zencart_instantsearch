@@ -117,7 +117,8 @@ class zcAjaxInstantSearch extends base
                             MATCH(pd.products_name) AGAINST(:searchQuery WITH QUERY EXPANSION) AS name_relevance_natural" .
                             (
                                 INSTANT_SEARCH_INCLUDE_PRODUCT_DESCRIPTION === 'true'
-                                ? ", MATCH(pd.products_description) AGAINST(:searchQuery WITH QUERY EXPANSION) AS description_relevance"
+                                ? ", MATCH(pd.products_description) AGAINST(:searchQuery WITH QUERY EXPANSION) AS description_relevance_natural
+                                   , MATCH(pd.products_description) AGAINST(:searchBooleanQuery IN BOOLEAN MODE) AS description_relevance_boolean"
                                 : ""
                             ) . "
                             FROM " . TABLE_PRODUCTS_DESCRIPTION . " pd
@@ -132,16 +133,19 @@ class zcAjaxInstantSearch extends base
                                         +
                                         MATCH(pd.products_name) AGAINST(:searchQuery WITH QUERY EXPANSION)
                                     ) > 0 " .
-                                (
-                                    INSTANT_SEARCH_INCLUDE_PRODUCT_DESCRIPTION === 'true'
-                                    ? "OR MATCH(pd.products_description) AGAINST(:searchQuery WITH QUERY EXPANSION) > 0 "
+                                    (INSTANT_SEARCH_INCLUDE_PRODUCT_DESCRIPTION === 'true'
+                                    ? "OR (
+                                           MATCH(pd.products_description) AGAINST(:searchQuery WITH QUERY EXPANSION)
+                                           +
+                                           MATCH(pd.products_description) AGAINST(:searchBooleanQuery IN BOOLEAN MODE)
+                                       ) > 0 "
                                     : ""
-                                ) . "
+                                    ) . "
                                 )
                             ORDER BY name_relevance_boolean DESC, name_relevance_natural DESC, " .
                             (
                                 INSTANT_SEARCH_INCLUDE_PRODUCT_DESCRIPTION === 'true'
-                                ? "description_relevance DESC, "
+                                ? "description_relevance_natural DESC, description_relevance_boolean DESC, "
                                 : ""
                             ) . "
                             p.products_sort_order, pd.products_name
