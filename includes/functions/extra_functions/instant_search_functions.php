@@ -1,19 +1,18 @@
 <?php
 /**
- * @package Instant Search Results
- * @copyright Copyright Ayoob G 2009-2011
- * @copyright Portions Copyright 2003-2006 The Zen Cart Team
- * @copyright Portions Copyright 2003 osCommerce
- * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- *
- * Instant Search 3.0.0
+ * @package  Instant Search Plugin for Zen Cart
+ * @author   marco-pm
+ * @version  3.0.0
+ * @see      https://github.com/marco-pm/zencart_instantsearch
+ * @license  GNU Public License V2.0
  */
 
 /**
  * Returns the number of (enabled) products per manufacturer.
  *
- * @param int $manufacturers_id manufacturer's id
- * @return int products count
+ * @param int $manufacturers_id Manufacturer's id
+ *
+ * @return int Products count
  */
 function zen_count_products_for_manufacturer(int $manufacturers_id): int
 {

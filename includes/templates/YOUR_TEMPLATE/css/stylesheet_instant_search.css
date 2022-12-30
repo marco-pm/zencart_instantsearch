@@ -1,6 +1,12 @@
-/* Instant Search 3.0.0 */
+/**
+ * @package  Instant Search Plugin for Zen Cart
+ * @author   marco-pm
+ * @version  3.0.0
+ * @see      https://github.com/marco-pm/zencart_instantsearch
+ * @license  GNU Public License V2.0
+ */
 
-.instantSearchResultsContainer {
+.instantSearchResultsDropdownContainer {
     box-sizing: border-box;
     display: none;
     position: absolute;
@@ -19,7 +25,7 @@
     box-shadow: 0 2px 8px #000;
 }
 
-.instantSearchResultsContainer a {
+.instantSearchResultsDropdownContainer a {
     display: block;
     color: #000;
     background-color: #fff;
@@ -28,82 +34,82 @@
     overflow: hidden;
 }
 
-.instantSearchResultsContainer a:hover {
+.instantSearchResultsDropdownContainer a:hover {
     background-color: #eee;
     color: #000;
 }
 
-.instantSearchResultsContainer a:not(:first-child) {
+.instantSearchResultsDropdownContainer a:not(:first-child) {
     margin-top: .5rem;
 }
 
-.resultWrapper {
+.instantSearchResultsDropdownContainer__resultWrapper {
     display: flex;
     align-items: center;
 }
 
-.resultWrapper__img {
+.instantSearchResultsDropdownContainer__resultWrapper__img {
     float: left;
 }
 
-.resultWrapper__img img {
+.instantSearchResultsDropdownContainer__resultWrapper__img img {
     height: 40px;
     max-width: 40px;
     margin-right: 10px;
 }
 
-.resultWrapper__infoWrapper {
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper {
     display: flex;
     flex-direction: column;
 }
 
-.instantSearchResultsContainer--lg .resultWrapper__infoWrapper {
+.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper {
     flex-direction: row;
     align-items: center;
     column-gap: .5rem;
     width: 100%;
 }
 
-.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper {
+.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper {
     width: 65%;
 }
 
-.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper--highlightQuery {
+.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightQuery {
     font-weight: bold;
 }
 
-.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper--highlightQuery span {
+.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightQuery span {
     font-weight: normal;
 }
 
-.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper--highlightSuggestion {
+.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightSuggestion {
     font-weight: normal;
 }
 
-.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__nameModelWrapper--highlightSuggestion span {
+.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightSuggestion span {
     font-weight: bold;
 }
 
-.instantSearchResultsContainer--lg .resultWrapper__infoWrapper__priceCountWrapper {
+.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper {
     width: 35%;
     display: flex;
     flex-direction: column;
 }
 
-.resultWrapper__infoWrapper__nameModelWrapper__model {
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper__model {
     font-size: .8em;
 }
 
-.resultWrapper__infoWrapper__priceCountWrapper {
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper {
     font-size: .95em;
     padding-right: .5rem;
 }
 
-.resultWrapper__infoWrapper__priceCountWrapper br {
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper br {
     display: none;
 }
 
-.resultWrapper__infoWrapper__priceCountWrapper > span {
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper > span {
     font-size: .95em !important;
     margin: 0 !important;
     padding-top: 0 !important;
@@ -111,6 +117,38 @@
     padding-left: 0 !important;
 }
 
-.resultWrapper__infoWrapper__priceCountWrapper__count {
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper__count {
     opacity: 0.75;
+}
+
+#instantsearchresultBody #instantSearchResults__noResultsFoundWrapper {
+    margin: 3rem 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: none;
+}
+
+#instantsearchresultBody .list-more {
+    width: auto;
+}
+
+#instantsearchresultBody #instantSearchResults__loadingWrapper {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+#instantsearchresultBody .spinner {
+    border: 5px solid #eee;
+    border-top: 5px solid #000;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    margin: .7rem auto 1.5rem auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

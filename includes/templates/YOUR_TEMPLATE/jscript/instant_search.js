@@ -1,82 +1,99 @@
 /**
- * @package Instant Search Results
- * @copyright Copyright Ayoob G 2009-2011
- * @copyright Portions Copyright 2003-2006 The Zen Cart Team
- * @copyright Portions Copyright 2003 osCommerce
- * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- *
- * Instant Search 3.0.0
+ * @package  Instant Search Plugin for Zen Cart
+ * @author   marco-pm
+ * @version  3.0.0
+ * @see      https://github.com/marco-pm/zencart_instantsearch
+ * @license  GNU Public License V2.0
  */
 
 const {slideDown, slideUp, slideToggle} = window.domSlider
-const resultsContainerSelector = 'instantSearchResultsContainer';
+const resultsContainerSelector  = 'instantSearchResultsDropdownContainer';
+const instantSearchFormSelector = 'form[action*=search_result]:not([name=search]):not([name=advanced_search])';
 let controller;
-let inputBoxCurrent;
+let instantSearchInputCurrent;
 let inputTimer;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const inputBox = document.querySelectorAll(searchBoxSelector);
 
-    for (let i = 0; i < inputBox.length; i++) {
-        inputBox[i].setAttribute('autocomplete', 'off');
+    if (instantSearchPageEnabled) {
+        // Replace the search forms' action
+        const instantSearchForms = document.querySelectorAll(instantSearchFormSelector);
+        instantSearchForms.forEach(form => form.action = form.action.replace('search_result', 'instant_search_result'));
 
-        // Hide the results container on blur
-        inputBox[i].addEventListener('blur', function() {
-            removeResultsContainer();
-        });
+        const instantSearchFormPageInputs = document.querySelectorAll(`${instantSearchFormSelector} input[value="search_result"]`);
+        instantSearchFormPageInputs.forEach(input => input.value = 'instant_search_result');
 
-        // Perform the search and shows the results container on input and focus
-        ['input', 'focus'].forEach(event => inputBox[i].addEventListener(event, function() {
-            inputBoxCurrent = inputBox[i];
+        const instantSearchFormSearchDescrInputs = document.querySelectorAll(`${instantSearchFormSelector} input[name="search_in_description"]`);
+        instantSearchFormSearchDescrInputs.forEach(input => input.remove());
+    }
 
-            const typedSearchWord = this.value;
-            let searchWord = typedSearchWord.replace(/^\s+/, "").replace(/  +/g, ' ');
+    if (instantSearchDropdownEnabled) {
+        // Add search suggestions on search inputs
+        const instantSearchInputs = document.querySelectorAll(instantSearchDropdownInputSelector);
 
-            if (searchWord === "" || searchWord.length < searchInputMinLength) {
-                removeResultsContainer();
-            } else {
-                if (controller) {
-                    controller.abort();
-                }
+        for (let i = 0; i < instantSearchInputs.length; i++) {
+            instantSearchInputs[i].setAttribute('autocomplete', 'off');
 
-                clearTimeout(inputTimer);
-                inputTimer = setTimeout(async () => {
-                    controller = new AbortController();
-                    const signal = controller.signal;
-                    let data = new FormData();
-                    data.append('query', searchWord);
+            // Hide the results container on blur
+            instantSearchInputs[i].addEventListener('blur', function () {
+                removeResultsDropdown();
+            });
 
-                    try {
-                        const response = await fetch('ajax.php?act=ajaxInstantSearch&method=instantSearch', {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                            },
-                            body: data,
-                            signal
-                        });
-                        const responseData = await response.json();
-                        if (responseData.length > 0 && inputBoxCurrent.value === typedSearchWord) {
-                            createAndPositionResultsContainer(inputBoxCurrent, responseData);
-                            await slideDown({element: document.querySelector(`#${resultsContainerSelector}`), slideSpeed: 200});
-                        } else {
-                            removeResultsContainer();
-                        }
-                    } catch (e) {
-                        if (e instanceof DOMException && e.name === "AbortError") {
-                            // do nothing
-                        } else {
-                            console.error(e);
-                        }
+            ['input', 'focus'].forEach(event => instantSearchInputs[i].addEventListener(event, function () {
+                // Perform the search and shows the results dropdown
+                instantSearchInputCurrent      = instantSearchInputs[i];
+                const instantSearchQuery       = this.value;
+                const instantSearchQueryParsed = instantSearchQuery.replace(/^\s+/, "").replace(/  +/g, ' ');
+
+                if (instantSearchQueryParsed === "" || instantSearchQueryParsed.length < instantSearchDropdownInputMinLength) {
+                    removeResultsDropdown();
+                } else {
+                    if (controller) {
+                        controller.abort();
                     }
-                }, searchInputWaitTime);
-            }
-        }));
+
+                    clearTimeout(inputTimer);
+                    inputTimer = setTimeout(async () => {
+                        controller = new AbortController();
+                        const signal = controller.signal;
+                        const data = new FormData();
+                        data.append('keyword', instantSearchQueryParsed);
+
+                        try {
+                            const response = await fetch('ajax.php?act=ajaxInstantSearchDropdown&method=instantSearch', {
+                                method: 'POST',
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                                body: data,
+                                signal
+                            });
+                            const responseData = await response.json();
+                            if (responseData.length > 0 && instantSearchInputCurrent.value === instantSearchQuery) {
+                                createAndPositionResultsDropdown(instantSearchInputCurrent, responseData);
+                                await slideDown({
+                                    element: document.querySelector(`#${resultsContainerSelector}`),
+                                    slideSpeed: 200
+                                });
+                            } else {
+                                removeResultsDropdown();
+                            }
+                        } catch (e) {
+                            if (e instanceof DOMException && e.name === "AbortError") {
+                                // do nothing
+                            } else {
+                                console.error(e);
+                            }
+                        }
+                    }, instantSearchDropdownInputWaitTime);
+                }
+            }));
+        }
     }
 });
 
 // Create, populate and position the results container below the current input box
-function createAndPositionResultsContainer(inputBox, resultsData) {
+function createAndPositionResultsDropdown(inputBox, resultsData) {
     if (document.querySelector(`#${resultsContainerSelector}`)) {
         document.querySelector(`#${resultsContainerSelector}`).innerHTML = resultsData
     } else {
@@ -87,15 +104,15 @@ function createAndPositionResultsContainer(inputBox, resultsData) {
         document.body.appendChild(resultsContainer);
 
         // set the min width of the container equals to the input box's
-        resultsContainer.style.width = inputBoxCurrent.offsetWidth + 'px';
+        resultsContainer.style.width = instantSearchInputCurrent.offsetWidth + 'px';
         resultsContainer.style.display = 'block';
         const containerWidth = resultsContainer.offsetWidth;
         resultsContainer.style.display = 'none';
 
         if (containerWidth > 250) {
-            resultsContainer.classList.add('instantSearchResultsContainer--lg');
+            resultsContainer.classList.add('instantSearchResultsDropdownContainer--lg');
         } else {
-            resultsContainer.classList.remove('instantSearchResultsContainer--lg');
+            resultsContainer.classList.remove('instantSearchResultsDropdownContainer--lg');
         }
 
         const offsetInputBox  = inputBox.getBoundingClientRect();
@@ -116,10 +133,10 @@ function createAndPositionResultsContainer(inputBox, resultsData) {
     }
 }
 
-async function removeResultsContainer() {
+async function removeResultsDropdown() {
     const resultsContainer = document.querySelector(`#${resultsContainerSelector}`);
 
-    if (inputBoxCurrent && resultsContainer) {
+    if (instantSearchInputCurrent && resultsContainer) {
         await slideUp({element: resultsContainer, delay: 300, slideSpeed: 200});
         resultsContainer.remove();
     }
