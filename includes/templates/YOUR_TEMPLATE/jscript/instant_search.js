@@ -35,18 +35,18 @@ document.addEventListener('DOMContentLoaded', () => {
             instantSearchInputs[i].setAttribute('autocomplete', 'off');
 
             // Hide the results container on blur
-            instantSearchInputs[i].addEventListener('blur', function () {
-                removeResultsDropdown();
+            instantSearchInputs[i].addEventListener('blur', async function () {
+                await removeResultsDropdown();
             });
 
-            ['input', 'focus'].forEach(event => instantSearchInputs[i].addEventListener(event, function () {
+            ['input', 'focus'].forEach(event => instantSearchInputs[i].addEventListener(event, async function () {
                 // Perform the search and shows the results dropdown
                 instantSearchInputCurrent      = instantSearchInputs[i];
                 const instantSearchQuery       = this.value;
                 const instantSearchQueryParsed = instantSearchQuery.replace(/^\s+/, "").replace(/  +/g, ' ');
 
                 if (instantSearchQueryParsed === "" || instantSearchQueryParsed.length < instantSearchDropdownInputMinLength) {
-                    removeResultsDropdown();
+                    await removeResultsDropdown();
                 } else {
                     if (controller) {
                         controller.abort();
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     slideSpeed: 200
                                 });
                             } else {
-                                removeResultsDropdown();
+                                await removeResultsDropdown();
                             }
                         } catch (e) {
                             if (e instanceof DOMException && e.name === "AbortError") {
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Create, populate and position the results container below the current input box
 function createAndPositionResultsDropdown(inputBox, resultsData) {
     if (document.querySelector(`#${resultsContainerSelector}`)) {
-        document.querySelector(`#${resultsContainerSelector}`).innerHTML = resultsData
+        document.querySelector(`#${resultsContainerSelector}`).innerHTML = resultsData;
     } else {
         const resultsContainer = document.createElement('div');
         resultsContainer.innerHTML = resultsData;

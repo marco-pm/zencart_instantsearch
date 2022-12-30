@@ -18,18 +18,19 @@ let instantSearchIsLoadingResults            = false;
 let instantSearchResultPageIsLast            = false;
 let instantSearchPreviousResult              = '';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     if (!instantSearchIsLoadingResults) {
-        loadResults();
+        await loadResults();
     }
 
-    const observer = new IntersectionObserver(function(entries) {
+    const observer = new IntersectionObserver(async function(entries) {
         if (entries[0].isIntersecting === true &&
             !instantSearchIsLoadingResults &&
             instantSearchResultPage > 1 &&
             !instantSearchResultPageIsLast
-        )
-            loadResults();
+        ) {
+            await loadResults();
+        }
     }, { threshold: [0] });
     observer.observe(document.querySelector(instantSearchEndResultsSelector));
 });
