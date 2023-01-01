@@ -9,8 +9,35 @@
 
 declare(strict_types=1);
 
+use classes\InstantSearch;
+
 class zcAjaxInstantSearchPage extends InstantSearch
 {
+    /**
+     * Array of allowed search fields (keys) for building the sql sequence by calling the
+     * corresponding sql build method(s) with parameters (values).
+     *
+     * @var array
+     */
+    protected const VALID_SEARCH_FIELDS = [
+        'model-exact' => [
+            ['buildSqlProductModel', [true]],
+        ],
+        'name' => [
+            ['buildSqlProductName', [true]],
+            ['buildSqlProductNameDescriptionMatch', [false, INSTANT_SEARCH_PAGE_USE_QUERY_EXPANSION === 'true']],
+            ['buildSqlProductName', [false]],
+        ],
+        'name-description' => [
+            ['buildSqlProductName', [true]],
+            ['buildSqlProductNameDescriptionMatch', [true, INSTANT_SEARCH_PAGE_USE_QUERY_EXPANSION === 'true']],
+            ['buildSqlProductName', [false]],
+        ],
+        'model-broad' => [
+            ['buildSqlProductModel', [false]],
+        ],
+    ];
+
     /**
      * The current result page.
      *
@@ -47,10 +74,23 @@ class zcAjaxInstantSearchPage extends InstantSearch
     }
 
     /**
+     * Returns the exploded fields list setting and the error message to show in case of error while
+     * parsing the list.
+     *
+     * @return array First element: search fields array; second element: error message
+     */
+    protected function loadSearchFieldsConfiguration(): array
+    {
+        $searchFields = explode(',', preg_replace('/,$/', '', str_replace(' ', '', INSTANT_SEARCH_PAGE_FIELDS_LIST))); // Remove spaces and extra comma at the end
+        $errorMessage = sprintf(TEXT_INSTANT_SEARCH_CONFIGURATION_ERROR, 'INSTANT_SEARCH_PAGE_FIELDS_LIST');
+
+        return [$searchFields, $errorMessage];
+    }
+
+    /**
      * Sanitizes the input query, runs the search and formats the results.
      *
      * @param string $inputQuery The search query
-     *
      * @return string HTML-formatted results
      */
     protected function performSearch(string $inputQuery): string
@@ -62,35 +102,6 @@ class zcAjaxInstantSearchPage extends InstantSearch
         }
 
         return '';
-    }
-
-    /**
-     * Builds the sequence of database queries for the search.
-     *
-     * @return void
-     */
-    protected function buildSqlSequence(): array
-    {
-        $sqlSequence = [];
-
-        // search product models (exact matches)
-        $sqlSequence[] = $this->buildSqlProductModel(true);
-
-        // for single-word queries, search product names (begins with)
-        if (count($this->searchQueryArray) === 1) {
-            $sqlSequence[] = $this->buildSqlProductName(true);
-        }
-
-        // search product names and descriptions
-        $sqlSequence[] = $this->buildSqlProductNameDescriptionMatch(INSTANT_SEARCH_PAGE_INCLUDE_PRODUCT_DESCRIPTION === 'true');
-
-        // search product names (contains)
-        $sqlSequence[] = $this->buildSqlProductName(false);
-
-        // search product models (broad matches)
-        $sqlSequence[] = $this->buildSqlProductModel(false);
-
-        return $sqlSequence;
     }
 
     /**
@@ -203,7 +214,7 @@ class zcAjaxInstantSearchPage extends InstantSearch
      * Calculate the sql LIMIT value based on the max number of results allowed and the
      * number of results found so far.
      *
-     * @return int
+     * @return int LIMIT value
      */
     protected function calcResultsLimit(): int
     {

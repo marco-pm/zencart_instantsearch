@@ -9,8 +9,49 @@
 
 declare(strict_types=1);
 
+use classes\InstantSearch;
+
 class zcAjaxInstantSearchDropdown extends InstantSearch
 {
+    /**
+     * Array of allowed search fields (keys) for building the sql sequence by calling the
+     * corresponding sql build method(s) with parameters (values).
+     *
+     * @var array
+     */
+    protected const VALID_SEARCH_FIELDS = [
+        'model-exact' => [
+            ['buildSqlProductModel', [true]],
+        ],
+        'name' => [
+            ['buildSqlProductName', [true]],
+            ['buildSqlProductNameDescriptionMatch', [false, INSTANT_SEARCH_DROPDOWN_USE_QUERY_EXPANSION === 'true']],
+            ['buildSqlProductName', [false]],
+        ],
+        'name-description' => [
+            ['buildSqlProductName', [true]],
+            ['buildSqlProductNameDescriptionMatch', [true, INSTANT_SEARCH_DROPDOWN_USE_QUERY_EXPANSION === 'true']],
+            ['buildSqlProductName', [false]],
+        ],
+        'model-broad' => [
+            ['buildSqlProductModel', [false]],
+        ],
+        'category' => [
+            ['buildSqlCategory'],
+        ],
+        'manufacturer' => [
+            ['buildSqlManufacturer'],
+        ],
+    ];
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     /**
      * AJAX-callable method that performs the search on $_POST['keyword'] and returns the results in HTML format.
      *
@@ -26,10 +67,23 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
     }
 
     /**
+     * Returns the exploded fields list setting and the error message to show in case of error while
+     * parsing the list.
+     *
+     * @return array First element: search fields array; second element: error message
+     */
+    protected function loadSearchFieldsConfiguration(): array
+    {
+        $searchFields = explode(',', preg_replace('/,$/', '', str_replace(' ', '', INSTANT_SEARCH_DROPDOWN_FIELDS_LIST))); // Remove spaces and extra comma at the end
+        $errorMessage = sprintf(TEXT_INSTANT_SEARCH_CONFIGURATION_ERROR, 'INSTANT_SEARCH_DROPDOWN_FIELDS_LIST');
+
+        return [$searchFields, $errorMessage];
+    }
+
+    /**
      * Sanitizes the input query, runs the search and formats the results.
      *
      * @param string $inputQuery The search query
-     *
      * @return string HTML-formatted results
      */
     protected function performSearch(string $inputQuery): string
@@ -45,45 +99,6 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
         }
 
         return '';
-    }
-
-    /**
-     * Builds the sequence of database queries for the search.
-     *
-     * @return void
-     */
-    protected function buildSqlSequence(): array
-    {
-        $sqlSequence = [];
-
-        // search product models (exact matches)
-        if (INSTANT_SEARCH_DROPDOWN_INCLUDE_PRODUCT_MODEL === 'true') {
-            $sqlSequence[] = $this->buildSqlProductModel(true);
-        }
-
-        // for single-word queries, search product names (begins with)
-        if (count($this->searchQueryArray) === 1) {
-            $sqlSequence[] = $this->buildSqlProductName(true);
-        }
-
-        // search product names and descriptions
-        $sqlSequence[] = $this->buildSqlProductNameDescriptionMatch(INSTANT_SEARCH_DROPDOWN_INCLUDE_PRODUCT_DESCRIPTION === 'true');
-
-        // search product names (contains)
-        $sqlSequence[] = $this->buildSqlProductName(false);
-
-        // search product models (broad matches)
-        if (INSTANT_SEARCH_DROPDOWN_INCLUDE_PRODUCT_MODEL === 'true') {
-            $sqlSequence[] = $this->buildSqlProductModel(false);
-        }
-
-        // search categories
-        $sqlSequence[] = $this->buildSqlCategory();
-
-        // search manufacturers
-        $sqlSequence[] = $this->buildSqlManufacturer();
-
-        return $sqlSequence;
     }
 
     /**
@@ -127,7 +142,7 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
 
                 $dropdownResult['link']  = zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $id);
                 $dropdownResult['count'] = INSTANT_SEARCH_DROPDOWN_DISPLAY_MANUFACTURERS_COUNT === 'true'
-                    ? zen_count_products_for_manufacturer($id)
+                    ? zen_count_products_for_manufacturer((int)$id)
                     : '';
             } else {
                 continue;
@@ -153,7 +168,7 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
      * Calculate the sql LIMIT value based on the max number of results allowed and the
      * number of results found so far.
      *
-     * @return int
+     * @return int LIMIT value
      */
     protected function calcResultsLimit(): int
     {
@@ -164,8 +179,8 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
     /**
      * Highlights in bold the tokens/suggestions in the results.
      *
-     * @param string $text input string
-     * @return string output string
+     * @param string $text Input string
+     * @return string Output string
      */
     protected function highlightSearchWords(string $text): string
     {

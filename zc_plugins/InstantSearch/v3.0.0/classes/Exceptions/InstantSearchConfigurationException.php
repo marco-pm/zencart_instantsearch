@@ -7,12 +7,8 @@
  * @license  GNU Public License V2.0
  */
 
-if (!defined('IS_ADMIN_FLAG')) {
-    die('Illegal Access');
+namespace Zencart\Plugins\Catalog\InstantSearch\Exceptions;
+
+class InstantSearchConfigurationException extends \Exception
+{
 }
-
-$autoLoadConfig[220][] = array(
-    'autoType' => 'class',
-    'loadFile' => 'InstantSearch.php'
-);
-
