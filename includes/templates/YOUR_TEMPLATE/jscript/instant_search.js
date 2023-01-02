@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ['input', 'focus'].forEach(event => instantSearchInputs[i].addEventListener(event, async function () {
                 // Perform the search and shows the results dropdown
-                instantSearchInputCurrent      = instantSearchInputs[i];
-                const instantSearchQuery       = this.value;
+                instantSearchInputCurrent = instantSearchInputs[i];
+                const instantSearchQuery = this.value;
                 const instantSearchQueryParsed = instantSearchQuery.replace(/^\s+/, "").replace(/  +/g, ' ');
 
                 if (instantSearchQueryParsed === "" || instantSearchQueryParsed.length < instantSearchDropdownInputMinLength) {
@@ -69,8 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 signal
                             });
                             const responseData = await response.json();
-                            if (responseData.length > 0 && instantSearchInputCurrent.value === instantSearchQuery) {
-                                createAndPositionResultsDropdown(instantSearchInputCurrent, responseData);
+                            const responseDataJson = JSON.parse(responseData);
+                            if (responseDataJson.results.length > 0 && instantSearchInputCurrent.value === instantSearchQuery) {
+                                createAndPositionResultsDropdown(instantSearchInputCurrent, responseDataJson.results);
                                 await slideDown({
                                     element: document.querySelector(`#${resultsContainerSelector}`),
                                     slideSpeed: 200

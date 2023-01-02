@@ -80,7 +80,7 @@ abstract class InstantSearch extends \base
      * Sanitizes the input query, runs the search and formats the results.
      *
      * @param string $inputQuery The search query
-     * @return string HTML-formatted results
+     * @return array number of results (first element) and HTML-formatted results (second element)
      */
     protected function performSearch(string $inputQuery): string
     {
@@ -96,7 +96,10 @@ abstract class InstantSearch extends \base
 
         $this->notify('NOTIFY_INSTANT_SEARCH_BEFORE_FORMAT_RESULTS', $this->searchQuery, $this->results);
 
-        return $this->formatResults();
+        return json_encode([
+            'count'   => count($this->results),
+            'results' => $this->formatResults(),
+        ]);
     }
 
     /**

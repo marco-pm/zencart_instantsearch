@@ -18,7 +18,7 @@ const instantSearchNoResultsFoundDivSelector = '#instantSearchResults__noResults
 let instantSearchResultPage                  = instantSearchParams.get('page') ?? 1;
 let instantSearchIsLoadingResults            = false;
 let instantSearchResultPageIsLast            = false;
-let instantSearchPreviousResult              = '';
+let instantSearchPreviousResultCount         = 0;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!instantSearchIsLoadingResults) {
@@ -55,10 +55,12 @@ async function loadResults() {
         body: data,
     });
     const responseData = await response.json();
+    const responseDataJson = JSON.parse(responseData);
+
     document.querySelector(instantSearchFilterWrapperSelector).style.display = 'block';
-    if (responseData.length > 0 && responseData !== instantSearchPreviousResult) {
-        document.querySelector(instantSearchListingDivSelector).innerHTML = responseData;
-        instantSearchPreviousResult = responseData;
+    if (responseDataJson.results.length > 0 && responseDataJson.count !== instantSearchPreviousResultCount) {
+        document.querySelector(instantSearchListingDivSelector).innerHTML = responseDataJson.results;
+        instantSearchPreviousResultCount = responseDataJson.count;
 
         // Update URL page parameter
         const url = new URL(window.document.URL);
@@ -68,10 +70,11 @@ async function loadResults() {
         instantSearchResultPage++;
         instantSearchIsLoadingResults = false;
     } else {
-        // If the response HTML is empty or the same as before, it means that we have reached the end of results
+        // The HTML response is empty or the number of products is the same as before,
+        // so we have reached the end of results
         instantSearchResultPageIsLast = true;
 
-        if (!responseData.length) {
+        if (responseDataJson.results.length === 0 || responseDataJson.count === 0) {
             document.querySelector(instantSearchNoResultsFoundDivSelector).style.display = 'block';
         }
     }
