@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-use classes\InstantSearch;
+use Zencart\Plugins\Catalog\InstantSearch\InstantSearch;
 
 class zcAjaxInstantSearchPage extends InstantSearch
 {
@@ -70,6 +70,10 @@ class zcAjaxInstantSearchPage extends InstantSearch
             $this->resultPage = (int)$_POST['resultPage'];
         }
 
+        if (isset($_POST['alpha_filter_id']) && (int)$_POST['alpha_filter_id'] > 0) {
+            $this->alphaFilterId = (int)$_POST['alpha_filter_id'];
+        }
+
         return $this->performSearch($_POST['keyword']);
     }
 
@@ -113,9 +117,17 @@ class zcAjaxInstantSearchPage extends InstantSearch
     {
         global $zco_notifier, $current_page_base, $cPath, $request_type, $template;
 
-        $_GET['main_page'] = FILENAME_INSTANT_SEARCH_RESULT;
-        $_GET['act']       = '';
-        $_GET['method']    = '';
+        if (empty($this->results)) {
+            return '';
+        }
+
+        $_GET['main_page']       = FILENAME_INSTANT_SEARCH_RESULT;
+        $_GET['act']             = '';
+        $_GET['method']          = '';
+        $_GET['keyword']         = $_POST['keyword'];
+        $_GET['page']            = $_POST['resultPage'];
+        $_GET['alpha_filter_id'] = $_POST['alpha_filter_id'];
+        // TODO: sort $_GET
 
         $define_list = [
             'PRODUCT_LIST_MODEL'        => PRODUCT_LIST_MODEL,
@@ -134,17 +146,8 @@ class zcAjaxInstantSearchPage extends InstantSearch
             }
         }
 
-        // TODO: filters and sorting
-        /*$where_str = '';
-        $order_str = '';
-        if (isset($_GET['alpha_filter_id']) && (int)$_GET['alpha_filter_id'] > 0) {
-            $alpha_sort = " and (pd.products_name LIKE '" . chr((int)$_GET['alpha_filter_id']) . "%') ";
-            $where_str .= $alpha_sort;
-        } else {
-            $alpha_sort = '';
-            $where_str .= $alpha_sort;
-        }
-
+        // TODO: sorting
+        /*
         // set the default sort order setting from the Admin when not defined by customer
         if (!isset($_GET['sort']) and PRODUCT_LISTING_DEFAULT_SORT_ORDER != '') {
             $_GET['sort'] = PRODUCT_LISTING_DEFAULT_SORT_ORDER;

@@ -52,6 +52,13 @@ abstract class InstantSearch extends \base
     protected string $searchQueryRegexp;
 
     /**
+     * Optional alpha filter value.
+     *
+     * @var int
+     */
+    protected int $alphaFilterId;
+
+    /**
      * The search results.
      *
      * @var array
@@ -65,6 +72,7 @@ abstract class InstantSearch extends \base
     public function __construct()
     {
         $this->searchQuery = '';
+        $this->alphaFilterId = 0;
         $this->results = [];
     }
 
@@ -177,6 +185,7 @@ abstract class InstantSearch extends \base
         $sql = $db->bindVars($sql, ':regexpQuery', $this->searchQueryRegexp, 'string');
         $sql = $db->bindVars($sql, ':languageId', $_SESSION['languages_id'], 'integer');
         $sql = $db->bindVars($sql, ':foundIds', $foundIds ?? "''", 'string');
+        $sql = $db->bindVars($sql, ':alphaFilterId', chr($this->alphaFilterId) . '%', 'string');
         $sql = $db->bindVars($sql, ':resultsLimit', $this->calcResultsLimit(), 'integer');
 
         $this->notify('NOTIFY_INSTANT_SEARCH_DROPDOWN_SQL', $this->searchQuery, $sql);
@@ -209,7 +218,8 @@ abstract class InstantSearch extends \base
                        ($includeDescription === true ? ", MATCH(pd.products_description) AGAINST(:searchQuery" . $queryEpansion . ") AS description_relevance" : "") . "
                 FROM " . TABLE_PRODUCTS_DESCRIPTION . " pd
                 JOIN " . TABLE_PRODUCTS . " p ON (p.products_id = pd.products_id)
-                WHERE p.products_status <> 0
+                WHERE p.products_status <> 0 " .
+                  (($this->alphaFilterId > 0 ) ? "AND pd.products_name LIKE :alphaFilterId " : "") . "
                   AND pd.language_id = :languageId
                   AND p.products_id NOT IN (:foundIds)
                   AND
@@ -243,8 +253,10 @@ abstract class InstantSearch extends \base
                 FROM " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
                 LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (p.products_id = cpv.product_id AND cpv.language_id = :languageId)
-                WHERE p.products_status <> 0
-                  AND pd.products_name " . ($beginsWith === true ? "LIKE :searchBeginsQuery" : "REGEXP :regexpQuery") . "
+                WHERE p.products_status <> 0 " .
+                  (($this->alphaFilterId > 0 ) ? "AND pd.products_name LIKE :alphaFilterId " : "") . "
+                  AND pd.products_name " . ($beginsWith === true ? "LIKE :searchBeginsQuery" : "REGEXP :regexpQuery") .
+                  (($this->alphaFilterId > 0 ) ? " AND pd.products_name LIKE :alphaFilterId " : "") . "
                   AND pd.language_id = :languageId
                   AND p.products_id NOT IN (:foundIds)
                 ORDER BY cpv.views DESC, p.products_sort_order, pd.products_name
@@ -267,7 +279,8 @@ abstract class InstantSearch extends \base
                 FROM " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
                 LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (p.products_id = cpv.product_id AND cpv.language_id = :languageId)
-                WHERE p.products_status <> 0
+                WHERE p.products_status <> 0 " .
+                  (($this->alphaFilterId > 0 ) ? "AND pd.products_name LIKE :alphaFilterId " : "") . "
                   AND pd.products_name " . ($exactMatch === true ? "LIKE :searchBeginsQuery" : "REGEXP :regexpQuery") . "
                   AND pd.language_id = :languageId
                   AND p.products_id NOT IN (:foundIds)

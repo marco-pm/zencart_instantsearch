@@ -10,6 +10,7 @@
 $define = [
     'TEXT_INSTANT_SEARCH_PRODUCTS_TEXT' => 'products',
     'TEXT_INSTANT_SEARCH_CONFIGURATION_ERROR' => 'Configuration error for %s',
+    'TEXT_NO_PRODUCTS' => '',
 ];
 
 return $define;
