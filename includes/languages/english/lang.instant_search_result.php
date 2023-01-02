@@ -8,11 +8,11 @@
  */
 
 $define = [
-    'NAVBAR_TITLE_1'         => 'Search',
-    'NAVBAR_TITLE_2'         => 'Search Results',
-    'HEADING_TITLE'          => 'Search',
+    'NAVBAR_TITLE'           => 'Search Results',
+    'HEADING_TITLE'          => 'Search Results',
     'TEXT_NO_PRODUCTS_FOUND' => 'No products found.',
     'TEXT_LOADING_RESULTS'   => 'Loading results...',
+    'TEXT_SHOW'              => 'Filter Results by:',
 ];
 
 return $define;
