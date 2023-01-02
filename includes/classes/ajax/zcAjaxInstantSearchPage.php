@@ -14,6 +14,43 @@ use Zencart\Plugins\Catalog\InstantSearch\InstantSearch;
 class zcAjaxInstantSearchPage extends InstantSearch
 {
     /**
+     * Maximum number of results displayed globally (not per "ajax page") in the page.
+     *
+     * @var int
+     */
+    protected const INSTANT_SEARCH_PAGE_MAX_RESULTS_SCREEN = 500;
+
+    /**
+     * Association between displayed fields and their column position in the listing.
+     *
+     * @var array
+     */
+    protected const DEFINE_LIST = [
+        'PRODUCT_LIST_MODEL'        => PRODUCT_LIST_MODEL,
+        'PRODUCT_LIST_NAME'         => PRODUCT_LIST_NAME,
+        'PRODUCT_LIST_MANUFACTURER' => PRODUCT_LIST_MANUFACTURER,
+        'PRODUCT_LIST_PRICE'        => PRODUCT_LIST_PRICE,
+        'PRODUCT_LIST_QUANTITY'     => PRODUCT_LIST_QUANTITY,
+        'PRODUCT_LIST_WEIGHT'       => PRODUCT_LIST_WEIGHT,
+        'PRODUCT_LIST_IMAGE'        => PRODUCT_LIST_IMAGE
+    ];
+
+    /**
+     * Association between displayed fields and their database field names.
+     *
+     * @var array
+     */
+    protected const DEFINE_DB_FIELDS = [
+        'PRODUCT_LIST_MODEL'        => 'products_model',
+        'PRODUCT_LIST_NAME'         => 'products_name',
+        'PRODUCT_LIST_MANUFACTURER' => 'manufacturers_name',
+        'PRODUCT_LIST_PRICE'        => 'products_price',
+        'PRODUCT_LIST_QUANTITY'     => 'products_quantity',
+        'PRODUCT_LIST_WEIGHT'       => 'products_weight',
+        'PRODUCT_LIST_IMAGE'        => 'products_name'
+    ];
+
+    /**
      * Array of allowed search fields (keys) for building the sql sequence by calling the
      * corresponding sql build method(s) with parameters (values).
      *
@@ -121,23 +158,16 @@ class zcAjaxInstantSearchPage extends InstantSearch
             return '';
         }
 
+        // Begin of variables used by the product_listing module and the listing template
         $_GET['main_page']       = FILENAME_INSTANT_SEARCH_RESULT;
         $_GET['act']             = '';
         $_GET['method']          = '';
         $_GET['keyword']         = $_POST['keyword'];
         $_GET['page']            = $_POST['resultPage'];
         $_GET['alpha_filter_id'] = $_POST['alpha_filter_id'];
-        // TODO: sort $_GET
+        $_GET['sort']            = $_POST['sort'];
 
-        $define_list = [
-            'PRODUCT_LIST_MODEL'        => PRODUCT_LIST_MODEL,
-            'PRODUCT_LIST_NAME'         => PRODUCT_LIST_NAME,
-            'PRODUCT_LIST_MANUFACTURER' => PRODUCT_LIST_MANUFACTURER,
-            'PRODUCT_LIST_PRICE'        => PRODUCT_LIST_PRICE,
-            'PRODUCT_LIST_QUANTITY'     => PRODUCT_LIST_QUANTITY,
-            'PRODUCT_LIST_WEIGHT'       => PRODUCT_LIST_WEIGHT,
-            'PRODUCT_LIST_IMAGE'        => PRODUCT_LIST_IMAGE
-        ];
+        $define_list = self::DEFINE_LIST;
         asort($define_list);
         $column_list = [];
         foreach ($define_list as $column => $value) {
@@ -145,67 +175,30 @@ class zcAjaxInstantSearchPage extends InstantSearch
                 $column_list[] = $column;
             }
         }
-
-        // TODO: sorting
-        /*
-        // set the default sort order setting from the Admin when not defined by customer
-        if (!isset($_GET['sort']) and PRODUCT_LISTING_DEFAULT_SORT_ORDER != '') {
-            $_GET['sort'] = PRODUCT_LISTING_DEFAULT_SORT_ORDER;
-        }
-        if ((!isset($_GET['sort'])) || (!preg_match('/[1-8][ad]/', $_GET['sort'])) || (substr($_GET['sort'], 0, 1) > count($column_list))) {
-            for ($col = 0, $n = sizeof($column_list); $col < $n; $col++) {
-                if ($column_list[$col] == 'PRODUCT_LIST_NAME') {
-                    $_GET['sort'] = $col + 1 . 'a';
-                    $order_str .= ' ORDER BY pd.products_name';
-                    break;
-                } else {
-                    // sort by products_sort_order when PRODUCT_LISTING_DEFAULT_SORT_ORDER ia left blank
-                    // for reverse, descending order use:
-                    //       $listing_sql .= " order by p.products_sort_order desc, pd.products_name";
-                    $order_str .= " order by p.products_sort_order, pd.products_name";
-                    break;
-                }
-            }
-            // if set to nothing use products_sort_order and PRODUCTS_LIST_NAME is off
-            if (PRODUCT_LISTING_DEFAULT_SORT_ORDER == '') {
-                $_GET['sort'] = '20a';
-            }
-        } else {
-            $sort_col = substr($_GET['sort'], 0, 1);
-            $sort_order = substr($_GET['sort'], -1);
-            $order_str = ' order by ';
-            switch ($column_list[$sort_col - 1]) {
-                case 'PRODUCT_LIST_MODEL':
-                    $order_str .= "p.products_model " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
-                    break;
-                case 'PRODUCT_LIST_NAME':
-                    $order_str .= "pd.products_name " . ($sort_order == 'd' ? "desc" : "");
-                    break;
-                case 'PRODUCT_LIST_MANUFACTURER':
-                    $order_str .= "m.manufacturers_name " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
-                    break;
-                case 'PRODUCT_LIST_QUANTITY':
-                    $order_str .= "p.products_quantity " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
-                    break;
-                case 'PRODUCT_LIST_IMAGE':
-                    $order_str .= "pd.products_name";
-                    break;
-                case 'PRODUCT_LIST_WEIGHT':
-                    $order_str .= "p.products_weight " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
-                    break;
-                case 'PRODUCT_LIST_PRICE':
-                    //        $order_str .= "final_price " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
-                    $order_str .= "p.products_price_sorter " . ($sort_order == 'd' ? "desc" : "") . ", pd.products_name";
-                    break;
-            }
-        }*/
-
-        // Begin of variables used by the product_listing module and the listing template
         $listing_split = (object)[
             'number_of_rows' => count($this->results)
         ];
         $listing = $this->results;
         // End of variables used by the product_listing module and the listing template
+
+
+        // Apply custom sort to the results based on $_POST['sort']
+        if (!empty($_POST['sort'])
+            && $_POST['sort'] !== '20a' // not equal to the default value
+            && preg_match('/[1-8][ad]/', $_GET['sort'])
+            && $_GET['sort'][0] <= count($column_list)
+        ) {
+            $sortCol     = $_GET['sort'][0];
+            $sortOrder   = substr($_GET['sort'], -1);
+            $sortDbField = self::DEFINE_DB_FIELDS[$column_list[$sortCol - 1]];
+            usort($this->results, static fn($prod1, $prod2) =>
+                $sortOrder === 'd'
+                    ? [$prod2[$sortDbField]] <=> [$prod1[$sortDbField]]
+                    : [$prod1[$sortDbField]] <=> [$prod2[$sortDbField]]
+            );
+            $listing = $this->results;
+        }
+
 
         ob_start();
         include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCT_LISTING_INSTANT_SEARCH));
@@ -221,6 +214,15 @@ class zcAjaxInstantSearchPage extends InstantSearch
      */
     protected function calcResultsLimit(): int
     {
-        return ((int)INSTANT_SEARCH_PAGE_MAX_RESULTS_PER_PAGE * $this->resultPage) - count($this->results);
+        // If a custom sort is applied, set the sql limit to the maximum value (we need to fetch all
+        // the products from the database in order to properly sort them, otherwise at every "ajax page" loaded
+        // the displayed results would change)
+        if (!empty($_POST['sort']) && $_POST['sort'] !== '20a') {
+            return self::INSTANT_SEARCH_PAGE_MAX_RESULTS_SCREEN;
+        }
+
+       $maxResultsPage = ((int)INSTANT_SEARCH_PAGE_MAX_RESULTS_PER_PAGE * $this->resultPage) - count($this->results);
+
+        return min($maxResultsPage, self::INSTANT_SEARCH_PAGE_MAX_RESULTS_SCREEN);
     }
 }

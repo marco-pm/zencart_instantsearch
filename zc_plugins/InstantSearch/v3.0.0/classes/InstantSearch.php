@@ -184,7 +184,7 @@ abstract class InstantSearch extends \base
         $sql = $db->bindVars($sql, ':searchBeginsQuery', $this->searchQuery . '%', 'string');
         $sql = $db->bindVars($sql, ':regexpQuery', $this->searchQueryRegexp, 'string');
         $sql = $db->bindVars($sql, ':languageId', $_SESSION['languages_id'], 'integer');
-        $sql = $db->bindVars($sql, ':foundIds', $foundIds ?? "''", 'string');
+        $sql = $db->bindVars($sql, ':foundIds', $foundIds ?? "''", 'inConstructInteger');
         $sql = $db->bindVars($sql, ':alphaFilterId', chr($this->alphaFilterId) . '%', 'string');
         $sql = $db->bindVars($sql, ':resultsLimit', $this->calcResultsLimit(), 'integer');
 
@@ -208,16 +208,15 @@ abstract class InstantSearch extends \base
      */
     protected function buildSqlProductNameDescriptionMatch(bool $includeDescription = true, bool $withQueryExpansion = true): string
     {
-        $queryEpansion = $withQueryExpansion === true ? ' WITH QUERY EXPANSION' : '';
+        $queryExpansion = $withQueryExpansion === true ? ' WITH QUERY EXPANSION' : '';
 
-        $sql = "SELECT p.products_id, p.products_image, p.products_sort_order, p.manufacturers_id,
-                       p.products_price, p.products_tax_class_id, p.products_price_sorter, p.products_quantity,
-                       p.products_qty_box_status, p.master_categories_id, p.product_is_call, pd.products_name,
+        $sql = "SELECT p.*, pd.products_name, m.manufacturers_name,
                        MATCH(pd.products_name) AGAINST(:searchBooleanQuery IN BOOLEAN MODE) AS name_relevance_boolean,
-                       MATCH(pd.products_name) AGAINST(:searchQuery" . $queryEpansion . ") AS name_relevance_natural" .
-                       ($includeDescription === true ? ", MATCH(pd.products_description) AGAINST(:searchQuery" . $queryEpansion . ") AS description_relevance" : "") . "
+                       MATCH(pd.products_name) AGAINST(:searchQuery" . $queryExpansion . ") AS name_relevance_natural" .
+                       ($includeDescription === true ? ", MATCH(pd.products_description) AGAINST(:searchQuery" . $queryExpansion . ") AS description_relevance" : "") . "
                 FROM " . TABLE_PRODUCTS_DESCRIPTION . " pd
                 JOIN " . TABLE_PRODUCTS . " p ON (p.products_id = pd.products_id)
+                LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
                 WHERE p.products_status <> 0 " .
                   (($this->alphaFilterId > 0 ) ? "AND pd.products_name LIKE :alphaFilterId " : "") . "
                   AND pd.language_id = :languageId
@@ -227,9 +226,9 @@ abstract class InstantSearch extends \base
                           (
                               MATCH(pd.products_name) AGAINST(:searchBooleanQuery IN BOOLEAN MODE)
                               +
-                              MATCH(pd.products_name) AGAINST(:searchQuery" . $queryEpansion . ")
+                              MATCH(pd.products_name) AGAINST(:searchQuery" . $queryExpansion . ")
                           ) > 0 " .
-                          ($includeDescription === true ? "OR MATCH(pd.products_description) AGAINST(:searchQuery" . $queryEpansion . ") > 0 " : "") . "
+                          ($includeDescription === true ? "OR MATCH(pd.products_description) AGAINST(:searchQuery" . $queryExpansion . ") > 0 " : "") . "
                   )
                 ORDER BY name_relevance_boolean DESC, name_relevance_natural DESC, " .
                          ($includeDescription === true ? "description_relevance DESC, " : "") . "
@@ -247,16 +246,14 @@ abstract class InstantSearch extends \base
      */
     protected function buildSqlProductName(bool $beginsWith = true): string
     {
-        $sql = "SELECT p.products_id, p.products_image, p.products_sort_order, p.manufacturers_id,
-                       p.products_price, p.products_tax_class_id, p.products_price_sorter, p.products_quantity,
-                       p.products_qty_box_status, p.master_categories_id, p.product_is_call, pd.products_name
+        $sql = "SELECT p.*, pd.products_name, m.manufacturers_name
                 FROM " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
+                LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
                 LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (p.products_id = cpv.product_id AND cpv.language_id = :languageId)
                 WHERE p.products_status <> 0 " .
                   (($this->alphaFilterId > 0 ) ? "AND pd.products_name LIKE :alphaFilterId " : "") . "
-                  AND pd.products_name " . ($beginsWith === true ? "LIKE :searchBeginsQuery" : "REGEXP :regexpQuery") .
-                  (($this->alphaFilterId > 0 ) ? " AND pd.products_name LIKE :alphaFilterId " : "") . "
+                  AND pd.products_name " . ($beginsWith === true ? "LIKE :searchBeginsQuery" : "REGEXP :regexpQuery") . "
                   AND pd.language_id = :languageId
                   AND p.products_id NOT IN (:foundIds)
                 ORDER BY cpv.views DESC, p.products_sort_order, pd.products_name
@@ -273,15 +270,14 @@ abstract class InstantSearch extends \base
      */
     protected function buildSqlProductModel(bool $exactMatch = true): string
     {
-        $sql = "SELECT p.products_id, p.products_image, p.products_sort_order, p.manufacturers_id,
-                       p.products_price, p.products_tax_class_id, p.products_price_sorter, p.products_quantity,
-                       p.products_qty_box_status, p.master_categories_id, p.product_is_call, pd.products_name
+        $sql = "SELECT p.*, pd.products_name, m.manufacturers_name
                 FROM " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
+                LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
                 LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (p.products_id = cpv.product_id AND cpv.language_id = :languageId)
                 WHERE p.products_status <> 0 " .
                   (($this->alphaFilterId > 0 ) ? "AND pd.products_name LIKE :alphaFilterId " : "") . "
-                  AND pd.products_name " . ($exactMatch === true ? "LIKE :searchBeginsQuery" : "REGEXP :regexpQuery") . "
+                  AND p.products_model " . ($exactMatch === true ? "= :searchQuery" : "REGEXP :regexpQuery") . "
                   AND pd.language_id = :languageId
                   AND p.products_id NOT IN (:foundIds)
                 ORDER BY cpv.views DESC, p.products_sort_order, pd.products_name
