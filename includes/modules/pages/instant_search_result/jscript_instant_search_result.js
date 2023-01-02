@@ -55,10 +55,16 @@ async function loadResults() {
         document.querySelector(instantSearchFormFilterSelector).style.display = 'block';
         document.querySelector(instantSearchListingDivSelector).innerHTML = responseData;
         instantSearchPreviousResult = responseData;
+
+        // Update URL page parameter
+        const url = new URL(window.document.URL);
+        url.searchParams.set('page', instantSearchResultPage);
+        window.history.replaceState(null, '', url.toString());
+
         instantSearchResultPage++;
         instantSearchIsLoadingResults = false;
     } else {
-        // If the response HTML is empty or the same as before, it means that we reached the end of results
+        // If the response HTML is empty or the same as before, it means that we have reached the end of results
         instantSearchResultPageIsLast = true;
 
         if (!responseData.length) {
