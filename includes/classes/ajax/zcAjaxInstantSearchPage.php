@@ -221,7 +221,7 @@ class zcAjaxInstantSearchPage extends InstantSearch
             return self::INSTANT_SEARCH_PAGE_MAX_RESULTS_SCREEN;
         }
 
-       $maxResultsPage = ((int)INSTANT_SEARCH_PAGE_MAX_RESULTS_PER_PAGE * $this->resultPage) - count($this->results);
+       $maxResultsPage = ((int)INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE * $this->resultPage) - count($this->results);
 
         return min($maxResultsPage, self::INSTANT_SEARCH_PAGE_MAX_RESULTS_SCREEN);
     }
