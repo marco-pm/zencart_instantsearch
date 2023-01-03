@@ -44,7 +44,7 @@ class zcAjaxInstantSearchPage extends InstantSearch
         'PRODUCT_LIST_MODEL'        => 'products_model',
         'PRODUCT_LIST_NAME'         => 'products_name',
         'PRODUCT_LIST_MANUFACTURER' => 'manufacturers_name',
-        'PRODUCT_LIST_PRICE'        => 'products_price',
+        'PRODUCT_LIST_PRICE'        => 'products_price_sorter',
         'PRODUCT_LIST_QUANTITY'     => 'products_quantity',
         'PRODUCT_LIST_WEIGHT'       => 'products_weight',
         'PRODUCT_LIST_IMAGE'        => 'products_name'

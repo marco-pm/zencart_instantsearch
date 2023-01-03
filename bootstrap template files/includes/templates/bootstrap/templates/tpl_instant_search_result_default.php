@@ -1,6 +1,6 @@
 <?php
 /**
- * Adaptation of tpl_search_result_default.php (responsive_classic template version)
+ * Adaptation of tpl_search_result_default.php (bootstrap template version)
  * for the Instant Search result page.
  *
  * @package  Instant Search Plugin for Zen Cart
@@ -16,13 +16,11 @@
     <h1 id="searchResultsDefaultHeading"><?php echo HEADING_TITLE; ?></h1>
 
     <?php if ($do_filter_list || PRODUCT_LIST_ALPHA_SORTER === 'true') { ?>
-        <div id="instantSearchResults__sorterRow" class="group" style="display:none">
-        <?php
-            echo zen_draw_form('filter', zen_href_link(FILENAME_INSTANT_SEARCH_RESULT), 'get') . '<label class="inputLabel">' . TEXT_SHOW . '</label>';;
-            echo zen_post_all_get_params(['currency', 'alpha_filter_id']);
-            require(DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCT_LISTING_ALPHA_SORTER));
-            echo '</form>'; ?>
+        <?php echo zen_draw_form('filter', zen_href_link($search_result_page), 'get') . zen_post_all_get_params(['currency', 'alpha_filter_id']); ?>
+        <div id="instantSearchResults__sorterRow" class="row mb-3">
+            <?php require DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCT_LISTING_ALPHA_SORTER); ?>
         </div>
+        <?php echo '</form>'; ?>
     <?php } ?>
 
     <div id="instantSearchResults__noResultsFoundWrapper">
@@ -39,9 +37,5 @@
 
     <?php // don't remove this div ?>
     <div id="instantSearchResults__end"></div>
-
-    <div class="buttonRow back">
-        <?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?>
-    </div>
 
 </div>

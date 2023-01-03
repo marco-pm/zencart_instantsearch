@@ -1,6 +1,6 @@
 <?php
 /**
- * Adaptation of tpl_modules_product_listing.php (responsive_classic template version)
+ * Adaptation of tpl_modules_product_listing.php (bootstrap template version)
  * for the Instant Search result page.
  *
  * @package  Instant Search Plugin for Zen Cart
@@ -12,10 +12,8 @@
 ?>
 
 <?php if ($show_top_submit_button == true) { // only show when there is something to submit and enabled ?>
-    <div class="prod-list-wrap group">
-        <div class="forward button-top">
-            <?php echo zen_image_submit(BUTTON_IMAGE_ADD_PRODUCTS_TO_CART, BUTTON_ADD_PRODUCTS_TO_CART_ALT, 'id="submit1" name="submit1"'); ?>
-        </div>
+    <div id="productsListing-btn-toolbarTop" class="btn-toolbar justify-content-end my-3" role="toolbar">
+        <?php echo zen_image_submit(BUTTON_IMAGE_ADD_PRODUCTS_TO_CART, BUTTON_ADD_PRODUCTS_TO_CART_ALT, 'id="submit1" name="submit1"'); ?>
     </div>
 <?php } // show top submit ?>
 
@@ -26,13 +24,11 @@
 } ?>
 
 <?php if ($show_bottom_submit_button == true) { // only show when there is something to submit and enabled ?>
-    <div class="prod-list-wrap group">
-        <div class="forward button-top">
-            <?php echo zen_image_submit(BUTTON_IMAGE_ADD_PRODUCTS_TO_CART, BUTTON_ADD_PRODUCTS_TO_CART_ALT, 'id="submit2" name="submit2"'); ?>
-        </div>
+    <div id="productsListing-btn-toolbarBottom" class="btn-toolbar justify-content-end my-3" role="toolbar">
+        <?php echo zen_image_submit(BUTTON_IMAGE_ADD_PRODUCTS_TO_CART, BUTTON_ADD_PRODUCTS_TO_CART_ALT, 'id="submit2" name="submit1"'); ?>
     </div>
 <?php } // show_bottom_submit_button ?>
 
-<?php if ($how_many > 0 && PRODUCT_LISTING_MULTIPLE_ADD_TO_CART != 0 and $show_submit == true and $listing_split->number_of_rows > 0) {
+<?php if ($show_top_submit_button == true || $show_bottom_submit_button == true) {
     echo '</form>';
 } ?>

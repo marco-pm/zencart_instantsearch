@@ -13,7 +13,7 @@ const instantSearchSort                      = instantSearchParams.get('sort') ?
 const instantSearchEndResultsSelector        = '#instantSearchResults__end';
 const instantSearchListingDivSelector        = '#productListing';
 const instantSearchLoadingDivSelector        = '#instantSearchResults__loadingWrapper';
-const instantSearchFilterWrapperSelector     = '#filter-wrapper';
+const instantSearchFilterDivSelector         = '#instantSearchResults__sorterRow';
 const instantSearchNoResultsFoundDivSelector = '#instantSearchResults__noResultsFoundWrapper';
 let instantSearchResultPage                  = instantSearchParams.get('page') ?? 1;
 let instantSearchIsLoadingResults            = false;
@@ -57,7 +57,7 @@ async function loadResults() {
     const responseData = await response.json();
     const responseDataJson = JSON.parse(responseData);
 
-    document.querySelector(instantSearchFilterWrapperSelector).style.display = 'block';
+    document.querySelector(instantSearchFilterDivSelector).style.display = 'block';
     if (responseDataJson.results.length > 0 && responseDataJson.count !== instantSearchPreviousResultCount) {
         document.querySelector(instantSearchListingDivSelector).innerHTML = responseDataJson.results;
         instantSearchPreviousResultCount = responseDataJson.count;
