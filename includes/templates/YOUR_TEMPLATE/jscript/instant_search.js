@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const signal = controller.signal;
                         const data = new FormData();
                         data.append('keyword', instantSearchQueryParsed);
+                        data.append('securityToken', instantSearchSecurityToken);
 
                         try {
                             const response = await fetch('ajax.php?act=ajaxInstantSearchDropdown&method=instantSearch', {

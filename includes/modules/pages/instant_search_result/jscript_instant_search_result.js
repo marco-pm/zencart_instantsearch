@@ -46,6 +46,7 @@ async function loadResults() {
     data.append('resultPage', instantSearchResultPage);
     data.append('alpha_filter_id', instantSearchAlphaFilterId);
     data.append('sort', instantSearchSort);
+    data.append('securityToken', instantSearchResultSecurityToken);
 
     const response = await fetch('ajax.php?act=ajaxInstantSearchPage&method=instantSearch', {
         method: 'POST',

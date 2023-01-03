@@ -9,6 +9,7 @@
 
 if (defined('INSTANT_SEARCH_DROPDOWN_ENABLED') && defined('INSTANT_SEARCH_PAGE_ENABLED')) { ?>
     <script>
+        const instantSearchSecurityToken          = '<?php echo $_SESSION['securityToken']; ?>';
         const instantSearchDropdownEnabled        = <?php echo (bool)INSTANT_SEARCH_DROPDOWN_ENABLED; ?>;
         const instantSearchPageEnabled            = <?php echo (bool)INSTANT_SEARCH_PAGE_ENABLED; ?>;
         const instantSearchDropdownInputWaitTime  = parseInt(<?php echo INSTANT_SEARCH_DROPDOWN_INPUT_WAIT_TIME; ?>);
