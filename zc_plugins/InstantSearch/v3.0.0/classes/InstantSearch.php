@@ -59,6 +59,20 @@ abstract class InstantSearch extends \base
     protected int $alphaFilterId;
 
     /**
+     * If true, the search terms are added to the search log table.
+     *
+     * @var string
+     */
+    protected bool $addToSearchLog;
+
+    /**
+     * The prefix to add to the search log entry.
+     *
+     * @var string
+     */
+    protected string $searchLogPrefix;
+
+    /**
      * The search results.
      *
      * @var array
@@ -92,6 +106,10 @@ abstract class InstantSearch extends \base
             $this->searchDb();
         } catch (InstantSearchConfigurationException $e) {
             return '<strong>' . $e->getMessage() . '</strong>';
+        }
+
+        if ($this->addToSearchLog === true) {
+            $this->addEntryToSearchLog();
         }
 
         $this->notify('NOTIFY_INSTANT_SEARCH_BEFORE_FORMAT_RESULTS', $this->searchQuery, $this->results);
@@ -225,13 +243,13 @@ abstract class InstantSearch extends \base
                   AND pd.language_id = :languageId
                   AND p.products_id NOT IN (:foundIds)
                   AND
+                    (
                       (
-                          (
-                              MATCH(pd.products_name) AGAINST(:searchBooleanQuery IN BOOLEAN MODE)
-                              +
-                              MATCH(pd.products_name) AGAINST(:searchQuery" . $queryExpansion . ")
-                          ) > 0 " .
-                          ($includeDescription === true ? "OR MATCH(pd.products_description) AGAINST(:searchQuery" . $queryExpansion . ") > 0 " : "") . "
+                          MATCH(pd.products_name) AGAINST(:searchBooleanQuery IN BOOLEAN MODE)
+                          +
+                          MATCH(pd.products_name) AGAINST(:searchQuery" . $queryExpansion . ")
+                      ) > 0 " .
+                      ($includeDescription === true ? "OR MATCH(pd.products_description) AGAINST(:searchQuery" . $queryExpansion . ") > 0 " : "") . "
                   )
                 ORDER BY name_relevance_boolean DESC, name_relevance_natural DESC, " .
                          ($includeDescription === true ? "description_relevance DESC, " : "") . "
@@ -324,6 +342,40 @@ abstract class InstantSearch extends \base
                 LIMIT :resultsLimit";
 
         return $sql;
+    }
+
+    /**
+     * Adds the searched terms to the search log table (if the table exists, i.e.
+     * if the Search Log plugin is installed).
+     *
+     * @return void
+     */
+    protected function addEntryToSearchLog(): void
+    {
+        global $db;
+
+        $searchLogTableName = DB_PREFIX . 'search_log';
+
+        $sql = "
+            SELECT TABLE_NAME
+              FROM information_schema.TABLES
+             WHERE (TABLE_SCHEMA = :table_schema)
+               AND (TABLE_NAME = :table_name)
+        ";
+
+        $sql = $db->bindVars($sql, ':table_schema', DB_DATABASE, 'string');
+        $sql = $db->bindVars($sql, ':table_name', $searchLogTableName, 'string');
+        $check = $db->Execute($sql);
+
+        if ($check->RecordCount() > 0) {
+            $sql = "
+                INSERT INTO :table_name (search_term, search_time)
+                VALUES (:search_term, NOW())
+            ";
+            $sql = $db->bindVars($sql, ':table_name', $searchLogTableName, 'noquotestring');
+            $sql = $db->bindVars($sql, ':search_term', $this->searchLogPrefix . ' ' . $this->searchQuery, 'string');
+            $db->Execute($sql);
+        }
     }
 
     /**

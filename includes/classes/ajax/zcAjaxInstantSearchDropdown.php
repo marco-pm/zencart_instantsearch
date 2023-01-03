@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-use classes\InstantSearch;
+use Zencart\Plugins\Catalog\InstantSearch\InstantSearch;
 
 class zcAjaxInstantSearchDropdown extends InstantSearch
 {
@@ -49,6 +49,9 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
      */
     public function __construct()
     {
+        $this->addToSearchLog = INSTANT_SEARCH_DROPDOWN_ADD_LOG_ENTRY === 'true';
+        $this->searchLogPrefix = TEXT_SEARCH_LOG_ENTRY_DROPDOWN_PREFIX;
+
         parent::__construct();
     }
 

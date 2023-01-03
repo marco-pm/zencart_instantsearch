@@ -87,6 +87,8 @@ class zcAjaxInstantSearchPage extends InstantSearch
      */
     public function __construct()
     {
+        $this->addToSearchLog = INSTANT_SEARCH_PAGE_ADD_LOG_ENTRY === 'true';
+        $this->searchLogPrefix = TEXT_SEARCH_LOG_ENTRY_PAGE_PREFIX;
         $this->resultPage = 1;
 
         parent::__construct();
@@ -105,6 +107,10 @@ class zcAjaxInstantSearchPage extends InstantSearch
 
         if (!empty($_POST['resultPage']) && (int)$_POST['resultPage'] > 0) {
             $this->resultPage = (int)$_POST['resultPage'];
+
+            if ($this->resultPage !== 1) {
+                $this->addToSearchLog = false;
+            }
         }
 
         if (isset($_POST['alpha_filter_id']) && (int)$_POST['alpha_filter_id'] > 0) {
