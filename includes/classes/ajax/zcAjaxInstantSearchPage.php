@@ -128,7 +128,7 @@ class zcAjaxInstantSearchPage extends InstantSearch
      */
     protected function loadSearchFieldsConfiguration(): array
     {
-        $searchFields = explode(',', preg_replace('/,$/', '', str_replace(' ', '', INSTANT_SEARCH_PAGE_FIELDS_LIST))); // Remove spaces and extra comma at the end
+        $searchFields = explode(',', INSTANT_SEARCH_PAGE_FIELDS_LIST);
         $errorMessage = sprintf(TEXT_INSTANT_SEARCH_CONFIGURATION_ERROR, 'INSTANT_SEARCH_PAGE_FIELDS_LIST');
 
         return [$searchFields, $errorMessage];

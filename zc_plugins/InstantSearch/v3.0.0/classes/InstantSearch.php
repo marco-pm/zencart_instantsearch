@@ -149,16 +149,6 @@ abstract class InstantSearch extends \base
         // Load search fields list
         [$searchFields, $errorMessage] = $this->loadSearchFieldsConfiguration();
 
-        // Check that there are no duplicates
-        if (count(array_unique($searchFields)) < count($searchFields)) {
-            throw new InstantSearchConfigurationException($errorMessage);
-        }
-
-        // Check that there is only one value between name and name-description in the list
-        if (in_array('name', $searchFields) && in_array('name-description', $searchFields)) {
-            throw new InstantSearchConfigurationException($errorMessage);
-        }
-
         $sqlSequence = [];
 
         foreach ($searchFields as $searchField) {
