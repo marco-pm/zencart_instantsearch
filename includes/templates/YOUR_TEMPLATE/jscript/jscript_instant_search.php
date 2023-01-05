@@ -10,8 +10,8 @@
 if (defined('INSTANT_SEARCH_DROPDOWN_ENABLED') && defined('INSTANT_SEARCH_PAGE_ENABLED')) { ?>
     <script>
         const instantSearchSecurityToken          = '<?php echo $_SESSION['securityToken']; ?>';
-        const instantSearchDropdownEnabled        = <?php echo (bool)INSTANT_SEARCH_DROPDOWN_ENABLED; ?>;
-        const instantSearchPageEnabled            = <?php echo (bool)INSTANT_SEARCH_PAGE_ENABLED; ?>;
+        const instantSearchDropdownEnabled        = <?php echo INSTANT_SEARCH_DROPDOWN_ENABLED === 'true' ? 1 : 0; ?>;
+        const instantSearchPageEnabled            = <?php echo INSTANT_SEARCH_PAGE_ENABLED === 'true' ? 1 : 0; ?>;
         const instantSearchDropdownInputWaitTime  = parseInt(<?php echo INSTANT_SEARCH_DROPDOWN_INPUT_WAIT_TIME; ?>);
         const instantSearchDropdownInputMinLength = parseInt(<?php echo INSTANT_SEARCH_DROPDOWN_MIN_WORDSEARCH_LENGTH; ?>);
         const instantSearchDropdownInputSelector  = '<?php echo str_replace("'", "\'", INSTANT_SEARCH_DROPDOWN_INPUT_BOX_SELECTOR); ?>';
