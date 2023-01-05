@@ -119,7 +119,7 @@ class ScriptedInstaller extends ScriptedInstallBase
             AND column_name = 'products_name'
             AND index_type = 'FULLTEXT'
         ");
-        if ($index->RecordCount() > 0) {
+        if (!$index->EOF) {
             $this->executeInstallerSql("
                 DROP INDEX idx_products_name
                 ON " . TABLE_PRODUCTS_DESCRIPTION
@@ -133,7 +133,7 @@ class ScriptedInstaller extends ScriptedInstallBase
             AND column_name = 'products_description'
             AND index_type = 'FULLTEXT'
         ");
-        if ($index->RecordCount() > 0) {
+        if (!$index->EOF) {
             $this->executeInstallerSql("
                 DROP INDEX idx_products_description
                 ON " . TABLE_PRODUCTS_DESCRIPTION
@@ -160,7 +160,7 @@ class ScriptedInstaller extends ScriptedInstallBase
             WHERE column_name = 'products_name'
             AND index_type = 'FULLTEXT'
         ");
-        if ($index->RecordCount() < 0) {
+        if ($index->EOF) {
             $this->executeInstallerSql("
                 CREATE FULLTEXT INDEX idx_products_name
                 ON " . TABLE_PRODUCTS_DESCRIPTION . "(products_name)
@@ -173,7 +173,7 @@ class ScriptedInstaller extends ScriptedInstallBase
             WHERE column_name = 'products_description'
             AND index_type = 'FULLTEXT'
         ");
-        if ($index->RecordCount() < 0) {
+        if ($index->EOF) {
             $this->executeInstallerSql("
                 CREATE FULLTEXT INDEX idx_products_description
                 ON " . TABLE_PRODUCTS_DESCRIPTION . "(products_description)
@@ -217,7 +217,7 @@ class ScriptedInstaller extends ScriptedInstallBase
                 ('Dropdown - Display Manufacturer Count', 'INSTANT_SEARCH_DROPDOWN_DISPLAY_MANUFACTURERS_COUNT', 'true', 'Display the number of products for the matched manufacturers.', $configurationGroupId, now(), 600, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),', NULL),
                 ('Dropdown - Image Width', 'INSTANT_SEARCH_DROPDOWN_IMAGE_WIDTH', '100', 'Width of the product/category/manufacturer\'s image.', $configurationGroupId, now(), 650, NULL, NULL, '{\"error\":\"TEXT_INSTANT_SEARCH_CONFIGURATION_INT_VALIDATE\",\"id\":\"FILTER_VALIDATE_INT\",\"options\":{\"options\":{\"min_range\":0}}}'),
                 ('Dropdown - Image Height', 'INSTANT_SEARCH_DROPDOWN_IMAGE_HEIGHT', '80', 'Height of the product/category/manufacturer\'s image.', $configurationGroupId, now(), 700, NULL, NULL, '{\"error\":\"TEXT_INSTANT_SEARCH_CONFIGURATION_INT_VALIDATE\",\"id\":\"FILTER_VALIDATE_INT\",\"options\":{\"options\":{\"min_range\":0}}}'),
-                ('Dropdown - Higlight Search Terms in Bold', 'INSTANT_SEARCH_DROPDOWN_HIGHLIGHT_TEXT', 'suggestion', '<code>none</code>: no highlight<br><code>query</code>: highlight the user search terms<br><code>suggestion</code>: highlight the autocompleted text', $configurationGroupId, now(), 750, NULL, 'zen_cfg_select_option(array(\'none\', \'query\', \'suggestion\'),', NULL),
+                ('Dropdown - Highlight Search Terms in Bold', 'INSTANT_SEARCH_DROPDOWN_HIGHLIGHT_TEXT', 'suggestion', '<code>none</code>: no highlight<br><code>query</code>: highlight the user search terms<br><code>suggestion</code>: highlight the autocompleted text', $configurationGroupId, now(), 750, NULL, 'zen_cfg_select_option(array(\'none\', \'query\', \'suggestion\'),', NULL),
                 ('Dropdown - Input Box Selector', 'INSTANT_SEARCH_DROPDOWN_INPUT_BOX_SELECTOR', 'input[name=\"keyword\"]', 'CSS selector of the search input box(es). You might need to change it if you\'re using a custom template and the results dropdown is not showing. Default: <code>input[name=\"keyword\"]</code>', $configurationGroupId, now(), 800, NULL, NULL, '{\"error\":\"ERROR\",\"id\":\"FILTER_SANITIZE_URL\",\"options\":{\"options\":{}}}'),
                 ('Dropdown - Add Entry to Search Log', 'INSTANT_SEARCH_DROPDOWN_ADD_LOG_ENTRY', 'false', 'Add the searched terms to the Search Log report (if <em>Search Log</em> plugin is installed).', $configurationGroupId, now(), 850, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),', NULL),
                 ('Listing Page - Number of Results per Page', 'INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE', '10', 'Number of products per page displayed in the search results listing page.', $configurationGroupId, now(), 900, NULL, NULL, '{\"error\":\"TEXT_INSTANT_SEARCH_CONFIGURATION_INT_VALIDATE\",\"id\":\"FILTER_VALIDATE_INT\",\"options\":{\"options\":{\"min_range\":0}}}'),
