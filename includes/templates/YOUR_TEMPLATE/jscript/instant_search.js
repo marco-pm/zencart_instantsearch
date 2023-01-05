@@ -8,7 +8,7 @@
 
 const {slideDown, slideUp, slideToggle} = window.domSlider
 const resultsContainerSelector  = 'instantSearchResultsDropdownContainer';
-const instantSearchFormSelector = 'form[action*=search_result]:not([name=search]):not([name=advanced_search])';
+const instantSearchFormSelector = `form[action*=${instantSearchZcSearchResultPageName}]:not([name=${instantSearchZcSearchPageName}])`;
 let controller;
 let instantSearchInputCurrent;
 let inputTimer;
@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (instantSearchPageEnabled) {
         // Replace the search forms' action
-        const instantSearchForms = document.querySelectorAll(instantSearchFormSelector);
-        instantSearchForms.forEach(form => form.action = form.action.replace('search_result', 'instant_search_result'));
-
-        const instantSearchFormPageInputs = document.querySelectorAll(`${instantSearchFormSelector} input[value="search_result"]`);
-        instantSearchFormPageInputs.forEach(input => input.value = 'instant_search_result');
+        const instantSearchFormPageInputs = document.querySelectorAll(`${instantSearchFormSelector} input[value="${instantSearchZcSearchResultPageName}"]`);
+        instantSearchFormPageInputs.forEach(input => input.value = instantSearchResultPageName);
 
         const instantSearchFormSearchDescrInputs = document.querySelectorAll(`${instantSearchFormSelector} input[name="search_in_description"]`);
         instantSearchFormSearchDescrInputs.forEach(input => input.remove());
+
+        const instantSearchForms = document.querySelectorAll(instantSearchFormSelector);
+        instantSearchForms.forEach(form => form.action = form.action.replace(instantSearchZcSearchResultPageName, instantSearchResultPageName));
     }
 
     if (instantSearchDropdownEnabled) {
