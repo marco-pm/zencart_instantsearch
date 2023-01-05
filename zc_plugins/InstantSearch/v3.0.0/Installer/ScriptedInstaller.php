@@ -37,7 +37,7 @@ class ScriptedInstaller extends ScriptedInstallBase
             WHERE configuration_group_title = '" . self::CONFIGURATION_GROUP_TITLE . "'
             LIMIT 1
         ");
-        if ($sql->RecordCount() < 0) {
+        if ($sql->RecordCount() === 0) {
             return false;
         }
         $configurationGroupId = (int)$sql->fields['configuration_group_id'];
@@ -67,19 +67,19 @@ class ScriptedInstaller extends ScriptedInstallBase
             WHERE configuration_group_title = '" . self::CONFIGURATION_GROUP_TITLE . "'
             LIMIT 1
         ");
-        if ($sql->RecordCount < 0) {
+        if ($sql->RecordCount() === 0) {
             $this->dbConn->Execute("
                 INSERT INTO " . TABLE_CONFIGURATION_GROUP . " (configuration_group_title, configuration_group_description, sort_order, visible)
                 VALUES ('" . self::CONFIGURATION_GROUP_TITLE . "', '" . self::CONFIGURATION_GROUP_TITLE . "', 1, 1);
             ");
-            $configurationGroupId = (int)$this->dbConn->Insert_ID();
+            $configurationGroupId = (int)($this->dbConn->Insert_ID());
             $this->executeInstallerSql("
                 UPDATE " . TABLE_CONFIGURATION_GROUP . "
                 SET sort_order = $configurationGroupId
                 WHERE configuration_group_id = $configurationGroupId
             ");
         } else {
-            $configurationGroupId = (int)$sql->fields['configuration_group_id'];
+            $configurationGroupId = (int)($sql->fields['configuration_group_id']);
         }
 
         // Register admin page
