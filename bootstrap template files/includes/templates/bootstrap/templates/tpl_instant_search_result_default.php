@@ -17,7 +17,7 @@
 
     <?php if ($do_filter_list || PRODUCT_LIST_ALPHA_SORTER === 'true') { ?>
         <?php echo zen_draw_form('filter', zen_href_link($search_result_page), 'get') . zen_post_all_get_params(['currency', 'alpha_filter_id']); ?>
-        <div id="instantSearchResults__sorterRow" class="row mb-3">
+        <div class="instantSearchResults__sorterRow my-3">
             <?php require DIR_WS_MODULES . zen_get_module_directory(FILENAME_PRODUCT_LISTING_ALPHA_SORTER); ?>
         </div>
         <?php echo '</form>'; ?>

@@ -13,7 +13,7 @@ const instantSearchSort                      = instantSearchParams.get('sort') ?
 const instantSearchEndResultsSelector        = '#instantSearchResults__end';
 const instantSearchListingDivSelector        = '#productListing';
 const instantSearchLoadingDivSelector        = '#instantSearchResults__loadingWrapper';
-const instantSearchFilterDivSelector         = '#instantSearchResults__sorterRow';
+const instantSearchFilterDivSelector         = '.instantSearchResults__sorterRow';
 const instantSearchNoResultsFoundDivSelector = '#instantSearchResults__noResultsFoundWrapper';
 let instantSearchResultPage                  = instantSearchParams.get('page') ?? 1;
 let instantSearchIsLoadingResults            = false;
@@ -77,6 +77,7 @@ async function loadResults() {
 
         if (responseDataJson.results.length === 0 || responseDataJson.count === 0) {
             document.querySelector(instantSearchNoResultsFoundDivSelector).style.display = 'block';
+            document.querySelector(instantSearchFilterDivSelector).style.display = 'none';
         }
     }
     document.querySelector(instantSearchLoadingDivSelector).style.display = 'none';
