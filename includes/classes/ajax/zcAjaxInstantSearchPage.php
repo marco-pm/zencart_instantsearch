@@ -145,7 +145,11 @@ class zcAjaxInstantSearchPage extends InstantSearch
         $this->searchQuery = html_entity_decode(strtolower(strip_tags(trim($inputQuery))), ENT_NOQUOTES, 'utf-8');
 
         if ($this->searchQuery !== '') {
-            return parent::performSearch($inputQuery);
+            try {
+                return parent::performSearch($inputQuery);
+            } catch (JsonException $e) {
+                return '';
+            }
         }
 
         return '';

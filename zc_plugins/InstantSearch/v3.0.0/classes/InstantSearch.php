@@ -61,7 +61,7 @@ abstract class InstantSearch extends \base
     /**
      * If true, the search terms are added to the search log table.
      *
-     * @var string
+     * @var bool
      */
     protected bool $addToSearchLog;
 
@@ -94,7 +94,9 @@ abstract class InstantSearch extends \base
      * Sanitizes the input query, runs the search and formats the results.
      *
      * @param string $inputQuery The search query
-     * @return array number of results (first element) and HTML-formatted results (second element)
+     * @return string Json-encoded array with number of results (first element)
+     *                and HTML-formatted results (second element)
+     * @throws \JsonException
      */
     protected function performSearch(string $inputQuery): string
     {
@@ -115,9 +117,9 @@ abstract class InstantSearch extends \base
         $this->notify('NOTIFY_INSTANT_SEARCH_BEFORE_FORMAT_RESULTS', $this->searchQuery, $this->results);
 
         return json_encode([
-            'count'   => count($this->results),
+            'count' => count($this->results),
             'results' => $this->formatResults(),
-        ]);
+        ], JSON_THROW_ON_ERROR);
     }
 
     /**

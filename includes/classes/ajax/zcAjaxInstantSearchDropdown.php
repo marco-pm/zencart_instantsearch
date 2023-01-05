@@ -98,7 +98,11 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
             $searchQueryLength >= INSTANT_SEARCH_DROPDOWN_MIN_WORDSEARCH_LENGTH &&
             $searchQueryLength <= INSTANT_SEARCH_DROPDOWN_MAX_WORDSEARCH_LENGTH
         ) {
-            return parent::performSearch($inputQuery);
+            try {
+                return parent::performSearch($inputQuery);
+            } catch (JsonException $e) {
+                return '';
+            }
         }
 
         return '';
