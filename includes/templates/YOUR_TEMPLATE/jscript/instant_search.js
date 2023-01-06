@@ -9,7 +9,7 @@
 
 const {slideDown, slideUp, slideToggle} = window.domSlider
 const resultsContainerSelector  = 'instantSearchResultsDropdownContainer';
-const instantSearchFormSelector = `form[action*=${instantSearchZcSearchResultPageName}]:not([name=${instantSearchZcSearchPageName}])`;
+const instantSearchFormSelector = `form[action*=${instantSearchZcSearchResultPageName}]:not([name=search]):not([name=advanced_search])`;
 let controller;
 let instantSearchInputCurrent;
 let inputTimer;
