@@ -10,8 +10,8 @@
 $nameModelClass = '';
 if (INSTANT_SEARCH_DROPDOWN_HIGHLIGHT_TEXT === 'query') {
     $nameModelClass = ' instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightQuery';
-} elseif (INSTANT_SEARCH_DROPDOWN_HIGHLIGHT_TEXT === 'suggestion') {
-    $nameModelClass = ' instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightSuggestion';
+} elseif (INSTANT_SEARCH_DROPDOWN_HIGHLIGHT_TEXT === 'autocomplete') {
+    $nameModelClass = ' instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightAutocomplete';
 }
 
 foreach ($dropdownResults as $result) { ?>

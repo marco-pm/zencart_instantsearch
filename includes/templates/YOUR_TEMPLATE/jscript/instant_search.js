@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (instantSearchDropdownEnabled) {
-        // Add search suggestions on search inputs
+        // Add autocomplete dropdown on search inputs
         const instantSearchInputs = document.querySelectorAll(instantSearchDropdownInputSelector);
 
         for (let i = 0; i < instantSearchInputs.length; i++) {
