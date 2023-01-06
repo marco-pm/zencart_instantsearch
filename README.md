@@ -1,9 +1,12 @@
 # Instant Search plugin 3.0 for Zen Cart 1.5.7 and 1.5.8
-Show autocomplete search results while the user is typing.
-
-Show relevant search results in a listing page with infinite scroll.
+Show autocomplete search results while the user is typing. Show relevant search results in a listing page with 
+infinite scroll.
 
 # Features
+This plugin uses a combination of MySQL Full-Text Search and LIKE/REGEXP queries to quickly find and sort products, brands, and categories based on their relevance to the user query.
+
+The results can be displayed in an autocomplete dropdown as the user types in a search box and/or as a search results page with a sortable product list and infinite scroll once the user submits the search form, providing an alternative to the classic Zen Cart search results page.
+
 Version 3.0 of the plugin brings new features and substantial improvements to previous versions.
 - Faster and better searches, with MySQL Full-Text search and Query Expansion
 - New, additional search results page with sortable product list and infinite scroll

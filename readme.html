@@ -41,8 +41,8 @@
             <div class="container">
             <h1 class="mb-1 fs-4">Instant Search plugin 3.0.0 for Zen Cart 1.5.7 and 1.5.8</h1>
                 <div class="float-md-right text-center text-md-right mt-2 mt-md-0">
-                    <i class="bi-github me-1 align-top"></i> <a href="https://github.com/marco-pm/zencart_instantsearch" target="_blank" rel="noopener noreferrer" class="link-secondary text-decoration-none me-4">GitHub Repository</a>
-                    <i class="bi-layout-text-sidebar-reverse me-1 align-top"></i> <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" rel="noopener noreferrer" class="link-secondary text-decoration-none">Support Thread</a>
+                    <i class="bi-github me-1 align-top"></i> <a href="https://github.com/marco-pm/zencart_instantsearch" target="_blank" class="link-secondary text-decoration-none me-4">GitHub Repository</a>
+                    <i class="bi-layout-text-sidebar-reverse me-1 align-top"></i> <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" class="link-secondary text-decoration-none">Support Thread</a>
                 </div>
             </div>
         </nav>
@@ -64,7 +64,7 @@
                         <a class="nav-link link-secondary" href="#item-configuration">Configuration</a>
                         <nav class="nav nav-pills flex-column">
                             <a class="nav-link link-secondary ms-3 my-1" href="#item-fields-to-search-and-order">Fields to search and order</a>
-                            <a class="nav-link link-secondary ms-3 my-1" href="#item-query-expansion">Query expansion</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-query-expansion">Query Expansion</a>
                         </nav>
                         <a class="nav-link link-secondary" href="#item-faq">FAQs & Troubleshooting</a>
                         <a class="nav-link link-secondary" href="#item-list-of-notifiers">(For developers) List of Notifiers</a>
@@ -77,12 +77,12 @@
             <article class="col-md-8 col-xxl-9 mt-4 mt-md-0 ps-md-4">
                 <section>
                     <h1 id="item-introduction" class="display-1 fs-2 pb-2">Introduction</h1>
-                    <p>This plugin uses a combination of MySQL Full-Text Search and LIKE/REGEXP queries to find products, brands and categories in a fast way and sort them based on their relevance to the user query.</p>
-                    <p>The results can be displayed immediately, in an autocomplete dropdown while the user is typing in a search box, and/or as a search results page with sortable product list and infinite scroll, once the user submits the search form (therefore as an alternative to the classic Zen Cart search results page).</p>
+                    <p>This plugin uses a combination of MySQL Full-Text Search and LIKE/REGEXP queries to quickly find and sort products, brands, and categories based on their relevance to the user query.</p>
+                    <p>The results can be displayed in an autocomplete dropdown as the user types in a search box and/or as a search results page with a sortable product list and infinite scroll once the user submits the search form, providing an alternative to the classic Zen Cart search results page.</p>
                 </section>
 
                 <section>
-                    <h1 id="item-prerequisites" class="display-1 fs-2 pb-2 pt-5">Prerequisites</h1>
+                    <h1 id="item-prerequisites" class="display-1 fs-2 pb-2 pt-4">Prerequisites</h1>
                     <ul class="mt-3">
                         <li>Zen Cart 1.5.7 or 1.5.8</li>
                         <li class="mt-1">PHP 7.4 through 8.2</li>
@@ -90,8 +90,8 @@
                 </section>
 
                 <section>
-                    <h1 id="item-installation" class="display-1 fs-2 pb-2 pt-5">Installation</h1>
-                    <p>Follow one of the following three chapters, depending on if you're currently using Instant Search v1, Instant Search v2, or you're installing Instant Search for the first time.</p>
+                    <h1 id="item-installation" class="display-1 fs-2 pb-2 pt-4">Installation</h1>
+                    <p>Follow one of the following three chapters, depending on whether you're currently using Instant Search v1, Instant Search v2, or are installing Instant Search for the first time.</p>
                     <h2 id="item-upgrade-1" class="fs-4 pt-1 pb-3">Upgrading from versions 1.x</h2>
                     <ol>
                         <li>REMOVE all the plugin files from your site's filesystem before installing:
@@ -159,17 +159,17 @@
                 </section>
 
                 <section>
-                    <h1 id="item-configuration" class="display-1 fs-2 mt-6 pb-2 pt-5">Configuration</h1>
+                    <h1 id="item-configuration" class="display-1 fs-2 mt-6 pb-2 pt-4">Configuration</h1>
                     <p>There are several configuration options available in the Admin (<em>Configuration > Instant Search</em>):</p>
                     <ul>
                         <li class="mt-2">Dropdown - Enable<br><em>When the user types into an input search box, display a dropdown with autocomplete search results.</em></li>
-                        <li class="mt-2">Listing Page - Enable<br><em>When the user submits a search form (advanced search form excluded), display the search results in a product listing page with infinite scroll.</em></li>
+                        <li class="mt-2">Listing Page - Enable<br><em>When the user submits a search form (excluding the advanced search form), display the search results on a product listing page with infinite scroll.</em></li>
                         <li class="mt-2">Dropdown - Search Delay<br><em>Delay the execution of the instant search by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries to the database while the user is typing.</em></li>
                         <li class="mt-2">Dropdown - Maximum Number of Results<br><em>Maximum number of results displayed in the dropdown.</em></li>
                         <li class="mt-2">Dropdown - Minimum Length of Search Query<br><em>Minimum number of characters requested for the dropdown to be displayed.</em></li>
                         <li class="mt-2">Dropdown - Maximum Length of Search Query<br><em>Maximum number of characters requested for the dropdown to be displayed.</em></li>
                         <li class="mt-2">Dropdown - Fields to Search and Order<br><em>See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</em></li>
-                        <li class="mt-2">Dropdown - Include Related Products in the Results (Query Expansion)<br><em>See <a href="#item-query-expansion" class="link-secondary">Query expansion</a>.</em></li>
+                        <li class="mt-2">Dropdown - Include Related Products in the Results (Query Expansion)<br><em>See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</em></li>
                         <li class="mt-2">Dropdown - Display Images<br><em>Display the product/category/manufacturer's image.</em></li>
                         <li class="mt-2">Dropdown - Display Product Price<br><em>Display the product's price.</em></li>
                         <li class="mt-2">Dropdown - Display Product Model<br><em>Display the product's model.</em></li>
@@ -182,20 +182,74 @@
                         <li class="mt-2">Dropdown - Add Entry to Search Log<br><em>Add the searched terms to the Search Log report (if Search Log plugin is installed).</em></li>
                         <li class="mt-2">Listing Page - Number of Results per Page<br><em>Number of products per page displayed in the search results listing page</em></li>
                         <li class="mt-2">Listing Page - Fields to Search and Order<br><em>See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</em></li>
-                        <li class="mt-2">Listing Page - Include Related Products in the Results (Query Expansion)<br><em>See <a href="#item-query-expansion" class="link-secondary">Query expansion</a>.</em></li>
+                        <li class="mt-2">Listing Page - Include Related Products in the Results (Query Expansion)<br><em>See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</em></li>
                         <li class="mt-2">Listing Page - Add Entry to Search Log<br><em>Add the searched terms to the Search Log report (if Search Log plugin is installed).</em></li>
                     </ul>
 
-                    <h2 id="item-fields-to-search-and-order" class="fs-4 pt-4 pb-3">Fields to search and order</h2>
-                    <p>work in progress</p>
+                    <h2 id="item-fields-to-search-and-order" class="fs-4 pt-3 pb-3">Fields to search and order</h2>
+                    <p>With the <em>Fields to Search and Order</em> setting, you can decide which fields to search and in what order. The possible fields are:</p>
+                    <ul>
+                        <li><span class="font-monospace">name</span>: product name</li>
+                        <li><span class="font-monospace">name-description</span>: product name and description; name matches have higher priority than description matches</li>
+                        <li><span class="font-monospace">model-exact</span>: product model, exact match (the query contains only and exactly the model)
+                        <li><span class="font-monospace">model-broad</span>: product model, broad match (the query contains also the model or part of it)
+                        <li>(dropdown only) <span class="font-monospace">category</span>: category name
+                        <li>(dropdown only) <span class="font-monospace">manufacturer</span>: manufacturer name
+                    </ul>
+                    <p>The fields are listed in order of search, separated by a comma. You should put the fields that you think are most relevant for your store, and/or that could provide the best matches, first. You can omit a field if you don't want to include it in the search.</p>
+                    <p>For example, if the setting value is <span class="font-monospace">category,name-description,model-exact</span> then:</p>
+                    <ol>
+                        <li>First, the category names are searched, the matches are sorted by relevancy, and then added on top of the results.</li>
+                        <li>If the maximum number of results to display has not been reached, the product names and descriptions are searched, the matches are sorted by relevancy, and then added at the end of the current results.</li>
+                        <li>If the maximum number of results to display has not been reached, the product models are searched, the matches are sorted by relevancy, and then added at the end of the current results.</li>
+                    </ol>
+                    <p><strong>You must pick only one field between <span class="font-monospace">name</span> and <span class="font-monospace">name-description</span></strong>. If you don't want to include the product description in the search, or the search is too slow/inconsistent, use <span class="font-monospace">name</span>.</p>
 
-                    <h2 id="item-query-expansion" class="fs-4 pt-4 pb-3">Query expansion</h2>
-                    <p>work in progress</p>
+                    <h2 id="item-query-expansion" class="fs-4 pt-3 pb-3">Query Expansion</h2>
+                    <p>Enable Query Expansion to show also related products in the results.</p>
+                    <p>Suppose you have three products with names:</p>
+                    <ul>
+                        <li>Microsoft Mouse and Keyboard set</li>
+                        <li>Logitech Advanced Mouse</li>
+                        <li>Optical wireless mouse by Trust</li>
+                    </ul>
+                    <p>The user searches <em>logitech</em>.<br>If Query Expansion is disabled, only the second product (the one with <em>logitech</em> in the name) will be shown.<br>If Query Expansion is enabled, the other two products will also be shown (with less priority), because they contain the word <em>mouse</em>, which is present in the matched product, so they could be relevant for the user.</p>
+                    <p>Query Expansion also applies to the product description (if included in the fields list).</p>
+                    <p>Note: this option is not equivalent to a typo-tolerance or synonym support feature (e.g. <em>Did you mean...?</em>). A search with the keyword <em>logiech</em> (typo), or <em>logitechs</em>, or <em>mice</em> would return no matches.</p>
                 </section>
 
                 <section>
                     <h1 id="item-faq" class="display-1 fs-2 mt-6 pb-2 pt-5">FAQs & Troubleshooting</h1>
-                    <p>work in progress</p>
+
+                    <h2 class="fs-5 pt-3 pb-1">What's the difference between Instant Search and the Advanced Search included in Zen Cart?</h2>
+                    <p>Instant Search uses Ajax (no page reload) and searches for matches only on specific fields (such as name, description, model, etc.) with the goal of being fast and relevant. It does not load all results at once, but rather stops once it has found enough, and sorts them by relevance to the user query.</p>
+                    <p>The storefront (formerly "Advanced") Search doesn't use Ajax and aims for completeness and flexibility. The user can apply various filter conditions, such as limiting the search to certain categories or price ranges and using AND/OR in the query. It is therefore the tool to use for tailored searches on all available fields. The Search also shows the exact total number of results, but to do this, it must load them all. Additionally, it does not sort the results by relevance.</p>
+
+                    <h2 class="fs-5 pt-3 pb-1">What's the difference between Instant Search and the Ajax Search of the Bootstrap template?</h2>
+                    <p>Aside from a visual difference (Bootstrap Ajax search shows results in a modal instead of a dropdown), both use Ajax (no page reload) and only look for matches on specific fields (name, description, model, etc.).<br>The difference is that Bootstrap Ajax Search is still based on the Zen Cart Search. It loads all results and doesn't sort them by relevance.<br>Depending on your needs, you may prefer Bootstrap Ajax Search to Instant Search. You can easily switch between them in the configuration settings.</p>
+
+                    <h2 class="fs-5 pt-3 pb-1">The search is slow</h2>
+                    <p>The search should return results in less than 1 second.<br>If that's not the case, disable the search in product descriptions (i.e. in the admin <em>Fields to Search and Order</em> setting, use <span class="font-monospace">name</span> instead of <span class="font-monospace">name-description</span>).<br>If the search is still slow, disable Query Expansion.</p>
+
+                    <h2 class="fs-5 pt-3 pb-1">The autocomplete dropdown does not appear</h2>
+                    <p>If you have enabled dropdown results and nothing happens when the user types, you may be using a custom template and your search entry boxes have a different CSS selector. You can set the CSS selector in the admin <em>Dropdown - Input Box Selector</em> setting.</p>
+
+                    <h2 class="fs-5 pt-3 pb-1">The look of the results listing page doesn't fit my store template</h2>
+                    <p>The plugin provides template files for Responsive Classic and Bootstrap templates. If you're using a different template, you might need to customize these files to fit your store's theme:</p>
+                    <ol>
+                        <li><span class="font-monospace">/includes/modules/YOUR_TEMPLATE/product_listing_instant_search.php</span></li>
+                        <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/templates/tpl_instant_search_result_default.php</span></li>
+                        <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results_listing.php</span></li>
+                    </ol>
+
+                    <h2 class="fs-5 pt-3 pb-1">The search returns too many non-relevant results</h2>
+                    <p>Disable Query Expansion.</p>
+
+                    <h2 class="fs-5 pt-3 pb-1">Does the search include typo-tolerance and synonym support (e.g. <em>Did you mean...?</em>)</h2>
+                    <p>Not yet (work in progress!).</p>
+
+                    <h2 class="fs-5 pt-3 pb-1">I need more help</h2>
+                    <p>Feel free to ask your question in the <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" class="link-secondary">Support Thread</a> on Zen Cart forums.</p>
                 </section>
 
                 <section>
@@ -213,7 +267,7 @@
                 </section>
 
                 <section>
-                    <h1 id="item-uninstall" class="display-1 fs-2 pb-2 pt-5">Uninstall</h1>
+                    <h1 id="item-uninstall" class="display-1 fs-2 pb-2 pt-4">Uninstall</h1>
                     <ol>
                         <li class="mt-2">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
                         <li class="mt-2">Remove the <a href="#item-files-list" class="link-secondary">plugin files</a> from your site's filesystem.
@@ -221,7 +275,7 @@
                 </section>
 
                 <section>
-                    <h1 id="item-files-list" class="display-1 fs-2 pb-2 pt-5">Files list</h1>
+                    <h1 id="item-files-list" class="display-1 fs-2 pb-2 pt-4">Files list</h1>
                         <ul class="mt-2 text-break">
                             <li><span class="font-monospace">/includes/classes/ajax/zcAjaxInstantSearchDropdown.php</span></li>
                             <li><span class="font-monospace">/includes/classes/ajax/zcAjaxInstantSearchPage.php</span></li>
@@ -259,7 +313,7 @@
                 </section>
 
                 <section>
-                    <h1 id="item-changelog" class="display-1 fs-2 pb-2 pt-5">Changelog</h1>
+                    <h1 id="item-changelog" class="display-1 fs-2 pb-2 pt-4">Changelog</h1>
                     <p>See <a href="https://github.com/marco-pm/zencart_instantsearch/releases" target="_blank" class="link-secondary">releases</a></p>
                 </section>
             </article>
