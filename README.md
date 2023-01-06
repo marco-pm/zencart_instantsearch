@@ -1,41 +1,32 @@
-# Instant Search plugin for Zen Cart
-Shows search results as you type.
+# Instant Search plugin 3.0 for Zen Cart 1.5.7 and 1.5.8
+Show autocomplete search results while the user is typing.
 
-The support thread on the Zen Cart forums is located [here](https://www.zen-cart.com/showthread.php?189289-Instant-Search).
+Show relevant search results in a listing page with infinite scroll.
+
+# Features
+Version 3.0 of the plugin brings new features and substantial improvements to previous versions.
+- Faster and better searches, with MySQL Full-Text search and Query Expansion
+- New, additional search results page with sortable product list and infinite scroll
+- New admin settings, including control of which fields to search and their order
+- More robust dropdown auto-positioning
+- Support for Zen Cart 1.5.8 language files and plugin upgrade functionality
+- Integration with Search Log plugin
+- Responsive Classic and Bootstrap template files included
+- Code almost entirely rewritten, removed jQuery dependency, and many other improvements
+- No modifications to Zen Cart core files
+- More features coming in the next versions!
 
 # Prerequisites
-* Zen Cart 1.5.7 or higher
-* PHP 7.0 or higher
-* Tested on Responsive Classic template and Bootstrap template
+- Zen Cart 1.5.7 or 1.5.8
+- PHP 7.4 through 8.2
 
-# Installation and use
-See the [readme.html](readme.html).
+# Installation, use and FAQs
+See the [readme.html](https://htmlpreview.github.io/?https://github.com/marco-pm/zencart_instantsearch/blob/main/readme.html).
 
-# Changelog
-## v2.1.0
-* Improved search performance
-* Added option for searching into product's attributes
-* Added option for minimum search term length
-* Bug fixes
+# Troubleshooting
+[Zen Cart Forum Support Thread](https://www.zen-cart.com/showthread.php?189289-Instant-Search)
 
-## v2.0.1
-* Added debouncing with configurable wait time
-* Removed old css rules
+See also the FAQS & troubleshooting section in the [readme.html](https://htmlpreview.github.io/?https://github.com/marco-pm/zencart_instantsearch/blob/main/readme.html).
 
-## v2.0.0
-* Added configuration options in the Admin
-  * enable/disable plugin
-  * max # of results to be displayed
-  * enable/disable display of images, model, price
-  * enable/disable search on product's model, category, manufacturer
-* Optional search on categories and manufacturers
-* Code refactoring
-* Various code and visual improvements
-
-## v1.1.0
-* Now uses a ZC AJAX class
-* Searches only into the product name and the product model (for now)
-* Improved word search and results sorting
-* Displays the product image, name and model on the results
-
-
+# Testing
+work in progress

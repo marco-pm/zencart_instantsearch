@@ -39,7 +39,7 @@
     <header>
         <nav id="navbar-header" class="navbar position-fixed navbar-light bg-light shadow-sm justify-content-center align-items-center container-fluid py-3">
             <div class="container">
-            <h1 class="mb-1 fs-4">Instant Search plugin 2.1.0 for Zen Cart</h1>
+            <h1 class="mb-1 fs-4">Instant Search plugin 3.0.0 for Zen Cart 1.5.7 and 1.5.8</h1>
                 <div class="float-md-right text-center text-md-right mt-2 mt-md-0">
                     <i class="bi-github me-1 align-top"></i> <a href="https://github.com/marco-pm/zencart_instantsearch" target="_blank" rel="noopener noreferrer" class="link-secondary text-decoration-none me-4">GitHub Repository</a>
                     <i class="bi-layout-text-sidebar-reverse me-1 align-top"></i> <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" rel="noopener noreferrer" class="link-secondary text-decoration-none">Support Thread</a>
@@ -48,22 +48,26 @@
         </nav>
     </header>
 
-    <div class="container" id="main-container">
+    <div class="container mb-5" id="main-container">
         <div class="row">
             <aside class="col-md-4 col-xxl-3">
                 <nav id="navbar-contents" class="navbar navbar-light bg-light flex-column align-items-stretch p-3 shadow-sm mt-4 mt-sm-3 mb-3 my-md-0">
                     <nav class="nav nav-pills flex-column">
+                        <a class="nav-link link-secondary" href="#item-introduction">Introduction</a>
                         <a class="nav-link link-secondary" href="#item-prerequisites">Prerequisites</a>
-                        <a class="nav-link link-secondary" href="#item-first-time-installation">Installation</a>
+                        <a class="nav-link link-secondary" href="#item-installation">Installation</a>
                         <nav class="nav nav-pills flex-column">
                             <a class="nav-link link-secondary ms-3 my-1" href="#item-upgrade-1">Upgrading from versions 1.x</a>
                             <a class="nav-link link-secondary ms-3 my-1" href="#item-upgrade-2">Upgrading from versions 2.x</a>
                             <a class="nav-link link-secondary ms-3 my-1" href="#item-first-time-install">First-time install</a>
                         </nav>
-                        <a class="nav-link link-secondary" href="#item-use">Use</a>
+                        <a class="nav-link link-secondary" href="#item-configuration">Configuration</a>
                         <nav class="nav nav-pills flex-column">
-                            <a class="nav-link link-secondary ms-3 my-1" href="#item-notifications">(For developers) Notifications</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-fields-to-search-and-order">Fields to search and order</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-query-expansion">Query expansion</a>
                         </nav>
+                        <a class="nav-link link-secondary" href="#item-faq">FAQs & Troubleshooting</a>
+                        <a class="nav-link link-secondary" href="#item-list-of-notifiers">(For developers) List of Notifiers</a>
                         <a class="nav-link link-secondary" href="#item-uninstall">Uninstall</a>
                         <a class="nav-link link-secondary" href="#item-files-list">Files list</a>
                         <a class="nav-link link-secondary" href="#item-changelog">Changelog</a>
@@ -72,20 +76,25 @@
             </aside>
             <article class="col-md-8 col-xxl-9 mt-4 mt-md-0 ps-md-4">
                 <section>
-                    <h1 id="item-prerequisites" class="display-1 fs-2 pb-2">Prerequisites</h1>
+                    <h1 id="item-introduction" class="display-1 fs-2 pb-2">Introduction</h1>
+                    <p>This plugin uses a combination of MySQL Full-Text Search and LIKE/REGEXP queries to find products, brands and categories in a fast way and sort them based on their relevance to the user query.</p>
+                    <p>The results can be displayed immediately, in an autocomplete dropdown while the user is typing in a search box, and/or as a search results page with sortable product list and infinite scroll, once the user submits the search form (therefore as an alternative to the classic Zen Cart search results page).</p>
+                </section>
+
+                <section>
+                    <h1 id="item-prerequisites" class="display-1 fs-2 pb-2 pt-5">Prerequisites</h1>
                     <ul class="mt-3">
-                        <li>Zen Cart 1.5.7 or higher</li>
-                        <li>PHP 7.0 or higher</li>
-                        <li>Tested on Responsive Classic template and Bootstrap template</li>
+                        <li>Zen Cart 1.5.7 or 1.5.8</li>
+                        <li class="mt-1">PHP 7.4 through 8.2</li>
                     </ul>
                 </section>
 
                 <section>
-                    <h1 id="item-first-time-installation" class="display-1 fs-2 pb-2 pt-5">Installation</h1>
+                    <h1 id="item-installation" class="display-1 fs-2 pb-2 pt-5">Installation</h1>
+                    <p>Follow one of the following three chapters, depending on if you're currently using Instant Search v1, Instant Search v2, or you're installing Instant Search for the first time.</p>
                     <h2 id="item-upgrade-1" class="fs-4 pt-1 pb-3">Upgrading from versions 1.x</h2>
-                    <p>If you're currently using a 1.x version of the plugin:</p>
                     <ol>
-                        <li>REMOVE the following plugin's files from your site's file system before installing:
+                        <li>REMOVE all the plugin files from your site's filesystem before installing:
                             <ul class="text-break mt-3">
                                 <li>(up to version 1.0.2) <span class="font-monospace">searches.php</span></li>
                                 <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instantSearch.js</span></li>
@@ -94,132 +103,164 @@
                         </li>
                         <li class="mt-3">Do a <a href="#item-first-time-install" class="link-secondary">first-time install</a>.</li>
                     </ol>
-                    <p>If you're using observers to watch the plugin's notifications, note that the passed variables have changed. See <a href="#item-notifications" class="link-secondary">Notifications</a>.</p>
                 </section>
 
                 <section>
-                    <h2 id="item-upgrade-2" class="fs-4 py-3">Upgrading from versions 2.x</h2>
-                    <p>If you're currently using a 2.x version of the plugin: in Zen Cart 1.5.7 the plugin upgrade functionality is not active yet, therefore you must uninstall the current plugin version and install the new one via the Plugin Manager.</p>
+                    <h2 id="item-upgrade-2" class="fs-4 pt-4 pb-3">Upgrading from versions 2.x</h2>
+                    <h3 class="fs-5 py-1">Zen Cart 1.5.8</h3>
                     <ol>
-                        <li class="mt-3">Write down your current Instant Search settings in the admin (<em>Configuration > Instant Search</em>), because they will be lost once you uninstall the current plugin.</li>
-                        <li class="mt-3">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
-                        <li class="mt-3">Do a <a href="#item-first-time-install" class="link-secondary">first-time install</a>.</li>
-                        <li class="mt-3">Re-apply the previous Instant Search settings that you had written down on step 1.</li>
-                    </ol>
-                </section>
-
-                <section>
-                    <h2 id="item-first-time-install" class="fs-4 py-3">First-time install</h2>
-                    <ol>
-                        <li>Copy the <a href="#item-files-list" class="link-secondary">files</a> to your site's file system.<br>
+                        <li>REMOVE the following plugin files from your site's filesystem before installing:
+                            <ul class="text-break mt-3">
+                                <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
+                                <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
+                                <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
+                            </ul>
+                        </li>
+                        <li class="mt-2">Copy the <a href="#item-files-list" class="link-secondary">plugin files</a> to your site's filesystem.<br>
                             Rename <span class="font-monospace">YOUR_TEMPLATE</span> to match the name of your site's template.<br>
-                            DON'T rename the <span class="font-monospace">admin</span> subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v2.1.0</span>.
-                        <li class="mt-3">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
+                            DON'T rename the <span class="font-monospace">admin</span> subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v3.0.0</span>.</li>
+                        <li class="mt-2">If you're using the Bootstrap template on your store, copy the content of the <span class="font-monospace">bootstrap template files</span> directory to your site's filesystem (overwrite files if asked).</li>
+                        <li class="mt-2">In the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em>, click the <em>Upgrade Available</em> button and then <em>Upgrade</em>.</li>
+                        <li class="mt-2">In the same Admin page, click <em>Clean Up</em> to remove the previous plugin version files from the filesystem.</li>
+                        <li class="mt-2">In the file <span class="font-monospace">/includes/extra_configures/robots_pages_to_skip.php</span>, add the line<br><span class="font-monospace">instant_search_result,</span><br>under the line<br><span class="font-monospace">info_shopping_cart,</span></li>
+                    </ol>
+                    <h3 class="fs-5 py-1">Zen Cart 1.5.7</h3>
+                    <ol>
+                        <li>REMOVE the following plugin files from your site's filesystem before installing:
+                            <ul class="text-break mt-3">
+                                <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
+                                <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
+                                <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
+                            </ul>
+                        </li>
+                        <li class="mt-2">Write down your current Instant Search settings in the admin (<em>Configuration > Instant Search</em>), because they will be lost once you uninstall the current plugin.</li>
+                        <li class="mt-2">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
+                        <li class="mt-2">Do a <a href="#item-first-time-install" class="link-secondary">first-time install</a>.</li>
+                        <li class="mt-2">Re-apply the previous Instant Search settings that you had written down on step 1.</li>
                     </ol>
                 </section>
 
                 <section>
-                    <h1 id="item-use" class="display-1 fs-2 mt-6 pb-2 pt-5">Use</h1>
-                    <p>Once the user starts typing in any search input box (header search, sidebox search, etc.), the keywords are searched into the database and the results immediately displayed in a dropdown that appears below the input box.</p>
+                    <h2 id="item-first-time-install" class="fs-4 pt-4 pb-3">First-time install</h2>
+                    <ol>
+                        <li>Copy the <a href="#item-files-list" class="link-secondary">plugin files</a> to your site's file system.<br>
+                            Rename <span class="font-monospace">YOUR_TEMPLATE</span> to match the name of your site's template.<br>
+                            DON'T rename the <span class="font-monospace">admin</span> subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v3.0.0</span>.
+                        <li class="mt-2">If you're using the Bootstrap template on your store, copy the content of the <span class="font-monospace">bootstrap template files</span> directory to your site's filesystem (overwrite files if asked).</li>
+                        <li class="mt-3">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
+                        <li class="mt-2">
+                            Add the results listing page to the <span class="font-monospace">ROBOTS_PAGES_TO_SKIP</span> value:
+                            <ul>
+                                <li class="mt-2">Zen Cart 1.5.8: in the file <span class="font-monospace">/includes/extra_configures/robots_pages_to_skip.php</span>, add the line<br><span class="font-monospace">instant_search_result,</span><br>under the line<br><span class="font-monospace">info_shopping_cart,</span></li>
+                                <li class="mt-2">Zen Cart 1.5.7: in your template's version of the file <span class="font-monospace">/includes/languages/english/meta_tags.php</span>, in the line that begins with <span class="font-monospace">define('ROBOTS_PAGES_TO_SKIP'</span>, add<br><span class="font-monospace">instant_search_result,</span><br>right after<br><span class="font-monospace">info_shopping_cart,</span><br></li>
+                            </ul>
+                        </li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h1 id="item-configuration" class="display-1 fs-2 mt-6 pb-2 pt-5">Configuration</h1>
                     <p>There are several configuration options available in the Admin (<em>Configuration > Instant Search</em>):</p>
                     <ul>
-                        <li class="mt-2">Enable Instant Search</li>
-                        <li class="mt-2">Maximum number of results to display<br><em>Maximum number of results displayed in the dropdown.</em></li>
-                        <li class="mt-2">Minimum length of input text<br><em>Minimum number of characters that must be entered before Instant Search is initiated.</em></li>
-                        <li class="mt-2">Maximum length of input text<br><em>Maximum string length allowed for Instant Search. If the search string length exceeds this value, the instant search will not be performed.</em></li>
-                        <li class="mt-2">Search Delay<br><em>Delay the execution of the instant search query by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries while the user is typing.</em></li>
-                        <li class="mt-2">Display images<br><em>Display the product/category/manufacturer's image in the results.</em></li>
-                        <li class="mt-2">Display the product's price<br><em>Display the product's price in the results.</em></li>
-                        <li class="mt-2">Search Product's model<br><em>Include the product's model in the search. Set to false to improve Instant Search performance.</em></li>
-                        <li class="mt-2">Display the product's model<br><em>Display the product's model in the results.</em></li>
-                        <li class="mt-2">Search Categories<br><em>Include category names in the search/results. Set to false to improve Instant Search performance.</em></li>
-                        <li class="mt-2">Display Categories count<br><em>Display the number of products in the matched categories results (only if "Search also into categories" is set to true).</em></li>
-                        <li class="mt-2">Search Manufacturers<br><em>Include manufacturer names in the search/results. Set to false to improve Instant Search performance.</em></li>
-                        <li class="mt-2">Display Manufacturers count<br><em>Display the number of products for the matched manufacturers (only if "Search also into manufacturers" is set to true).</em></li>
-                        <li class="mt-2">Search product's attributes values<br><em>Include product attribute values in the search. Set to false to improve Instant Search performance.</em></li>
+                        <li class="mt-2">Dropdown - Enable<br><em>When the user types into an input search box, display a dropdown with autocomplete search results.</em></li>
+                        <li class="mt-2">Listing Page - Enable<br><em>When the user submits a search form (advanced search form excluded), display the search results in a product listing page with infinite scroll.</em></li>
+                        <li class="mt-2">Dropdown - Search Delay<br><em>Delay the execution of the instant search by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries to the database while the user is typing.</em></li>
+                        <li class="mt-2">Dropdown - Maximum Number of Results<br><em>Maximum number of results displayed in the dropdown.</em></li>
+                        <li class="mt-2">Dropdown - Minimum Length of Search Query<br><em>Minimum number of characters requested for the dropdown to be displayed.</em></li>
+                        <li class="mt-2">Dropdown - Maximum Length of Search Query<br><em>Maximum number of characters requested for the dropdown to be displayed.</em></li>
+                        <li class="mt-2">Dropdown - Fields to Search and Order<br><em>See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</em></li>
+                        <li class="mt-2">Dropdown - Include Related Products in the Results (Query Expansion)<br><em>See <a href="#item-query-expansion" class="link-secondary">Query expansion</a>.</em></li>
+                        <li class="mt-2">Dropdown - Display Images<br><em>Display the product/category/manufacturer's image.</em></li>
+                        <li class="mt-2">Dropdown - Display Product Price<br><em>Display the product's price.</em></li>
+                        <li class="mt-2">Dropdown - Display Product Model<br><em>Display the product's model.</em></li>
+                        <li class="mt-2">Dropdown - Display Category Count<br><em>Display the number of products for the matched categories.</em></li>
+                        <li class="mt-2">Dropdown - Display Manufacturer Count<br><em>Display the number of products for the matched manufacturers.</em></li>
+                        <li class="mt-2">Dropdown - Image Width<br><em>Width of the product/category/manufacturer's image</em></li>
+                        <li class="mt-2">Dropdown - Image Height<br><em> Height of the product/category/manufacturer's image.</em></li>
+                        <li class="mt-2">Dropdown - Highlight Search Terms in Bold<br><em>Set to <span class="font-monospace">none</span> for no highlight, <span class="font-monospace">query</span> to highlight the user search terms, <span class="font-monospace">autocomplete</span> to highlight the autocompleted text.</em></li>
+                        <li class="mt-2">Dropdown - Input Box Selector<br><em>CSS selector of the search input box(es). You might need to change it if you're using a custom template and the results dropdown is not showing.</em></li>
+                        <li class="mt-2">Dropdown - Add Entry to Search Log<br><em>Add the searched terms to the Search Log report (if Search Log plugin is installed).</em></li>
+                        <li class="mt-2">Listing Page - Number of Results per Page<br><em>Number of products per page displayed in the search results listing page</em></li>
+                        <li class="mt-2">Listing Page - Fields to Search and Order<br><em>See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</em></li>
+                        <li class="mt-2">Listing Page - Include Related Products in the Results (Query Expansion)<br><em>See <a href="#item-query-expansion" class="link-secondary">Query expansion</a>.</em></li>
+                        <li class="mt-2">Listing Page - Add Entry to Search Log<br><em>Add the searched terms to the Search Log report (if Search Log plugin is installed).</em></li>
                     </ul>
+
+                    <h2 id="item-fields-to-search-and-order" class="fs-4 pt-4 pb-3">Fields to search and order</h2>
+                    <p>work in progress</p>
+
+                    <h2 id="item-query-expansion" class="fs-4 pt-4 pb-3">Query expansion</h2>
+                    <p>work in progress</p>
                 </section>
 
                 <section>
-                    <h2 id="item-notifications" class="fs-4 py-3">(For developers) Notifications</h2>
-                    <p>The class <span class="font-monospace">zcAjaxInstantSearch</span> triggers two notifications for observers:</p>
+                    <h1 id="item-faq" class="display-1 fs-2 mt-6 pb-2 pt-5">FAQs & Troubleshooting</h1>
+                    <p>work in progress</p>
+                </section>
+
+                <section>
+                    <h1 id="item-list-of-notifiers" class="display-1 fs-2 mt-6 pb-2 pt-5">(For developers) Notifiers list</h1>
                     <ul>
-                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_QUERY</span>. The second variable is the sql query that is going to be executed to search for the keywords on the db.</li>
-                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT</span>. The second variable is the unformatted array (db data) of the current <span class="font-monospace">$result</span>; the third variable is the <span class="font-monospace">$formattedResult</span> array that contains the result data to be displayed.</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_BEFORE_SQL</span> (<span class="font-monospace text-break">InstantSearch.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_BEFORE_FORMAT_RESULTS</span> (<span class="font-monospace text-break">InstantSearch.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_DROPDOWN_ADD_DROPDOWN_RESULT</span> (<span class="font-monospace text-break">zcAjaxInstantSearchDropdown.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_HEADER_START_INSTANT_SEARCH_RESULTS_PAGE</span> (<span class="font-monospace text-break">instant_search_result/header_php.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_HEADER_END_INSTANT_SEARCH_RESULTS_PAGE</span> (<span class="font-monospace text-break">instant_search_result/header_php.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_MODULE_INSTANT_SEARCH_LISTING_RESULTCOUNT</span> (<span class="font-monospace text-break">product_listing_instant_search.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_MODULES_INSTANT_SEARCH_LISTING_PRODUCTS_BUTTON</span> (<span class="font-monospace text-break">product_listing_instant_search.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_LISTING_END</span> (<span class="font-monospace text-break">product_listing_instant_search.php</span>)</li>
                     </ul>
-                    <p>Both notifications pass as first, read-only variable the current <span class="font-monospace">$type</span> of the search, where <span class="font-monospace">$type</span> can be <span class="font-monospace">product</span>, <span class="font-monospace">category</span> or <span class="font-monospace">manufacturer</span>.</p>
                 </section>
 
                 <section>
                     <h1 id="item-uninstall" class="display-1 fs-2 pb-2 pt-5">Uninstall</h1>
                     <ol>
-                        <li class="mt-3">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
-                        <li class="mt-3">Remove the <a href="#item-files-list" class="link-secondary">files</a> from your site's file system.
+                        <li class="mt-2">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
+                        <li class="mt-2">Remove the <a href="#item-files-list" class="link-secondary">plugin files</a> from your site's filesystem.
                     </ol>
                 </section>
 
                 <section>
                     <h1 id="item-files-list" class="display-1 fs-2 pb-2 pt-5">Files list</h1>
                         <ul class="mt-2 text-break">
-                            <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
-                            <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
-                            <li><span class="font-monospace">includes/functions/extra_functions/instant_search_functions.php</span></li>
-                            <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/instant_search.js</span></li>
-                            <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instant_search.php</span></li>
-                            <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/css/stylesheet_instant_search.css</span></li>
-                            <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
-                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.1.0/Installer/ScriptedInstaller.php</span></li>
-                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.1.0/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
-                            <li><span class="font-monospace">zc_plugins/InstantSearch/v2.1.0/manifest.php</span></li>
+                            <li><span class="font-monospace">/includes/classes/ajax/zcAjaxInstantSearchDropdown.php</span></li>
+                            <li><span class="font-monospace">/includes/classes/ajax/zcAjaxInstantSearchPage.php</span></li>
+                            <li><span class="font-monospace">/includes/modules/YOUR_TEMPLATE/product_listing_instant_search.php</span></li>
+                            <li><span class="font-monospace">/includes/modules/pages/instant_search_result/jscript_instant_search_result.php</span></li>
+                            <li><span class="font-monospace">/includes/modules/pages/instant_search_result/jscript_instant_search_result.js</span></li>
+                            <li><span class="font-monospace">/includes/modules/pages/instant_search_result/header_php.php</span></li>
+                            <li><span class="font-monospace">/includes/languages/english/extra_definitions/lang.instant_search.php</span></li>
+                            <li><span class="font-monospace">/includes/languages/english/extra_definitions/instant_search.php</span></li>
+                            <li><span class="font-monospace">/includes/languages/english/lang.instant_search_result.php</span></li>
+                            <li><span class="font-monospace">/includes/languages/english/instant_search_result.php</span></li>
+                            <li><span class="font-monospace">/includes/functions/extra_functions/instant_search_functions.php</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/jscript_dom-slider.js</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/instant_search.js</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/jscript_instant_search.php</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/css/stylesheet_instant_search.css</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/templates/tpl_instant_search_result_default.php</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results_listing.php</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results_dropdown.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.0/classes/InstantSearch.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.0/classes/admin/InstantSearchConfigurationValidation.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.0/classes/Exceptions/InstantSearchConfigurationException.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.0/Installer/ScriptedInstaller.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.0/admin/includes/languages/english/extra_definitions/lang.instant_search.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.0/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.0/catalog/includes/extra_datafiles/instant_search_filenames.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.0/manifest.php</span></li>
                         </ul>
+                    <p>Bootstrap template files:</p>
+                    <ul class="mt-2 text-break">
+                        <li><span class="font-monospace">/includes/modules/bootstrap/product_listing_instant_search.php</span></li>
+                        <li><span class="font-monospace">/includes/templates/bootstrap/templates/tpl_instant_search_result_default.php</span></li>
+                        <li><span class="font-monospace">/includes/templates/bootstrap/templates/tpl_ajax_instant_search_results_listing.php</span></li>
+                    </ul>
                 </section>
 
                 <section>
                     <h1 id="item-changelog" class="display-1 fs-2 pb-2 pt-5">Changelog</h1>
-                    <h2 id="item-v202" class="fs-4 py-3">v2.1.0 (2022-05-20)</h2>
-                    <ul>
-                        <li>Improved search performance</li>
-                        <li>Added option for searching into product's attributes (<a href="https://github.com/marco-pm/zencart_instantsearch/issues/9" target="_blank" rel="noopener noreferrer" class="link-secondary">#9</a>)</li>
-                        <li>Added option for minimum search term length (<a href="https://github.com/marco-pm/zencart_instantsearch/issues/12" target="_blank" rel="noopener noreferrer" class="link-secondary">#12</a>)</li>
-                        <li>Bug fixes</li>
-                        <li>Note that the second and third variables of the <span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_PRIOR_ADD_RESULT</span> notification have slightly changed, see <a href="#item-notifications" class="link-secondary">Notifications</a>.</li>
-                    </ul>
-
-                    <h2 id="item-v201" class="fs-4 py-3">v2.0.1 (2022-03-04)</h2>
-                    <ul>
-                        <li>Added debouncing with configurable wait time (fixes <a href="https://github.com/marco-pm/zencart_instantsearch/issues/1" target="_blank" rel="noopener noreferrer" class="link-secondary">#1</a>)</li>
-                        <li>Removed old css rules</li>
-                    </ul>
-
-                    <h2 id="item-v200" class="fs-4 py-3">v2.0.0 (2022-02-23)</h2>
-                    <ul>
-                        <li>Added configuration options in the Admin
-                            <ul>
-                                <li>Enable Instant Search</li>
-                                <li>Max # of results displayed</li>
-                                <li>Max length of input text</li>
-                                <li>Display images</li>
-                                <li>Search also into product's model</li>
-                                <li>Display the product's model</li>
-                                <li>Display the product's price</li>
-                                <li>Search also into categories</li>
-                                <li>Display categories count</li>
-                                <li>Search also into manufacturers</li>
-                                <li>Display manufacturers count</li>
-                            </ul>
-                        </li>
-                        <li>Optional search on categories and manufacturers</li>
-                        <li>Code refactoring</li>
-                        <li>Various code and visual improvements</li>
-                    </ul>
-
-                    <h2 id="item-v110" class="fs-4 py-3">v1.1.0 (2022-02-09)</h2>
-                    <ul>
-                        <li>Now uses a ZC AJAX class</li>
-                        <li>Searches only into the product name and the product model (for now)</li>
-                        <li>Improved word search and results sorting</li>
-                        <li>Displays the product image, name and model on the results</li>
-                    </ul>
+                    <p>See <a href="https://github.com/marco-pm/zencart_instantsearch/releases" target="_blank" class="link-secondary">releases</a></p>
                 </section>
             </article>
         </div>

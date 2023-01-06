@@ -3,7 +3,7 @@
 return [
     'pluginVersion'     => 'v3.0.0',
     'pluginName'        => 'Instant Search',
-    'pluginDescription' => 'Show relevant search results. Display them on the fly while typing (in a results dropdown) and in a listing page.',
+    'pluginDescription' => 'Show autocomplete search results while the user is typing. Show relevant search results in a listing page with infinite scroll.',
     'pluginAuthor'      => 'marcopm',
     'pluginId'          => 1336,
     'zcVersions'        => ['v157', 'v158'],
