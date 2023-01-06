@@ -201,7 +201,7 @@ abstract class InstantSearch extends \base
         $sql = $db->bindVars($sql, ':alphaFilterId', chr($this->alphaFilterId) . '%', 'string');
         $sql = $db->bindVars($sql, ':resultsLimit', $this->calcResultsLimit(), 'integer');
 
-        $this->notify('NOTIFY_INSTANT_SEARCH_DROPDOWN_SQL', $this->searchQuery, $sql);
+        $this->notify('NOTIFY_INSTANT_SEARCH_BEFORE_SQL', $this->searchQuery, $sql);
 
         // Run the sql
         $dbResults = $db->Execute($sql);
