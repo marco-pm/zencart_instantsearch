@@ -74,26 +74,26 @@
     width: 65%;
 }
 
-.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightQuery {
-    font-weight: bold;
-}
-
-.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightQuery span {
-    font-weight: normal;
-}
-
-.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightAutocomplete {
-    font-weight: normal;
-}
-
-.instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightAutocomplete span {
-    font-weight: bold;
-}
-
 .instantSearchResultsDropdownContainer--lg .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper {
     width: 35%;
     display: flex;
     flex-direction: column;
+}
+
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightQuery {
+    font-weight: bold;
+}
+
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightQuery span {
+    font-weight: normal;
+}
+
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightAutocomplete {
+    font-weight: normal;
+}
+
+.instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper--highlightAutocomplete span {
+    font-weight: bold;
 }
 
 .instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper__model {
