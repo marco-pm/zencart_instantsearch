@@ -3,11 +3,13 @@
  * Adaptation of product_listing.php (bootstrap template version)
  * for the Instant Search result page.
  *
- * @package  Instant Search Plugin for Zen Cart
- * @author   marco-pm
- * @version  3.0.0
- * @see      https://github.com/marco-pm/zencart_instantsearch
- * @license  GNU Public License V2.0
+ * @package   Instant Search Plugin for Zen Cart
+ * @author    marco-pm
+ * @version   3.0.0
+ * @see       https://github.com/marco-pm/zencart_instantsearch
+ * @copyright Copyright 2003-2020 Zen Cart Development Team
+ * @copyright Portions Copyright 2003 osCommerce
+ * @license   http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  */
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
