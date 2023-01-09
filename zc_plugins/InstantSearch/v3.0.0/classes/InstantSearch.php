@@ -117,7 +117,7 @@ abstract class InstantSearch extends \base
         $this->notify('NOTIFY_INSTANT_SEARCH_BEFORE_FORMAT_RESULTS', $this->searchQuery, $this->results);
 
         return json_encode([
-            'count' => count($this->results),
+            'count'   => count($this->results),
             'results' => $this->formatResults(),
         ], JSON_THROW_ON_ERROR);
     }

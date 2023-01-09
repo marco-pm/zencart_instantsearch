@@ -91,7 +91,7 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
      */
     protected function performSearch(string $inputQuery): string
     {
-        $this->searchQuery = html_entity_decode(strtolower(strip_tags(trim($inputQuery))), ENT_NOQUOTES, 'utf-8');
+        $this->searchQuery = trim(html_entity_decode(str_replace('&nbsp;', ' ', strtolower(strip_tags($inputQuery))), ENT_NOQUOTES, 'utf-8'));
         $searchQueryLength = strlen($this->searchQuery);
 
         if ($this->searchQuery !== '' &&
