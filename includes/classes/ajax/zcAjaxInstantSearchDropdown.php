@@ -179,7 +179,6 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
      */
     protected function calcResultsLimit(): int
     {
-        // $resultsLimit = ((int)MAX_DISPLAY_PRODUCTS_LISTING * $this->resultPage) - count($this->results);
         return (int)INSTANT_SEARCH_DROPDOWN_MAX_RESULTS - count($this->results);
     }
 
