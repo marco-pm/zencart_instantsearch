@@ -20,18 +20,32 @@ let instantSearchIsLoadingResults            = false;
 let instantSearchResultPageIsLast            = false;
 let instantSearchPreviousResultCount         = 0;
 
-document.addEventListener('DOMContentLoaded', async () => {
+// Fetch the first page of results while the page is loading, then display it as soon as the DOM is loaded
+(async () => {
     if (!instantSearchIsLoadingResults) {
-        await loadResults();
-    }
+        const jsonResults = await loadResults();
 
-    const observer = new IntersectionObserver(async function(entries) {
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            await displayResults(jsonResults);
+        } else {
+            document.addEventListener('DOMContentLoaded', async () => {
+                await displayResults(jsonResults);
+            });
+        }
+    }
+})();
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // When the user reaches the bottom of the current results page, load a new one
+    const observer = new IntersectionObserver(async (entries) => {
         if (entries[0].isIntersecting === true &&
             !instantSearchIsLoadingResults &&
             instantSearchResultPage > 1 &&
             !instantSearchResultPageIsLast
         ) {
-            await loadResults();
+            document.querySelector(instantSearchLoadingDivSelector).style.display = 'block';
+            const jsonResults = await loadResults();
+            await displayResults(jsonResults);
         }
     }, { threshold: [0] });
     observer.observe(document.querySelector(instantSearchEndResultsSelector));
@@ -39,7 +53,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadResults() {
     instantSearchIsLoadingResults = true;
-    document.querySelector(instantSearchLoadingDivSelector).style.display = 'block';
 
     const data = new FormData();
     data.append('keyword', instantSearchKeyword);
@@ -56,12 +69,15 @@ async function loadResults() {
         body: data,
     });
     const responseData = await response.json();
-    const responseDataJson = JSON.parse(responseData);
+    return JSON.parse(responseData);
+}
 
+async function displayResults(jsonResults) {
     document.querySelector(instantSearchFilterDivSelector).style.display = 'block';
-    if (responseDataJson.results.length > 0 && responseDataJson.count !== instantSearchPreviousResultCount) {
-        document.querySelector(instantSearchListingDivSelector).innerHTML = responseDataJson.results;
-        instantSearchPreviousResultCount = responseDataJson.count;
+
+    if (jsonResults.results.length > 0 && jsonResults.count !== instantSearchPreviousResultCount) {
+        document.querySelector(instantSearchListingDivSelector).innerHTML = jsonResults.results;
+        instantSearchPreviousResultCount = jsonResults.count;
 
         // Update URL page parameter
         const url = new URL(window.document.URL);
@@ -75,10 +91,11 @@ async function loadResults() {
         // so we have reached the end of results
         instantSearchResultPageIsLast = true;
 
-        if (responseDataJson.results.length === 0 || responseDataJson.count === 0) {
+        if (jsonResults.results.length === 0 || jsonResults.count === 0) {
             document.querySelector(instantSearchNoResultsFoundDivSelector).style.display = 'block';
             document.querySelector(instantSearchFilterDivSelector).style.display = 'none';
         }
     }
+
     document.querySelector(instantSearchLoadingDivSelector).style.display = 'none';
 }
