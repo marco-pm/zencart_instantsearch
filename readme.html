@@ -147,7 +147,7 @@
                             Rename <span class="font-monospace">YOUR_TEMPLATE</span> to match the name of your site's template.<br>
                             DON'T rename the <span class="font-monospace">admin</span> subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v3.0.0</span>.
                         <li class="mt-2">If you're using the Bootstrap template on your store, copy the content of the <span class="font-monospace">bootstrap template files</span> directory to your site's filesystem (overwrite files if asked).</li>
-                        <li class="mt-3">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
+                        <li class="mt-2">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
                         <li class="mt-2">
                             Add the results listing page to the <span class="font-monospace">ROBOTS_PAGES_TO_SKIP</span> value:
                             <ul class="text-break mt-3">
@@ -161,31 +161,112 @@
                 <section>
                     <h1 id="item-configuration" class="display-1 fs-2 mt-6 pb-2 pt-4">Configuration</h1>
                     <p>There are several configuration options available in the Admin (<em>Configuration > Instant Search</em>):</p>
-                    <ul>
-                        <li class="mt-2">Dropdown - Enable<br><em>When the user types into an input search box, display a dropdown with autocomplete search results.</em></li>
-                        <li class="mt-2">Listing Page - Enable<br><em>When the user submits a search form (excluding the advanced search form), display the search results on a product listing page with infinite scroll.</em></li>
-                        <li class="mt-2">Dropdown - Search Delay<br><em>Delay the execution of the instant search by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries to the database while the user is typing.</em></li>
-                        <li class="mt-2">Dropdown - Maximum Number of Results<br><em>Maximum number of results displayed in the dropdown.</em></li>
-                        <li class="mt-2">Dropdown - Minimum Length of Search Query<br><em>Minimum number of characters requested for the dropdown to be displayed.</em></li>
-                        <li class="mt-2">Dropdown - Maximum Length of Search Query<br><em>Maximum number of characters requested for the dropdown to be displayed.</em></li>
-                        <li class="mt-2">Dropdown - Fields to Search and Order<br><em>See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</em></li>
-                        <li class="mt-2">Dropdown - Include Related Products in the Results (Query Expansion)<br><em>See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</em></li>
-                        <li class="mt-2">Dropdown - Display Images<br><em>Display the product/category/manufacturer's image.</em></li>
-                        <li class="mt-2">Dropdown - Display Product Price<br><em>Display the product's price.</em></li>
-                        <li class="mt-2">Dropdown - Display Product Model<br><em>Display the product's model.</em></li>
-                        <li class="mt-2">Dropdown - Display Category Count<br><em>Display the number of products for the matched categories.</em></li>
-                        <li class="mt-2">Dropdown - Display Manufacturer Count<br><em>Display the number of products for the matched manufacturers.</em></li>
-                        <li class="mt-2">Dropdown - Image Width<br><em>Width of the product/category/manufacturer's image</em></li>
-                        <li class="mt-2">Dropdown - Image Height<br><em> Height of the product/category/manufacturer's image.</em></li>
-                        <li class="mt-2">Dropdown - Highlight Search Terms in Bold<br><em>Set to <span class="font-monospace">none</span> for no highlight, <span class="font-monospace">query</span> to highlight the user search terms, <span class="font-monospace">autocomplete</span> to highlight the autocompleted text.</em></li>
-                        <li class="mt-2">Dropdown - Input Box Selector<br><em>CSS selector of the search input box(es). You might need to change it if you're using a custom template and the results dropdown is not showing.</em></li>
-                        <li class="mt-2">Dropdown - Add Entry to Search Log<br><em>Add the searched terms to the Search Log report (if Search Log plugin is installed).</em></li>
-                        <li class="mt-2">Listing Page - Number of Results per Ajax Call<br><em>Number of products displayed every time a new "batch" (Ajax page) of search results is loaded while scrolling the page.</em></li>
-                        <li class="mt-2">Listing Page - Maximum Number of Results<br><em>Maximum number of search results for the listing page.</em></li>
-                        <li class="mt-2">Listing Page - Fields to Search and Order<br><em>See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</em></li>
-                        <li class="mt-2">Listing Page - Include Related Products in the Results (Query Expansion)<br><em>See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</em></li>
-                        <li class="mt-2">Listing Page - Add Entry to Search Log<br><em>Add the searched terms to the Search Log report (if Search Log plugin is installed).</em></li>
-                    </ul>
+                    <table class="table table-striped mb-5">
+                        <thead>
+                            <tr>
+                                <th scope="col">Setting</th>
+                                <th scope="col">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Dropdown - Enable</th>
+                                <td class="align-middle">When the user types into an input search box, display a dropdown with autocomplete search results.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Enable</th>
+                                <td class="align-middle">When the user types into an input search box, display a dropdown with autocomplete search results.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Listing Page - Enable</th>
+                                <td class="align-middle">When the user submits a search form (excluding the advanced search form), display the search results on a product listing page with infinite scroll.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Search Delay</th>
+                                <td class="align-middle">Delay the execution of the instant search by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries to the database while the user is typing.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Maximum Number of Results</th>
+                                <td class="align-middle">Maximum number of results displayed in the dropdown.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Minimum Length of Search Query</th>
+                                <td class="align-middle">Minimum number of characters requested for the dropdown to be displayed.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Maximum Length of Search Query</th>
+                                <td class="align-middle">Maximum number of characters requested for the dropdown to be displayed.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Fields to Search and Order</th>
+                                <td class="align-middle">See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Include Related Products in the Results (Query Expansion)</th>
+                                <td class="align-middle">See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Display Images</th>
+                                <td class="align-middle">Display the product/category/manufacturer's image.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Display Product Price</th>
+                                <td class="align-middle">Display the product's price.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Display Product Model</th>
+                                <td class="align-middle">Display the product's model.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Display Category Count</th>
+                                <td class="align-middle">Display the number of products for the matched categories.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Display Manufacturer Count</th>
+                                <td class="align-middle">Display the number of products for the matched manufacturers.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Image Width</th>
+                                <td class="align-middle">Width of the product/category/manufacturer's image</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Image Height</th>
+                                <td class="align-middle">Height of the product/category/manufacturer's image.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Highlight Search Terms in Bold</th>
+                                <td class="align-middle">Set to <span class="font-monospace">none</span> for no highlight,<span class="font-monospace">query</span> to highlight the user search terms,<span class="font-monospace">autocomplete</span> to highlight the autocompleted text.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Input Box Selector</th>
+                                <td class="align-middle">CSS selector of the search input box(es). You might need to change it if you're using a custom template and the results dropdown is not showing.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dropdown - Add Entry to Search Log</th>
+                                <td class="align-middle">Add the searched terms to the Search Log report (if Search Log plugin is installed).</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Listing Page - Number of Results per Ajax Call</th>
+                                <td class="align-middle">Number of products displayed every time a new "batch" (Ajax page) of search results is loaded while scrolling the page.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Listing Page - Maximum Number of Results</th>
+                                <td class="align-middle">Maximum number of search results for the listing page.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Listing Page - Fields to Search and Order</th>
+                                <td class="align-middle">See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Listing Page - Include Related Products in the Results (Query Expansion)</th>
+                                <td class="align-middle">See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Listing Page - Add Entry to Search Log</th>
+                                <td class="align-middle">Add the searched terms to the Search Log report (if Search Log plugin is installed).</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
                     <h2 id="item-fields-to-search-and-order" class="fs-4 pt-3 pb-3">Fields to search and order</h2>
                     <p>With the <em>Fields to Search and Order</em> setting, you can decide which fields to search and in what order. The possible fields are:</p>
