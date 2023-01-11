@@ -27,9 +27,11 @@ let instantSearchPreviousResultCount         = 0;
 
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             await displayResults(jsonResults);
+            await fillViewportWithResults();
         } else {
             document.addEventListener('DOMContentLoaded', async () => {
                 await displayResults(jsonResults);
+                await fillViewportWithResults();
             });
         }
     }
@@ -50,6 +52,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, { threshold: [0] });
     observer.observe(document.querySelector(instantSearchEndResultsSelector));
 });
+
+// If, on page load, the number of displayed results in the first page doesn't fill the viewport's height,
+// load a new result page until it's filled (in order for the IntersectionObserver to be triggered on scroll)
+async function fillViewportWithResults() {
+    const observedDivBounding = (document.querySelector(instantSearchEndResultsSelector)).getBoundingClientRect();
+    const isObservedDivInViewport =
+        observedDivBounding.top >= 0 &&
+        observedDivBounding.left >= 0 &&
+        observedDivBounding.right <= (window.innerWidth || document.documentElement.clientWidth) &&
+        observedDivBounding.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+    if (!instantSearchResultPageIsLast && isObservedDivInViewport) {
+        const jsonResults = await loadResults();
+        await displayResults(jsonResults);
+        await fillViewportWithResults();
+    }
+}
 
 async function loadResults() {
     instantSearchIsLoadingResults = true;
