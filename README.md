@@ -42,5 +42,3 @@ Run the tests with:
 ```
 php phpunit --configuration phpunit_instantsearch.xml
 ```
-
-(integration tests are work in progress)

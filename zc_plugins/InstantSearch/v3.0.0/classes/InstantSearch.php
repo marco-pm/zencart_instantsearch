@@ -91,6 +91,14 @@ abstract class InstantSearch extends \base
     }
 
     /**
+     * @return array
+     */
+    public function getResults(): array
+    {
+        return $this->results;
+    }
+
+    /**
      * Sanitizes the input query, runs the search and formats the results.
      *
      * @param string $inputQuery The search query

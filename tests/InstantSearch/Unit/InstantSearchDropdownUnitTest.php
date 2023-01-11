@@ -1,4 +1,12 @@
 <?php
+/**
+ * @package  Instant Search Plugin for Zen Cart
+ * @author   marco-pm
+ * @version  3.0.0
+ * @see      https://github.com/marco-pm/zencart_instantsearch
+ * @license  GNU Public License V2.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\InstantSearch\Unit;
@@ -36,26 +44,14 @@ class InstantSearchDropdownUnitTest extends InstantSearchUnitTest
         ];
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testCommonFieldsValuesCallCorrespondingSql(bool $useQueryExpansion = true): void {
         parent::testCommonFieldsValuesCallCorrespondingSql(INSTANT_SEARCH_DROPDOWN_USE_QUERY_EXPANSION === 'true');
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testNameWithDescriptionFieldCallsCorrespondingSql(bool $useQueryExpansion = true): void {
         parent::testCommonFieldsValuesCallCorrespondingSql(INSTANT_SEARCH_DROPDOWN_USE_QUERY_EXPANSION === 'true');
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testDropdownExclusiveFieldsValuesCallCorrespondingSql(): void
     {
         define('INSTANT_SEARCH_DROPDOWN_FIELDS_LIST', 'category,manufacturer');
@@ -67,10 +63,10 @@ class InstantSearchDropdownUnitTest extends InstantSearchUnitTest
         $_POST['keyword'] = 'whatever';
 
         $dropdownMock->expects($this->once())
-            ->method('buildSqlCategory');
+                     ->method('buildSqlCategory');
 
         $dropdownMock->expects($this->once())
-            ->method('buildSqlManufacturer');
+                     ->method('buildSqlManufacturer');
 
         $dropdownMock->instantSearch();
     }

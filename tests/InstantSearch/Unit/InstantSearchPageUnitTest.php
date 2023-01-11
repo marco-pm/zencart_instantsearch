@@ -1,4 +1,12 @@
 <?php
+/**
+ * @package  Instant Search Plugin for Zen Cart
+ * @author   marco-pm
+ * @version  3.0.0
+ * @see      https://github.com/marco-pm/zencart_instantsearch
+ * @license  GNU Public License V2.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\InstantSearch\Unit;
@@ -16,10 +24,10 @@ class InstantSearchPageUnitTest extends InstantSearchUnitTest
     {
         parent::setUp();
 
-        define('INSTANT_SEARCH_PAGE_MAX_RESULTS', '5');
+        define('INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE', '5');
+        define('INSTANT_SEARCH_PAGE_RESULTS_PER_SCREEN', '500');
         define('INSTANT_SEARCH_PAGE_USE_QUERY_EXPANSION', 'true');
         define('INSTANT_SEARCH_PAGE_ADD_LOG_ENTRY', 'true');
-        define('INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE', '5');
         define('TEXT_SEARCH_LOG_ENTRY_PAGE_PREFIX', '');
     }
 
@@ -33,10 +41,6 @@ class InstantSearchPageUnitTest extends InstantSearchUnitTest
         ];
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testNotAllowedFieldNameSettingReturnsError(): void
     {
         define('INSTANT_SEARCH_PAGE_FIELDS_LIST', 'category,name-description,model-broad');
@@ -50,26 +54,14 @@ class InstantSearchPageUnitTest extends InstantSearchUnitTest
         $this->assertStringContainsString(TEXT_INSTANT_SEARCH_CONFIGURATION_ERROR, $htmlOutput);
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testCommonFieldsValuesCallCorrespondingSql(bool $useQueryExpansion = true): void {
         parent::testCommonFieldsValuesCallCorrespondingSql(INSTANT_SEARCH_PAGE_USE_QUERY_EXPANSION === 'true');
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testNameWithDescriptionFieldCallsCorrespondingSql(bool $useQueryExpansion = true): void {
         parent::testCommonFieldsValuesCallCorrespondingSql(INSTANT_SEARCH_PAGE_USE_QUERY_EXPANSION === 'true');
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testDontSaveSearchLogIfResultPageGreaterThan1(): void
     {
         define('INSTANT_SEARCH_PAGE_FIELDS_LIST', 'name-description');
