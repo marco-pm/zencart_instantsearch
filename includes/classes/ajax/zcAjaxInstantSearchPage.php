@@ -14,13 +14,6 @@ use Zencart\Plugins\Catalog\InstantSearch\InstantSearch;
 class zcAjaxInstantSearchPage extends InstantSearch
 {
     /**
-     * Maximum number of results displayed globally (not per "ajax page") in the page.
-     *
-     * @var int
-     */
-    protected const INSTANT_SEARCH_PAGE_MAX_RESULTS_SCREEN = 500;
-
-    /**
      * Association between displayed fields and their column position in the listing.
      *
      * @var array
@@ -228,11 +221,11 @@ class zcAjaxInstantSearchPage extends InstantSearch
         // the products from the database in order to properly sort them, otherwise at every "ajax page" loaded
         // the displayed results would change)
         if (!empty($_POST['sort']) && $_POST['sort'] !== '20a') {
-            return self::INSTANT_SEARCH_PAGE_MAX_RESULTS_SCREEN;
+            return (int)INSTANT_SEARCH_PAGE_RESULTS_PER_SCREEN - count($this->results);
         }
 
-       $maxResultsPage = ((int)INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE * $this->resultPage) - count($this->results);
+        $maxNumberOfResults = min((int)INSTANT_SEARCH_PAGE_RESULTS_PER_SCREEN, (int)INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE * $this->resultPage);
 
-        return min($maxResultsPage, self::INSTANT_SEARCH_PAGE_MAX_RESULTS_SCREEN);
+        return $maxNumberOfResults - count($this->results);
     }
 }
