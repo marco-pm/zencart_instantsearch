@@ -2,7 +2,7 @@
 /**
  * @package  Instant Search Plugin for Zen Cart
  * @author   marco-pm
- * @version  3.0.0
+ * @version  3.0.1
  * @see      https://github.com/marco-pm/zencart_instantsearch
  * @license  GNU Public License V2.0
  */
@@ -45,7 +45,7 @@ abstract class InstantSearchDbTest extends zcUnitTestCase
         parent::setUp();
 
         $classLoader = new ClassLoader();
-        $classLoader->addPsr4("Zencart\\Plugins\\Catalog\\InstantSearch\\", "zc_plugins/InstantSearch/v3.0.0/classes/", true);
+        $classLoader->addPsr4("Zencart\\Plugins\\Catalog\\InstantSearch\\", "zc_plugins/InstantSearch/v3.0.1/classes/", true);
         $classLoader->register();
 
         require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'html_output.php');
