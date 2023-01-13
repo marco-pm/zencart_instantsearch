@@ -20,13 +20,14 @@ abstract class InstantSearchDbTest extends zcUnitTestCase
     use DatabaseConcerns;
 
     public array $databaseFixtures = [
-        'categoriesDemo'            => ['categories'],
-        'categoriesDescriptionDemo' => ['categories_description'],
-        'countProductsViewsDemo'    => ['count_product_views'],
-        'manufacturersDemo'         => ['manufacturers'],
-        'productsDemo'              => ['products'],
-        'productsDescriptionDemo'   => ['products_description'],
-        'productTypes'              => ['product_types']
+        'categoriesDemo'              => ['categories'],
+        'categoriesDescriptionDemo'   => ['categories_description'],
+        'countProductsViewsDemo'      => ['count_product_views'],
+        'manufacturersDemo'           => ['manufacturers'],
+        'metaTagsProductsDescription' => ['meta_tags_products_description'],
+        'productsDemo'                => ['products'],
+        'productsDescriptionDemo'     => ['products_description'],
+        'productTypes'                => ['product_types']
     ];
 
     public function __construct(
@@ -100,6 +101,9 @@ abstract class InstantSearchDbTest extends zcUnitTestCase
         $results = $instantSearchMock->getResults();
 
         $this->assertCount($expectedResultsCount, $results);
+
+        $resultsProductIds = array_column($results, 'products_id');
+        $this->assertCount(count(array_unique($resultsProductIds, SORT_NUMERIC)), $resultsProductIds);
 
         $resultsToCheck = [];
         $expectedFirstResultsIdsCount = count($expectedFirstResultsIds);
@@ -189,6 +193,9 @@ abstract class InstantSearchDbTest extends zcUnitTestCase
             ],
             'name-description,model-broad, no query expansion - results order is correct (name first)' => [
                 'industrial maxsample', 'name-description,model-broad', false, 5, 3, ['26', '105', '106']
+            ],
+            'meta-keywords - match' => [
+                'top-rated', 'meta-keywords', true, 5, 1, ['19']
             ],
         ];
     }

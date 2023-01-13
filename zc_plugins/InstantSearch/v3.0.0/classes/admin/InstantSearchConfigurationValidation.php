@@ -21,6 +21,7 @@ class InstantSearchConfigurationValidation extends \base
     protected const VALID_SEARCH_FIELDS_DROPDOWN = [
         'category',
         'manufacturer',
+        'meta-keywords',
         'model-broad',
         'model-exact',
         'name',
@@ -33,6 +34,7 @@ class InstantSearchConfigurationValidation extends \base
      * @var array
      */
     protected const VALID_SEARCH_FIELDS_PAGE = [
+        'meta-keywords',
         'model-broad',
         'model-exact',
         'name',

@@ -66,6 +66,9 @@ class zcAjaxInstantSearchPage extends InstantSearch
         'model-broad' => [
             ['buildSqlProductModel', [false]],
         ],
+        'meta-keywords' => [
+            ['buildSqlProductMetaKeywords'],
+        ],
     ];
 
     /**

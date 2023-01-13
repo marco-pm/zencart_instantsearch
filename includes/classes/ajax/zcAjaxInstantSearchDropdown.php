@@ -36,6 +36,9 @@ class zcAjaxInstantSearchDropdown extends InstantSearch
         'model-broad' => [
             ['buildSqlProductModel', [false]],
         ],
+        'meta-keywords' => [
+            ['buildSqlProductMetaKeywords'],
+        ],
         'category' => [
             ['buildSqlCategory'],
         ],
