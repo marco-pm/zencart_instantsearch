@@ -267,7 +267,7 @@ abstract class InstantSearch extends \base
      */
     protected function buildSqlProductName(bool $beginsWith = true): string
     {
-        $sql = "SELECT p.*, pd.products_name, m.manufacturers_name
+        $sql = "SELECT p.*, pd.products_name, m.manufacturers_name, SUM(cpv.views) AS total_views
                 FROM " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
                 LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
@@ -277,7 +277,8 @@ abstract class InstantSearch extends \base
                   AND pd.products_name " . ($beginsWith === true ? "LIKE :searchBeginsQuery" : "REGEXP :regexpQuery") . "
                   AND pd.language_id = :languageId
                   AND p.products_id NOT IN (:foundIds)
-                ORDER BY cpv.views DESC, p.products_sort_order, pd.products_name
+                GROUP BY p.products_id, pd.products_name, m.manufacturers_name
+                ORDER BY total_views DESC, p.products_sort_order, pd.products_name
                 LIMIT :resultsLimit";
 
         return $sql;
@@ -291,7 +292,7 @@ abstract class InstantSearch extends \base
      */
     protected function buildSqlProductModel(bool $exactMatch = true): string
     {
-        $sql = "SELECT p.*, pd.products_name, m.manufacturers_name
+        $sql = "SELECT p.*, pd.products_name, m.manufacturers_name, SUM(cpv.views) AS total_views
                 FROM " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
                 LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
@@ -301,7 +302,8 @@ abstract class InstantSearch extends \base
                   AND p.products_model " . ($exactMatch === true ? "= :searchQuery" : "REGEXP :regexpQuery") . "
                   AND pd.language_id = :languageId
                   AND p.products_id NOT IN (:foundIds)
-                ORDER BY cpv.views DESC, p.products_sort_order, pd.products_name
+                GROUP BY p.products_id, pd.products_name, m.manufacturers_name
+                ORDER BY total_views DESC, p.products_sort_order, pd.products_name
                 LIMIT :resultsLimit";
 
         return $sql;
