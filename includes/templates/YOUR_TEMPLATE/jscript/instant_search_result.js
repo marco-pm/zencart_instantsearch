@@ -74,12 +74,13 @@ async function loadResults() {
 
     const data = new FormData();
     data.append('keyword', instantSearchKeyword);
+    data.append('scope', 'page');
     data.append('resultPage', instantSearchResultPage);
     data.append('alpha_filter_id', instantSearchAlphaFilterId);
     data.append('sort', instantSearchSort);
     data.append('securityToken', instantSearchResultSecurityToken);
 
-    const response = await fetch('ajax.php?act=ajaxInstantSearchPage&method=instantSearch', {
+    const response = await fetch('ajax.php?act=ajaxInstantSearch&method=instantSearch', {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',

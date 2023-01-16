@@ -1,7 +1,7 @@
 /**
  * @package   Instant Search Plugin for Zen Cart
  * @author    marco-pm
- * @version   3.0.1
+ * @version   3.0.0
  * @see       https://github.com/marco-pm/zencart_instantsearch
  * @license   GNU Public License V2.0
  * @copyright Copyright Ayoob G 2009-2011
@@ -59,10 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         const signal = controller.signal;
                         const data = new FormData();
                         data.append('keyword', instantSearchQueryParsed);
+                        data.append('scope', 'dropdown');
                         data.append('securityToken', instantSearchSecurityToken);
 
                         try {
-                            const response = await fetch('ajax.php?act=ajaxInstantSearchDropdown&method=instantSearch', {
+                            const response = await fetch('ajax.php?act=ajaxInstantSearch&method=instantSearch', {
                                 method: 'POST',
                                 headers: {
                                     'X-Requested-With': 'XMLHttpRequest',
