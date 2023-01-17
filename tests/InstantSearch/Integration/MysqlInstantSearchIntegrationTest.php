@@ -15,7 +15,7 @@ use Composer\Autoload\ClassLoader;
 use Tests\Support\Traits\DatabaseConcerns;
 use Tests\Support\zcUnitTestCase;
 
-abstract class MySqlInstantSearchIntegrationTest extends zcUnitTestCase
+abstract class MysqlInstantSearchIntegrationTest extends zcUnitTestCase
 {
     use DatabaseConcerns;
 

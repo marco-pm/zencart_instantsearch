@@ -10,7 +10,7 @@
 declare(strict_types=1);
 
 use Zencart\Plugins\Catalog\InstantSearch\InstantSearch;
-use Zencart\Plugins\Catalog\InstantSearch\MySqlInstantSearch;
+use Zencart\Plugins\Catalog\InstantSearch\MysqlInstantSearch;
 
 class zcAjaxInstantSearch extends base
 {
@@ -31,7 +31,7 @@ class zcAjaxInstantSearch extends base
     /**
      * The InstantSearch concrete class to use.
      *
-     * @var InstantSearch|MySqlInstantSearch
+     * @var InstantSearch|MysqlInstantSearch
      */
     protected InstantSearch $instantSearch;
 
@@ -50,9 +50,9 @@ class zcAjaxInstantSearch extends base
             if (INSTANT_SEARCH_ENGINE === 'Typesense') {
                 // todo
                 // todo if typesense is not available, switch to mysql
-                // $this->instantSearch = new MySqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
+                // $this->instantSearch = new MysqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
             } else {
-                $this->instantSearch = new MySqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
+                $this->instantSearch = new MysqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
             }
         }
     }

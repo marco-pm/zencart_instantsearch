@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Zencart\Plugins\Catalog\InstantSearch\SearchEngineProviders;
 
-class MySqlSearchEngineProvider extends \base implements SearchEngineProviderInterface
+class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInterface
 {
     /**
      * Array of search fields (keys) with the corresponding sql build method (values).

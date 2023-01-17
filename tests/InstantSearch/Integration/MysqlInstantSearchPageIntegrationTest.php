@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Tests\InstantSearch\Integration;
 
-class MySqlInstantSearchPageIntegrationTest extends MySqlInstantSearchIntegrationTest
+class MysqlInstantSearchPageIntegrationTest extends MysqlInstantSearchIntegrationTest
 {
     protected const MAX_RESULTS_PER_SCREEN = 20;
 

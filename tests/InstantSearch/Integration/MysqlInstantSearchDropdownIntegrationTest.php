@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Tests\InstantSearch\Integration;
 
-class MySqlInstantSearchDropdownIntegrationTest extends MySqlInstantSearchIntegrationTest
+class MysqlInstantSearchDropdownIntegrationTest extends MysqlInstantSearchIntegrationTest
 {
     public function instantSearchSetUp(): void
     {

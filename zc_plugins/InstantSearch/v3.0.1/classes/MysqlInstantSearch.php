@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Zencart\Plugins\Catalog\InstantSearch;
 
 use Zencart\Plugins\Catalog\InstantSearch\SearchEngineProviders\SearchEngineProviderInterface;
-use Zencart\Plugins\Catalog\InstantSearch\SearchEngineProviders\MySqlSearchEngineProvider;
+use Zencart\Plugins\Catalog\InstantSearch\SearchEngineProviders\MysqlSearchEngineProvider;
 
-class MySqlInstantSearch extends InstantSearch
+class MysqlInstantSearch extends InstantSearch
 {
     /**
      * Use Query Expansion in the Full-Text searches.
@@ -39,6 +39,6 @@ class MySqlInstantSearch extends InstantSearch
      * @return SearchEngineProviderInterface
      */
     public function getSearchEngineProvider(): SearchEngineProviderInterface {
-        return new MySqlSearchEngineProvider($this->useQueryExpansion);
+        return new MysqlSearchEngineProvider($this->useQueryExpansion);
     }
 }
