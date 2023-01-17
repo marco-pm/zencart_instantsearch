@@ -9,6 +9,7 @@
 
 declare(strict_types=1);
 
+use Zencart\Plugins\Catalog\InstantSearch\InstantSearch;
 use Zencart\Plugins\Catalog\InstantSearch\MySqlInstantSearch;
 
 class zcAjaxInstantSearch extends base
@@ -19,6 +20,42 @@ class zcAjaxInstantSearch extends base
      * @var string
      */
     protected string $searchQuery;
+
+    /**
+     * Array of search results (for testing purposes).
+     *
+     * @var array
+     */
+    protected array $results;
+
+    /**
+     * The InstantSearch concrete class to use.
+     *
+     * @var InstantSearch|MySqlInstantSearch
+     */
+    protected InstantSearch $instantSearch;
+
+    /**
+     * Constructor.
+     *
+     * @param InstantSearch|null $instantSearch
+     */
+    public function __construct(InstantSearch $instantSearch = null)
+    {
+        $this->results = [];
+
+        if ($instantSearch !== null) {
+            $this->instantSearch = $instantSearch;
+        } else {
+            if (INSTANT_SEARCH_ENGINE === 'Typesense') {
+                // todo
+                // todo if typesense is not available, switch to mysql
+                // $this->instantSearch = new MySqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
+            } else {
+                $this->instantSearch = new MySqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
+            }
+        }
+    }
 
     /**
      * AJAX-callable method that performs the search on $_POST['keyword'] with scope $_POST['scope'] (dropdown or page)
@@ -95,16 +132,8 @@ class zcAjaxInstantSearch extends base
         // ------
 
 
-        // Instantiate the chosen search engine provider
-        if (INSTANT_SEARCH_ENGINE === 'Typesense') {
-            // todo
-            // also todo: if typesense is not available, switch to mysql
-        } else {
-            $instantSearch = new MySqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
-        }
-
         // Run the search and get the results
-        $results = $instantSearch->runSearch(
+        $results = $this->instantSearch->runSearch(
             $this->searchQuery,
             $searchFields,
             $limit,
@@ -112,6 +141,8 @@ class zcAjaxInstantSearch extends base
             $addToSearchLog,
             $searchLogPrefix
         );
+
+        $this->results = $results;
 
         $this->notify('NOTIFY_INSTANT_SEARCH_BEFORE_FORMAT_RESULTS', $this->searchQuery, $results);
 
@@ -296,5 +327,15 @@ class zcAjaxInstantSearch extends base
         $searchQueryPreg =  str_replace(' ', '|', preg_replace('/\s+/', ' ', preg_quote($this->searchQuery, '&')));
 
         return preg_replace('/(' . str_replace('/', '\/', $searchQueryPreg) . ')/i', '<span>$1</span>', $text);
+    }
+
+    /**
+     * For testing purposes.
+     *
+     * @return array
+     */
+    public function getResults(): array
+    {
+        return $this->results;
     }
 }

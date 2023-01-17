@@ -15,7 +15,7 @@ use Composer\Autoload\ClassLoader;
 use Tests\Support\Traits\DatabaseConcerns;
 use Tests\Support\zcUnitTestCase;
 
-abstract class InstantSearchDbTest extends zcUnitTestCase
+abstract class MySqlInstantSearchIntegrationTest extends zcUnitTestCase
 {
     use DatabaseConcerns;
 
@@ -30,15 +30,6 @@ abstract class InstantSearchDbTest extends zcUnitTestCase
         'productTypes'                => ['product_types']
     ];
 
-    public function __construct(
-        ?string $name = null,
-        array $data = [],
-        $dataName = '',
-        public string $instantSearchClassName = ''
-    ) {
-        parent::__construct($name, $data, $dataName);
-    }
-
     // Addition to the DatabaseConcerns setUp()
     public function instantSearchSetUp(): void
     {
@@ -48,12 +39,15 @@ abstract class InstantSearchDbTest extends zcUnitTestCase
         $classLoader->addPsr4("Zencart\\Plugins\\Catalog\\InstantSearch\\", "zc_plugins/InstantSearch/v3.0.1/classes/", true);
         $classLoader->register();
 
+        require DIR_FS_CATALOG . DIR_WS_CLASSES . 'ajax/zcAjaxInstantSearch.php';
+
         require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'html_output.php');
         require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'functions_products.php');
         require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'functions_strings.php');
 
         $_SESSION['languages_id'] = 1;
 
+        define('INSTANT_SEARCH_ENGINE', 'MySQL');
         define('PRODUCT_LIST_MODEL', '0');
         define('PRODUCT_LIST_NAME', '1');
         define('PRODUCT_LIST_MANUFACTURER', '2');
@@ -61,7 +55,6 @@ abstract class InstantSearchDbTest extends zcUnitTestCase
         define('PRODUCT_LIST_QUANTITY', '4');
         define('PRODUCT_LIST_WEIGHT', '5');
         define('PRODUCT_LIST_IMAGE', '6');
-        define('TEXT_INSTANT_SEARCH_CONFIGURATION_ERROR', 'Configuration error');
     }
 
     /**
@@ -93,12 +86,12 @@ abstract class InstantSearchDbTest extends zcUnitTestCase
             $_POST[$k] = $postVariable;
         }
 
-        $instantSearchMock = $this->getMockBuilder($this->instantSearchClassName)
-                                  ->onlyMethods(['formatResults'])
-                                  ->getMock();
+        $ajaxInstantSearchMock = $this->getMockBuilder('zcAjaxInstantSearch')
+                                      ->onlyMethods(['formatDropdownResults', 'formatPageResults'])
+                                      ->getMock();
 
-        $instantSearchMock->instantSearch();
-        $results = $instantSearchMock->getResults();
+        $ajaxInstantSearchMock->instantSearch();
+        $results = $ajaxInstantSearchMock->getResults();
 
         $this->assertCount($expectedResultsCount, $results);
 

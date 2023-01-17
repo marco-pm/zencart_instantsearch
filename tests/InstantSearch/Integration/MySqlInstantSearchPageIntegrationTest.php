@@ -11,19 +11,9 @@ declare(strict_types=1);
 
 namespace Tests\InstantSearch\Integration;
 
-use zcAjaxInstantSearchPage;
-
-class InstantSearchPageDbTest extends InstantSearchDbTest
+class MySqlInstantSearchPageIntegrationTest extends MySqlInstantSearchIntegrationTest
 {
     protected const MAX_RESULTS_PER_SCREEN = 20;
-
-    public function __construct(
-        ?string $name = null,
-        array $data = [],
-        $dataName = ''
-    ) {
-        parent::__construct($name, $data, $dataName, zcAjaxInstantSearchPage::class);
-    }
 
     public function instantSearchSetUp(): void
     {
@@ -35,6 +25,7 @@ class InstantSearchPageDbTest extends InstantSearchDbTest
     }
 
     /**
+     * @runInSeparateProcess
      * @dataProvider keywordProvider
      * @dataProvider pageSpecificKeywordProvider
      */
@@ -48,9 +39,11 @@ class InstantSearchPageDbTest extends InstantSearchDbTest
         array $postVariables = []
     ): void
     {
-        define('INSTANT_SEARCH_PAGE_FIELDS_LIST', $fieldsList);
+        define('INSTANT_SEARCH_FIELDS_LIST', $fieldsList);
+        define('INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION', $queryExpansion === true ? 'true' : 'false');
         define('INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE', $maxResults);
-        define('INSTANT_SEARCH_PAGE_USE_QUERY_EXPANSION', $queryExpansion === true ? 'true' : 'false');
+
+        $_POST['scope'] = 'page';
 
         parent::testKeywordReturnsProducts(
             $keyword,

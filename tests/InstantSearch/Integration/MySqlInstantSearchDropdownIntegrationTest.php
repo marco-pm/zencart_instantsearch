@@ -11,18 +11,8 @@ declare(strict_types=1);
 
 namespace Tests\InstantSearch\Integration;
 
-use zcAjaxInstantSearchDropdown;
-
-class InstantSearchDropdownDbTest extends InstantSearchDbTest
+class MySqlInstantSearchDropdownIntegrationTest extends MySqlInstantSearchIntegrationTest
 {
-    public function __construct(
-        ?string $name = null,
-        array $data = [],
-        $dataName = ''
-    ) {
-        parent::__construct($name, $data, $dataName, zcAjaxInstantSearchDropdown::class);
-    }
-
     public function instantSearchSetUp(): void
     {
         parent::instantSearchSetUp();
@@ -47,9 +37,11 @@ class InstantSearchDropdownDbTest extends InstantSearchDbTest
         array $postVariables = []
     ): void
     {
-        define('INSTANT_SEARCH_DROPDOWN_FIELDS_LIST', $fieldsList);
+        define('INSTANT_SEARCH_FIELDS_LIST', $fieldsList);
+        define('INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION', $queryExpansion === true ? 'true' : 'false');
         define('INSTANT_SEARCH_DROPDOWN_MAX_RESULTS', $maxResults);
-        define('INSTANT_SEARCH_DROPDOWN_USE_QUERY_EXPANSION', $queryExpansion === true ? 'true' : 'false');
+
+        $_POST['scope'] = 'dropdown';
 
         parent::testKeywordReturnsProducts(
             $keyword,

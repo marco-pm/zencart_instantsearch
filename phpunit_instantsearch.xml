@@ -15,9 +15,8 @@
     </testsuites>
     <coverage>
         <include>
-            <file>./includes/classes/ajax/zcAjaxInstantSearchDropdown.php</file>
-            <file>./includes/classes/ajax/zcAjaxInstantSearchPage.php</file>
-            <file>./zc_plugins/InstantSearch/v3.0.1/classes/InstantSearch.php</file>
+            <file>./includes/classes/ajax/zcAjaxInstantSearch.php</file>
+            <directory>./zc_plugins/InstantSearch/v3.0.1/classes</directory>
         </include>
     </coverage>
     <php>
