@@ -38,7 +38,8 @@ class MysqlInstantSearch extends InstantSearch
      *
      * @return SearchEngineProviderInterface
      */
-    public function getSearchEngineProvider(): SearchEngineProviderInterface {
+    public function getSearchEngineProvider(): SearchEngineProviderInterface
+    {
         return new MysqlSearchEngineProvider($this->useQueryExpansion);
     }
 }

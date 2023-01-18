@@ -37,8 +37,7 @@ class MysqlInstantSearchPageIntegrationTest extends MysqlInstantSearchIntegratio
         int $expectedResultsCount,
         array $expectedFirstResultsIds,
         array $postVariables = []
-    ): void
-    {
+    ): void {
         define('INSTANT_SEARCH_FIELDS_LIST', $fieldsList);
         define('INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION', $queryExpansion === true ? 'true' : 'false');
         define('INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE', $maxResults);

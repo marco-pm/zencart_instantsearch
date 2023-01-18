@@ -183,7 +183,7 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                 LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
             WHERE
                 p.products_status <> 0 " .
-                (($this->alphaFilter > 0 ) ? " AND pd.products_name LIKE :alphaFilter " : "") . "
+                ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : "") . "
                 AND pd.language_id = :languageId
                 AND p.products_id NOT IN (:foundIds)
                 AND (
@@ -246,7 +246,7 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
             WHERE
                 p.products_status <> 0 " .
                 ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : " ") . "
-                AND pd.products_name " . ($beginsWith === true ? " LIKE :searchBeginsQuery "  : " REGEXP :regexpQuery ") . "
+                AND pd.products_name " . ($beginsWith === true ? " LIKE :searchBeginsQuery " : " REGEXP :regexpQuery ") . "
                 AND pd.language_id = :languageId
                 AND p.products_id NOT IN (:foundIds)
             GROUP BY

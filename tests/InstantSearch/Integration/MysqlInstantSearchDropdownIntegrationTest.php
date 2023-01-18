@@ -35,8 +35,7 @@ class MysqlInstantSearchDropdownIntegrationTest extends MysqlInstantSearchIntegr
         int $expectedResultsCount,
         array $expectedFirstResultsIds,
         array $postVariables = []
-    ): void
-    {
+    ): void {
         define('INSTANT_SEARCH_FIELDS_LIST', $fieldsList);
         define('INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION', $queryExpansion === true ? 'true' : 'false');
         define('INSTANT_SEARCH_DROPDOWN_MAX_RESULTS', $maxResults);

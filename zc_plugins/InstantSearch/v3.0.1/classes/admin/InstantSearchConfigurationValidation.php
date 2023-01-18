@@ -34,7 +34,8 @@ class InstantSearchConfigurationValidation extends \base
      * @param string $fieldsList
      * @return bool
      */
-    public static function validateFieldsList(string $fieldsList): bool {
+    public static function validateFieldsList(string $fieldsList): bool
+    {
         // Check that the string is in the correct format
         if (preg_match('/^[a-z][a-z,-]*[a-z-]$/', $fieldsList) !== 1) {
             return false;

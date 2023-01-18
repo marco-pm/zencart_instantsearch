@@ -76,8 +76,7 @@ abstract class MysqlInstantSearchIntegrationTest extends zcUnitTestCase
         int $expectedResultsCount,
         array $expectedFirstResultsIds,
         array $postVariables = []
-    ): void
-    {
+    ): void {
         $this->instantSearchSetUp();
 
         $_POST['keyword'] = $keyword;

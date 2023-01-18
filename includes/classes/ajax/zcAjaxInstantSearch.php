@@ -31,7 +31,7 @@ class zcAjaxInstantSearch extends base
     /**
      * The InstantSearch concrete class to use.
      *
-     * @var InstantSearch|MysqlInstantSearch
+     * @var InstantSearch
      */
     protected InstantSearch $instantSearch;
 
