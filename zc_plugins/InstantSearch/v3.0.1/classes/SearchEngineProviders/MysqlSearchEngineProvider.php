@@ -14,13 +14,13 @@ namespace Zencart\Plugins\Catalog\InstantSearch\SearchEngineProviders;
 class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInterface
 {
     /**
-     * Array of search fields (keys) with the corresponding sql build method (values).
+     * Array of product fields (keys) with the corresponding sql build method (values).
      *
      * @var array
      */
     protected const FIELDS_TO_BUILD_METHODS = [
-        'category'         => ['buildSqlCategory'],
-        'manufacturer'     => ['buildSqlManufacturer'],
+        'category'         => ['buildSqlProductCategory'],
+        'manufacturer'     => ['buildSqlProductManufacturer'],
         'meta-keywords'    => ['buildSqlProductMetaKeywords'],
         'model-broad'      => ['buildSqlProductModelBroad'],
         'model-exact'      => ['buildSqlProductModelExact'],
@@ -66,26 +66,30 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
     }
 
     /**
-     * Search for $queryText and return the results.
+     * Searches for $queryText and returns the results.
      *
-     * @param string $queryText the string to search
-     * @param array $fieldsList
-     * @param int $limit maximum number of results to return
+     * @param string $queryText
+     * @param array $productFieldsList
+     * @param int $productsLimit
      * @param int|null $alphaFilter
      * @return array
      */
-    public function search(string $queryText, array $fieldsList, int $limit, int $alphaFilter = null): array
-    {
+    public function search(
+        string $queryText,
+        array $productFieldsList,
+        int $productsLimit,
+        int $alphaFilter = null
+    ): array {
         $this->alphaFilter = $alphaFilter ?? 0;
 
-        $sqlSequence = $this->buildSqlSequence($fieldsList);
+        $sqlSequence = $this->buildSqlSequence($productFieldsList);
 
-        // Run the sequence of database queries for the search, until we have enough results
+        // Run the sequence of database queries for products, until we have enough results
         foreach ($sqlSequence as $sql) {
-            if (count($this->results) >= $limit) {
+            if (count($this->results) >= $productsLimit) {
                 break;
             }
-            $result = $this->execQuery($sql, $queryText, $limit - count($this->results));
+            $result = $this->execQuery($sql, $queryText, $productsLimit - count($this->results));
             if (!empty($result)) {
                 array_push($this->results, ...$result);
             }
@@ -95,18 +99,18 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
     }
 
     /**
-     * Builds the sequence of database queries for the search.
-     * Note: validation of $fieldsList is made by the InstantSearchConfigurationValidation class, therefore
+     * Builds the sequence of database queries for products.
+     * Note: validation of $productFieldsList is made by the InstantSearchConfigurationValidation class, therefore
      * we don't manage Exceptions while reading the list here.
      *
-     * @param array $fieldsList
+     * @param array $productFieldsList
      * @return array
      */
-    protected function buildSqlSequence(array $fieldsList): array
+    protected function buildSqlSequence(array $productFieldsList): array
     {
         $sqlSequence = [];
 
-        foreach ($fieldsList as $field) {
+        foreach ($productFieldsList as $field) {
             foreach (static::FIELDS_TO_BUILD_METHODS[$field] as $buildMethod) {
                 $sqlSequence[] = $this->$buildMethod();
             }
@@ -145,7 +149,7 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
         $sql = $db->bindVars($sql, ':alphaFilter', chr($this->alphaFilter) . '%', 'string');
         $sql = $db->bindVars($sql, ':resultsLimit', $limit, 'integer');
 
-        $this->notify('NOTIFY_INSTANT_SEARCH_MYSQL_ENGINE_BEFORE_SQL', $queryText, $sql, $limit, $this->alphaFilter);
+        $this->notify('NOTIFY_INSTANT_SEARCH_MYSQL_ENGINE_BEFORE_SQL', $queryText, $sql, $productsLimit, $this->alphaFilter);
 
         // Run the sql
         $dbResults = $db->Execute($sql);
@@ -388,54 +392,85 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
     }
 
     /**
-     * Builds the REGEXP search sql on categories.
+     * Builds the REGEXP search sql on product category (immediate parent category only).
      *
      * @return string
      */
-    protected function buildSqlCategory(): string
+    protected function buildSqlProductCategory(): string
     {
+        // recursive if mysql 8
         return "
             SELECT
-                c.categories_id,
-                cd.categories_name,
-                c.categories_image
+                p.*,
+                pd.products_name,
+                m.manufacturers_name,
+                SUM(cpv.views) AS total_views
             FROM
-                " . TABLE_CATEGORIES . " c
-                LEFT JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON cd.categories_id = c.categories_id
+                " . TABLE_PRODUCTS . " p
+                JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
+                LEFT JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON cd.categories_id = p.master_categories_id
+                LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
+                LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (
+                    p.products_id = cpv.product_id
+                    AND cpv.language_id = :languageId
+                )
             WHERE
-                c.categories_status <> 0
+                p.products_status <> 0 " .
+                ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : " ") . "
                 AND (cd.categories_name REGEXP :regexpQuery)
                 AND cd.language_id = :languageId
+                AND pd.language_id = :languageId
+                AND p.products_id NOT IN (:foundIds)
+            GROUP BY
+                p.products_id,
+                pd.products_name,
+                m.manufacturers_name
             ORDER BY
-                c.sort_order,
-                cd.categories_name
+                total_views DESC,
+                p.products_sort_order,
+                pd.products_name
             LIMIT
                 :resultsLimit
         ";
     }
 
     /**
-     * Builds the REGEXP search sql on manufacturers.
+     * Builds the REGEXP search sql on product manufacturer.
      *
      * @return string
      */
-    protected function buildSqlManufacturer(): string
+    protected function buildSqlProductManufacturer(): string
     {
         return "
-        SELECT
-            DISTINCT m.manufacturers_id,
-            m.manufacturers_name,
-            m.manufacturers_image
-        FROM
-            " . TABLE_PRODUCTS . " p
-            LEFT JOIN " . TABLE_MANUFACTURERS . " m ON m.manufacturers_id = p.manufacturers_id
-        WHERE
-            p.products_status <> 0
-            AND (m.manufacturers_name REGEXP :regexpQuery)
-        ORDER BY
-            m.manufacturers_name
-        LIMIT
-            :resultsLimit
+            SELECT
+                p.*,
+                pd.products_name,
+                m.manufacturers_name,
+                SUM(cpv.views) AS total_views
+            FROM
+                " . TABLE_PRODUCTS . " p
+                JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
+                LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
+                LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (
+                    p.products_id = cpv.product_id
+                    AND cpv.language_id = :languageId
+                )
+            WHERE
+                p.products_status <> 0 " .
+                ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : " ") . "
+                AND (m.manufacturers_name REGEXP :regexpQuery)
+                AND pd.language_id = :languageId
+                AND p.products_id NOT IN (:foundIds)
+            GROUP BY
+                p.products_id,
+                pd.products_name,
+                m.manufacturers_name
+            ORDER BY
+                total_views DESC,
+                p.products_sort_order,
+                pd.products_name
+            LIMIT
+                :resultsLimit
         ";
     }
 }

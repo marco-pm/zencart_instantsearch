@@ -31,24 +31,24 @@ class MysqlInstantSearchPageIntegrationTest extends MysqlInstantSearchIntegratio
      */
     public function testKeywordReturnsProducts(
         string $keyword,
-        string $fieldsList,
-        bool $queryExpansion,
-        int $maxResults,
-        int $expectedResultsCount,
-        array $expectedFirstResultsIds,
-        array $postVariables = []
+        string $productFieldsList,
+        bool   $queryExpansion,
+        int    $maxProducts,
+        int    $expectedResultsCount,
+        array  $expectedFirstResultsIds,
+        array  $postVariables = []
     ): void {
-        define('INSTANT_SEARCH_FIELDS_LIST', $fieldsList);
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', $productFieldsList);
         define('INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION', $queryExpansion === true ? 'true' : 'false');
-        define('INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE', $maxResults);
+        define('INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE', $maxProducts);
 
         $_POST['scope'] = 'page';
 
         parent::testKeywordReturnsProducts(
             $keyword,
-            $fieldsList,
+            $productFieldsList,
             $queryExpansion,
-            $maxResults,
+            $maxProducts,
             $expectedResultsCount,
             $expectedFirstResultsIds,
             $postVariables

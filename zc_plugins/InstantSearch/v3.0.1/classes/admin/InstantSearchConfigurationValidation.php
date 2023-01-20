@@ -14,11 +14,11 @@ namespace Zencart\Plugins\Admin\InstantSearch;
 class InstantSearchConfigurationValidation extends \base
 {
     /**
-     * Array of allowed search fields.
+     * Array of allowed product fields.
      *
      * @var array
      */
-    protected const VALID_SEARCH_FIELDS_DROPDOWN = [
+    protected const VALID_PRODUCT_FIELDS_DROPDOWN = [
         'category',
         'manufacturer',
         'meta-keywords',
@@ -29,33 +29,33 @@ class InstantSearchConfigurationValidation extends \base
     ];
 
     /**
-     * Performs a series of checks on the fields list to validate it.
+     * Performs a series of checks on the product fields list to validate it.
      *
-     * @param string $fieldsList
+     * @param string $productFieldsList
      * @return bool
      */
-    public static function validateFieldsList(string $fieldsList): bool
+    public static function validateFieldsList(string $productFieldsList): bool
     {
         // Check that the string is in the correct format
-        if (preg_match('/^[a-z][a-z,-]*[a-z-]$/', $fieldsList) !== 1) {
+        if (preg_match('/^[a-z][a-z,-]*[a-z-]$/', $productFieldsList) !== 1) {
             return false;
         }
 
-        $searchFields = explode(',', $fieldsList);
+        $productFields = explode(',', $productFieldsList);
 
         // Check that there are no duplicates
-        if (count(array_unique($searchFields)) < count($searchFields)) {
+        if (count(array_unique($productFields)) < count($productFields)) {
             return false;
         }
 
         // Check that there is only one value between name and name-description in the list
-        if (in_array('name', $searchFields, true) && in_array('name-description', $searchFields, true)) {
+        if (in_array('name', $productFields, true) && in_array('name-description', $productFields, true)) {
             return false;
         }
 
-        foreach ($searchFields as $searchField) {
+        foreach ($productFields as $productField) {
             // Check that $searchField is a valid field name
-            if (!in_array($searchField, self::VALID_SEARCH_FIELDS_DROPDOWN, true)) {
+            if (!in_array($productField, self::VALID_PRODUCT_FIELDS_DROPDOWN, true)) {
                 return false;
             }
         }

@@ -43,6 +43,20 @@
     margin-top: .5rem;
 }
 
+.instantSearchResultsDropdownContainer__separator {
+    background-color: #525050;
+    color: #fff;
+    font-size: .95rem;
+    padding: .4rem .6rem;
+    margin: 1rem -.35rem .6rem -.35rem;
+    font-variant: small-caps;
+    letter-spacing: .05rem;
+}
+
+.instantSearchResultsDropdownContainer__separator:first-child {
+    margin-top: -.3rem;
+}
+
 .instantSearchResultsDropdownContainer__resultWrapper {
     display: flex;
     align-items: center;

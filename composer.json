@@ -4,11 +4,11 @@
     "homepage": "https://github.com/marco-pm/zencart_instantsearch",
     "license": "GPL-2.0",
     "require": {
-        "php": "^7.4|^8.0|^8.1|^8.2",
-        "zencart/zencart": "^v1.5.7|^v1.5.8"
+        "php": "7.4 - 8.2",
+        "symfony/http-client": "^v6.2",
+        "typesense/typesense-php": "^v4.8"
     },
     "require-dev": {
-        "php": "^7.4|^8.0|^8.1|^8.2",
-        "phpunit/phpunit": "^9.5"
+        "php": "8.0 - 8.2"
     }
 }

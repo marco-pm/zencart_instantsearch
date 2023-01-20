@@ -61,21 +61,21 @@ abstract class MysqlInstantSearchIntegrationTest extends zcUnitTestCase
      * @dataProvider keywordProvider
      *
      * @param string $keyword
-     * @param string $fieldsList
+     * @param string $productFieldsList
      * @param bool $queryExpansion use query expansion true/false
-     * @param int $maxResults max number of results
+     * @param int $maxProducts max number of results
      * @param int $expectedResultsCount
      * @param array $expectedFirstResultsIds first elements of the expected array of results' IDs
      * @param array $postVariables
      */
     public function testKeywordReturnsProducts(
         string $keyword,
-        string $fieldsList,
-        bool $queryExpansion,
-        int $maxResults,
-        int $expectedResultsCount,
-        array $expectedFirstResultsIds,
-        array $postVariables = []
+        string $productFieldsList,
+        bool   $queryExpansion,
+        int    $maxProducts,
+        int    $expectedResultsCount,
+        array  $expectedFirstResultsIds,
+        array  $postVariables = []
     ): void {
         $this->instantSearchSetUp();
 
@@ -188,6 +188,18 @@ abstract class MysqlInstantSearchIntegrationTest extends zcUnitTestCase
             ],
             'meta-keywords - match' => [
                 'top-rated', 'meta-keywords', true, 5, 1, ['19']
+            ],
+            'category - single match' => [
+                'simulation', 'category', true, 5, 1, ['21']
+            ],
+            'category - multiple matches' => [
+                'simulation strategy', 'category', true, 5, 3, ['24', '21', '23']
+            ],
+            'manufacturer - single match' => [
+                'matrox', 'manufacturer', true, 5, 2, ['1', '2']
+            ],
+            'manufacturer -  multiple matches' => [
+                'matrox fox', 'manufacturer', true, 5, 5, []
             ],
         ];
     }

@@ -31,6 +31,8 @@ class MysqlInstantSearch extends InstantSearch
     public function __construct($useQueryExpansion)
     {
         $this->useQueryExpansion = $useQueryExpansion;
+
+        parent::__construct();
     }
 
     /**

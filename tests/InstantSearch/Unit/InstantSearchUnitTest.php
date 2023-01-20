@@ -30,7 +30,7 @@ abstract class InstantSearchUnitTest extends zcUnitTestCase
 
         define('INSTANT_SEARCH_DROPDOWN_MIN_WORDSEARCH_LENGTH', '3');
         define('INSTANT_SEARCH_DROPDOWN_MAX_WORDSEARCH_LENGTH', '30');
-        define('INSTANT_SEARCH_DROPDOWN_MAX_RESULTS', '5');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_PRODUCTS', '5');
         define('INSTANT_SEARCH_DROPDOWN_ADD_LOG_ENTRY', 'true');
         define('TEXT_SEARCH_LOG_ENTRY_DROPDOWN_PREFIX', '');
         define('INSTANT_SEARCH_PAGE_RESULTS_PER_PAGE', '5');
@@ -86,11 +86,13 @@ abstract class InstantSearchUnitTest extends zcUnitTestCase
         ];
     }
 
+
     public function testSaveSearchLogIfEnabled(): void
     {
         $searchEngineProviderMock = $this->getMockForAbstractClass(SearchEngineProviderInterface::class);
 
-        $instantSearchMock = $this->getMockForAbstractClass(InstantSearch::class, mockedMethods: ['addEntryToSearchLog']);
+        $instantSearchMock = $this->getMockForAbstractClass(InstantSearch::class,
+            mockedMethods: ['addEntryToSearchLog', 'searchCategories', 'searchManufacturers']);
         $instantSearchMock->method('getSearchEngineProvider')
                           ->willReturn($searchEngineProviderMock);
 
@@ -102,7 +104,9 @@ abstract class InstantSearchUnitTest extends zcUnitTestCase
         $instantSearchMock->expects($this->exactly(2))
                           ->method('addEntryToSearchLog');
 
-        define('INSTANT_SEARCH_FIELDS_LIST', 'whatever');
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', 'whatever');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES', '2');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS', '2');
         $_POST['scope']   = 'dropdown';
         $_POST['keyword'] = 'whatever';
         $ajaxInstantSearchMock->instantSearch();
@@ -115,7 +119,8 @@ abstract class InstantSearchUnitTest extends zcUnitTestCase
     {
         $searchEngineProviderMock = $this->getMockForAbstractClass(SearchEngineProviderInterface::class);
 
-        $instantSearchMock = $this->getMockForAbstractClass(InstantSearch::class, mockedMethods: ['addEntryToSearchLog']);
+        $instantSearchMock = $this->getMockForAbstractClass(InstantSearch::class,
+            mockedMethods: ['addEntryToSearchLog', 'searchCategories', 'searchManufacturers']);
         $instantSearchMock->method('getSearchEngineProvider')
                           ->willReturn($searchEngineProviderMock);
 
@@ -127,7 +132,9 @@ abstract class InstantSearchUnitTest extends zcUnitTestCase
         $instantSearchMock->expects($this->never())
                           ->method('addEntryToSearchLog');
 
-        define('INSTANT_SEARCH_FIELDS_LIST', 'whatever');
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', 'whatever');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES', '2');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS', '2');
         $_POST['scope']      = 'page';
         $_POST['keyword']    = 'whatever';
         $_POST['resultPage'] = '2';
@@ -138,7 +145,8 @@ abstract class InstantSearchUnitTest extends zcUnitTestCase
     {
         $searchEngineProviderMock = $this->getMockForAbstractClass(SearchEngineProviderInterface::class);
 
-        $instantSearchMock = $this->getMockForAbstractClass(InstantSearch::class, mockedMethods: ['addEntryToSearchLog']);
+        $instantSearchMock = $this->getMockForAbstractClass(InstantSearch::class,
+            mockedMethods: ['addEntryToSearchLog', 'searchCategories', 'searchManufacturers']);
         $instantSearchMock->method('getSearchEngineProvider')
                           ->willReturn($searchEngineProviderMock);
 
@@ -147,7 +155,9 @@ abstract class InstantSearchUnitTest extends zcUnitTestCase
                                       ->onlyMethods(['formatDropdownResults', 'formatPageResults'])
                                       ->getMock();
 
-        define('INSTANT_SEARCH_FIELDS_LIST', 'name-description');
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', 'name-description');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES', '2');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS', '2');
         $_POST['scope']      = 'dropdown';
         $_POST['keyword']    = 'whatever';
         $htmlOutput = $ajaxInstantSearchMock->instantSearch();

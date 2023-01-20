@@ -14,13 +14,18 @@ namespace Zencart\Plugins\Catalog\InstantSearch\SearchEngineProviders;
 interface SearchEngineProviderInterface
 {
     /**
-     * Search for $queryText and return the results.
+     * Searches for $queryText and returns the results.
      *
-     * @param string $queryText the string to search
-     * @param array $fieldsList
-     * @param int $limit maximum number of results to return
+     * @param string $queryText
+     * @param array $productFieldsList
+     * @param int $productsLimit
      * @param int|null $alphaFilter
      * @return array
      */
-    public function search(string $queryText, array $fieldsList, int $limit, int $alphaFilter = null): array;
+    public function search(
+        string $queryText,
+        array $productFieldsList,
+        int $productsLimit,
+        int $alphaFilter = null
+    ): array;
 }

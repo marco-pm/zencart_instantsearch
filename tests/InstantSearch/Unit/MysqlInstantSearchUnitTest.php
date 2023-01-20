@@ -25,23 +25,31 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
 
     public function testDropdownFieldsValuesCallCorrespondingSql(): void
     {
-        define('INSTANT_SEARCH_FIELDS_LIST', 'name,model-exact,model-broad,meta-keywords,category,manufacturer');
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', 'name,model-exact,model-broad,meta-keywords,category,manufacturer');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES', '2');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS', '2');
 
         $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
                                               ->onlyMethods([
                                                   'execQuery', 'buildSqlProductModel', 'buildSqlProductName',
                                                   'buildSqlProductNameDescription', 'buildSqlProductMetaKeywords',
-                                                  'buildSqlCategory', 'buildSqlManufacturer'
+                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer'
                                               ])
                                               ->getMock();
 
         $mysqlInstantSearchMock = $this->getMockBuilder(MysqlInstantSearch::class)
-                                       ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
-                                       ->onlyMethods(['getSearchEngineProvider', 'addEntryToSearchLog'])
+                                       ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true', $mysqlSearchEngineProviderMock])
+                                       ->onlyMethods([
+                                           'getSearchEngineProvider', 'addEntryToSearchLog',
+                                           'searchCategories', 'searchManufacturers'
+                                       ])
                                        ->getMock();
         $mysqlInstantSearchMock->method('getSearchEngineProvider')
                                ->willReturn($mysqlSearchEngineProviderMock);
+        // This is necessary too, because the constructor of $mysqlSearchEngineProviderMock is calling the
+        // original implementation of getSearchEngineProvider()
+        $mysqlInstantSearchMock->setSearchEngineProvider($mysqlSearchEngineProviderMock);
 
         $ajaxInstantSearchMock = $this->getMockBuilder('zcAjaxInstantSearch')
                                       ->setConstructorArgs([$mysqlInstantSearchMock])
@@ -64,10 +72,16 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
                                       ->method('buildSqlProductMetaKeywords');
 
         $mysqlSearchEngineProviderMock->expects($this->once())
-                                      ->method('buildSqlCategory');
+                                      ->method('buildSqlProductCategory');
 
         $mysqlSearchEngineProviderMock->expects($this->once())
-                                      ->method('buildSqlManufacturer');
+                                      ->method('buildSqlProductManufacturer');
+
+        $mysqlInstantSearchMock->expects($this->once())
+                               ->method('searchCategories');
+
+        $mysqlInstantSearchMock->expects($this->once())
+                               ->method('searchManufacturers');
 
         $_POST['keyword'] = 'whatever';
         $_POST['scope']   = 'dropdown';
@@ -76,23 +90,29 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
 
     public function testPageFieldsValuesCallCorrespondingSql(): void
     {
-        define('INSTANT_SEARCH_FIELDS_LIST', 'name,model-exact,model-broad,meta-keywords,category,manufacturer');
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', 'name,model-exact,model-broad,meta-keywords,category,manufacturer');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES', '2');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS', '2');
 
         $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
                                               ->onlyMethods([
                                                   'execQuery', 'buildSqlProductModel', 'buildSqlProductName',
                                                   'buildSqlProductNameDescription', 'buildSqlProductMetaKeywords',
-                                                  'buildSqlCategory', 'buildSqlManufacturer'
+                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer'
                                               ])
                                               ->getMock();
 
         $mysqlInstantSearchMock = $this->getMockBuilder(MysqlInstantSearch::class)
-                                       ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
-                                       ->onlyMethods(['getSearchEngineProvider', 'addEntryToSearchLog'])
+                                       ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true', $mysqlSearchEngineProviderMock])
+                                       ->onlyMethods([
+                                           'getSearchEngineProvider', 'addEntryToSearchLog',
+                                           'searchCategories', 'searchManufacturers'
+                                       ])
                                        ->getMock();
         $mysqlInstantSearchMock->method('getSearchEngineProvider')
                                ->willReturn($mysqlSearchEngineProviderMock);
+        $mysqlInstantSearchMock->setSearchEngineProvider($mysqlSearchEngineProviderMock);
 
         $ajaxInstantSearchMock = $this->getMockBuilder('zcAjaxInstantSearch')
                                       ->setConstructorArgs([$mysqlInstantSearchMock])
@@ -114,13 +134,19 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
         $mysqlSearchEngineProviderMock->expects($this->once())
                                       ->method('buildSqlProductMetaKeywords');
 
-        // category should be ignored when scope is page
-        $mysqlSearchEngineProviderMock->expects($this->never())
-                                      ->method('buildSqlCategory');
+        $mysqlSearchEngineProviderMock->expects($this->once())
+                                      ->method('buildSqlProductCategory');
+
+        $mysqlSearchEngineProviderMock->expects($this->once())
+                                      ->method('buildSqlProductManufacturer');
+
+        // categories should be ignored when scope is page
+        $mysqlInstantSearchMock->expects($this->never())
+                               ->method('searchCategories');
 
         // manufacturer should be ignored when scope is page
-        $mysqlSearchEngineProviderMock->expects($this->never())
-                                      ->method('buildSqlManufacturer');
+        $mysqlInstantSearchMock->expects($this->never())
+                               ->method('searchManufacturers');
 
         $_POST['keyword'] = 'whatever';
         $_POST['scope']   = 'page';
@@ -129,7 +155,9 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
 
     public function testNameDescriptionFieldCallCorrespondingSql(): void
     {
-        define('INSTANT_SEARCH_FIELDS_LIST', 'name-description');
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', 'name-description');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES', '2');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS', '2');
 
         $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
@@ -138,10 +166,14 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
 
         $mysqlInstantSearchMock = $this->getMockBuilder(MysqlInstantSearch::class)
                                        ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
-                                       ->onlyMethods(['getSearchEngineProvider', 'addEntryToSearchLog'])
+                                       ->onlyMethods([
+                                           'getSearchEngineProvider', 'addEntryToSearchLog',
+                                           'searchCategories', 'searchManufacturers'
+                                       ])
                                        ->getMock();
         $mysqlInstantSearchMock->method('getSearchEngineProvider')
                                ->willReturn($mysqlSearchEngineProviderMock);
+        $mysqlInstantSearchMock->setSearchEngineProvider($mysqlSearchEngineProviderMock);
 
         $ajaxInstantSearchMock = $this->getMockBuilder('zcAjaxInstantSearch')
                                       ->setConstructorArgs([$mysqlInstantSearchMock])
@@ -160,5 +192,42 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
         $_POST['keyword'] = 'whatever';
         $_POST['scope']   = 'dropdown';
         $ajaxInstantSearchMock->instantSearch();
+    }
+
+    public function testCategoriesAndManufacturersIgnoredWhenLimitIsZero(): void
+    {
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', 'name');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES', '0');
+        define('INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS', '0');
+
+        $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
+                                              ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
+                                              ->onlyMethods([
+                                                  'execQuery', 'buildSqlProductName', 'buildSqlProductNameDescription',
+                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer'
+                                              ])
+                                              ->getMock();
+
+        $mysqlInstantSearchMock = $this->getMockBuilder(MysqlInstantSearch::class)
+                                       ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true', $mysqlSearchEngineProviderMock])
+                                       ->onlyMethods([
+                                           'getSearchEngineProvider', 'addEntryToSearchLog',
+                                           'searchCategories', 'searchManufacturers'
+                                       ])
+                                       ->getMock();
+        $mysqlInstantSearchMock->method('getSearchEngineProvider')
+                               ->willReturn($mysqlSearchEngineProviderMock);
+        $mysqlInstantSearchMock->setSearchEngineProvider($mysqlSearchEngineProviderMock);
+
+        $ajaxInstantSearchMock = $this->getMockBuilder('zcAjaxInstantSearch')
+                                      ->setConstructorArgs([$mysqlInstantSearchMock])
+                                      ->onlyMethods(['formatDropdownResults', 'formatPageResults'])
+                                      ->getMock();
+
+        $mysqlInstantSearchMock->expects($this->never())
+                               ->method('searchCategories');
+
+        $mysqlInstantSearchMock->expects($this->never())
+                               ->method('searchManufacturers');
     }
 }

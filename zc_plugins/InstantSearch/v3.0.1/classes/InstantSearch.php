@@ -11,10 +11,19 @@ declare(strict_types=1);
 
 namespace Zencart\Plugins\Catalog\InstantSearch;
 
+use Zencart\Plugins\Catalog\InstantSearch\Exceptions\InstantSearchEngineInitException;
+use Zencart\Plugins\Catalog\InstantSearch\Exceptions\InstantSearchEngineSearchException;
 use Zencart\Plugins\Catalog\InstantSearch\SearchEngineProviders\SearchEngineProviderInterface;
 
 abstract class InstantSearch extends \base
 {
+    /**
+     * The search engine provider.
+     *
+     * @var SearchEngineProviderInterface
+     */
+    protected SearchEngineProviderInterface $searchEngineProvider;
+
     /**
      * Factory method that returns the Search engine provider.
      *
@@ -23,32 +32,166 @@ abstract class InstantSearch extends \base
     abstract public function getSearchEngineProvider(): SearchEngineProviderInterface;
 
     /**
+     * Constructor.
+     *
+     * @throws InstantSearchEngineInitException
+     */
+    public function __construct()
+    {
+        try {
+            $this->searchEngineProvider = $this->getSearchEngineProvider();
+        } catch (\Exception $e) {
+            $this->writeLog("Error while initializing the search engine provider, check the configuration parameters", $e);
+            throw new InstantSearchEngineInitException();
+        }
+    }
+
+    /**
      * Search for $queryText with the chosen Search Engine Provider and return the results.
      *
      * @param string $queryText
-     * @param array $fieldsList
-     * @param int $limit
+     * @param array $productFieldsList
+     * @param int $productsLimit
+     * @param int $categoriesLimit
+     * @param int $manufacturersLimit
      * @param int|null $alphaFilter
      * @param bool $addToSearchLog
      * @param string $searchLogPrefix
      * @return array
+     * @throws InstantSearchEngineSearchException
      */
     public function runSearch(
         string $queryText,
-        array $fieldsList,
-        int $limit,
+        array $productFieldsList,
+        int $productsLimit,
+        int $categoriesLimit = 0,
+        int $manufacturersLimit = 0,
         int $alphaFilter = null,
         bool $addToSearchLog = false,
         string $searchLogPrefix = ''
-    ): array
-    {
-        $searchEngineProvider = $this->getSearchEngineProvider();
-
+    ): array {
         if ($addToSearchLog === true) {
             $this->addEntryToSearchLog($queryText, $searchLogPrefix);
         }
 
-        return $searchEngineProvider->search($queryText, $fieldsList, $limit, $alphaFilter);
+        try {
+            $results = $this->searchEngineProvider->search(
+                $queryText,
+                $productFieldsList,
+                $productsLimit,
+                $alphaFilter
+            );
+
+            if ($categoriesLimit > 0) {
+                $result = $this->searchCategories($queryText, $categoriesLimit);
+                if (!empty($result)) {
+                    array_push($results, ...$result);
+                }
+            }
+
+            if ($manufacturersLimit > 0) {
+                $result = $this->searchManufacturers($queryText, $manufacturersLimit);
+                if (!empty($result)) {
+                    array_push($results, ...$result);
+                }
+            }
+
+            return $results;
+        } catch (\Exception $e) {
+            $this->writeLog("Error while searching for \"$queryText\"", $e);
+            throw new InstantSearchEngineSearchException();
+        }
+    }
+
+    /**
+     * Search the categories' names in the database.
+     *
+     * @param string $queryText
+     * @param int $limit
+     * @return array
+     */
+    protected function searchCategories(string $queryText, int $limit): array
+    {
+        global $db;
+
+        $searchQueryPreg = preg_replace('/\s+/', ' ', preg_quote($queryText, '&'));
+        $searchQueryRegexp = str_replace(' ', '|', $searchQueryPreg);
+
+        $sql = "
+            SELECT
+                c.categories_id,
+                cd.categories_name,
+                c.categories_image
+            FROM
+                " . TABLE_CATEGORIES . " c
+                LEFT JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON cd.categories_id = c.categories_id
+            WHERE
+                c.categories_status <> 0
+                AND (cd.categories_name REGEXP :regexpQuery)
+                AND cd.language_id = :languageId
+            ORDER BY
+                c.sort_order,
+                cd.categories_name
+            LIMIT
+                :resultsLimit
+        ";
+
+        $sql = $db->bindVars($sql, ':regexpQuery', $searchQueryRegexp, 'string');
+        $sql = $db->bindVars($sql, ':languageId', $_SESSION['languages_id'], 'integer');
+        $sql = $db->bindVars($sql, ':resultsLimit', $limit, 'integer');
+
+        $dbResults = $db->Execute($sql);
+
+        $results = [];
+        foreach ($dbResults as $dbResult) {
+            $results[] = $dbResult;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Search the manufacturers' names in the database.
+     *
+     * @param string $queryText
+     * @param int $limit
+     * @return array
+     */
+    protected function searchManufacturers(string $queryText, int $limit): array
+    {
+        global $db;
+
+        $searchQueryPreg = preg_replace('/\s+/', ' ', preg_quote($queryText, '&'));
+        $searchQueryRegexp = str_replace(' ', '|', $searchQueryPreg);
+
+        $sql = "
+            SELECT
+                DISTINCT m.manufacturers_id,
+                m.manufacturers_name,
+                m.manufacturers_image
+            FROM
+                " . TABLE_PRODUCTS . " p
+                LEFT JOIN " . TABLE_MANUFACTURERS . " m ON m.manufacturers_id = p.manufacturers_id
+            WHERE
+                p.products_status <> 0
+                AND (m.manufacturers_name REGEXP :regexpQuery)
+            ORDER BY
+                m.manufacturers_name
+            LIMIT
+                :resultsLimit
+        ";
+
+        $sql = $db->bindVars($sql, ':regexpQuery', $searchQueryRegexp, 'string');
+        $sql = $db->bindVars($sql, ':resultsLimit', $limit, 'integer');
+
+        $dbResults = $db->Execute($sql);
+
+        $results = [];
+        foreach ($dbResults as $dbResult) {
+            $results[] = $dbResult;
+        }
+
+        return $results;
     }
 
     /**
@@ -85,5 +228,28 @@ abstract class InstantSearch extends \base
             $sql = $db->bindVars($sql, ':search_term', $prefix . ' ' . $query, 'string');
             $db->Execute($sql);
         }
+    }
+
+    /**
+     * Write an entry in the Instant Search log.
+     *
+     * @param string $message
+     * @param \Exception $e
+     * @return void
+     */
+    public function writeLog(string $message, \Exception $e): void
+    {
+        $logName = DIR_FS_LOGS . "/instant-search-" . date('Y-m-d') . ".log";
+        $providerClassParts = explode('\\', get_class($this->searchEngineProvider));
+        $providerName = end($providerClassParts);
+        error_log(date('Y-m-d H:i:s') . " [$providerName] $message: " . $e->getMessage() . PHP_EOL, 3, $logName);
+    }
+
+    /**
+     * @param SearchEngineProviderInterface $searchEngineProvider
+     */
+    public function setSearchEngineProvider(SearchEngineProviderInterface $searchEngineProvider): void
+    {
+        $this->searchEngineProvider = $searchEngineProvider;
     }
 }

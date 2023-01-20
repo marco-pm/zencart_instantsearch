@@ -29,24 +29,28 @@ class MysqlInstantSearchDropdownIntegrationTest extends MysqlInstantSearchIntegr
      */
     public function testKeywordReturnsProducts(
         string $keyword,
-        string $fieldsList,
-        bool $queryExpansion,
-        int $maxResults,
-        int $expectedResultsCount,
-        array $expectedFirstResultsIds,
-        array $postVariables = []
+        string $productFieldsList,
+        bool   $queryExpansion,
+        int    $maxProducts,
+        int    $expectedResultsCount,
+        array  $expectedFirstResultsIds,
+        array  $postVariables = [],
+        int    $maxCategories = 0,
+        int    $maxManufacturers = 0,
     ): void {
-        define('INSTANT_SEARCH_FIELDS_LIST', $fieldsList);
+        define('INSTANT_SEARCH_PRODUCT_FIELDS_LIST', $productFieldsList);
         define('INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION', $queryExpansion === true ? 'true' : 'false');
-        define('INSTANT_SEARCH_DROPDOWN_MAX_RESULTS', $maxResults);
+        define('INSTANT_SEARCH_DROPDOWN_MAX_PRODUCTS', $maxProducts);
+        define('INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES', $maxCategories);
+        define('INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS', $maxManufacturers);
 
         $_POST['scope'] = 'dropdown';
 
         parent::testKeywordReturnsProducts(
             $keyword,
-            $fieldsList,
+            $productFieldsList,
             $queryExpansion,
-            $maxResults,
+            $maxProducts,
             $expectedResultsCount,
             $expectedFirstResultsIds,
             $postVariables
@@ -56,26 +60,26 @@ class MysqlInstantSearchDropdownIntegrationTest extends MysqlInstantSearchIntegr
     public function dropdownSpecificKeywordProvider(): array
     {
         return [
-            'category - no match' => [
-                'gibberish', 'category', true, 5, 0, []
+            'categories - no match' => [
+                'gibberish', 'name', true, 5, 0, [], [], 2, 0
             ],
-            'category - single match' => [
-                'dvd', 'category', true, 5, 1, ['3']
+            'categories - single match' => [
+                'dvd', 'name', true, 0, 1, ['3'], [], 2, 0
             ],
-            'category - multiple matches' => [
-                'big linked', 'category', true, 5, 2, ['22', '53']
+            'categories - multiple matches' => [
+                'big linked', 'name', true, 0, 2, ['22', '53'], [], 2, 0
             ],
-            'category - total number of results limited by max limit' => [
-                'sale', 'category', true, 2, 2, ['58', '48']
+            'categories - number of results limited by categories limit' => [
+                'sale', 'name', true, 0, 3, ['58'], [], 3, 0
             ],
-            'manufacturer - no match' => [
-                'gibberish', 'manufacturer', true, 5, 0, []
+            'manufacturers - no match' => [
+                'gibberish', 'name', true, 0, 0, [], [], 0, 2
             ],
-            'manufacturer - single match' => [
-                'ewle', 'manufacturer', true, 5, 1, ['9']
+            'manufacturers - single match' => [
+                'ewle', 'name', true, 0, 1, ['9'], [], 0, 2
             ],
-            'category,manufacturer,name - results order is correct' => [
-                'hewlett fox', 'category,manufacturer,name', true, 5, 5, ['4', '9', '27']
+            'name,categories,manufacturers - results order is correct' => [
+                'hewlett fox unlinked', 'name', true, 3, 5, ['27', '61', '100', '53', '4'], [], 1, 1
             ],
         ];
     }

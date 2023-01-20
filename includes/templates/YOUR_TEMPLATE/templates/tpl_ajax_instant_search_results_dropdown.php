@@ -15,32 +15,38 @@ if (INSTANT_SEARCH_DROPDOWN_HIGHLIGHT_TEXT === 'query') {
 }
 
 foreach ($dropdownResults as $result) { ?>
-    <a href="<?php echo $result['link']; ?>">
-        <div class="instantSearchResultsDropdownContainer__resultWrapper">
-            <?php if (!empty($result['img'])) { ?>
-                <div class="instantSearchResultsDropdownContainer__resultWrapper__img">
-                    <?php echo $result['img']; ?>
-                </div>
-            <?php } ?>
-            <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper">
-                <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper<?php echo $nameModelClass; ?>">
-                    <?php echo $result['name']; ?>
-                    <?php if (!empty($result['model'])) { ?>
-                        <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper__model">
-                            <?php echo $result['model']; ?>
-                        </div>
-                    <?php } ?>
-                </div>
-                <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper">
-                    <?php if (!empty($result['price'])) {
-                        echo $result['price'];
-                    } elseif (!empty($result['count'])) { ?>
-                        <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper__count">
-                            <?php echo $result['count'] . ' ' . TEXT_INSTANT_SEARCH_PRODUCTS_TEXT; ?>
-                        </div>
-                    <?php } ?>
+    <?php if (!empty($result['separator'])) { ?>
+        <div class="instantSearchResultsDropdownContainer__separator">
+            <?php echo $result['separator']; ?>
+        </div>
+    <?php } else { ?>
+        <a href="<?php echo $result['link']; ?>">
+            <div class="instantSearchResultsDropdownContainer__resultWrapper">
+                <?php if (!empty($result['img'])) { ?>
+                    <div class="instantSearchResultsDropdownContainer__resultWrapper__img">
+                        <?php echo $result['img']; ?>
+                    </div>
+                <?php } ?>
+                <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper">
+                    <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper<?php echo $nameModelClass; ?>">
+                        <?php echo $result['name']; ?>
+                        <?php if (!empty($result['model'])) { ?>
+                            <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__nameModelWrapper__model">
+                                <?php echo $result['model']; ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+                    <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper">
+                        <?php if (!empty($result['price'])) {
+                            echo $result['price'];
+                        } elseif (!empty($result['count'])) { ?>
+                            <div class="instantSearchResultsDropdownContainer__resultWrapper__infoWrapper__priceCountWrapper__count">
+                                <?php echo $result['count'] . ' ' . TEXT_INSTANT_SEARCH_PRODUCTS_TEXT; ?>
+                            </div>
+                        <?php } ?>
+                    </div>
                 </div>
             </div>
-        </div>
-    </a>
+        </a>
+    <?php } ?>
 <?php } ?>
