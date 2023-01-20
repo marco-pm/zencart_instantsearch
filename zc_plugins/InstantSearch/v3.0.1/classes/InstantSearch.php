@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Zencart\Plugins\Catalog\InstantSearch;
 
-use Zencart\Plugins\Catalog\InstantSearch\Exceptions\InstantSearchEngineInitException;
 use Zencart\Plugins\Catalog\InstantSearch\Exceptions\InstantSearchEngineSearchException;
 use Zencart\Plugins\Catalog\InstantSearch\SearchEngineProviders\SearchEngineProviderInterface;
 
@@ -33,17 +32,10 @@ abstract class InstantSearch extends \base
 
     /**
      * Constructor.
-     *
-     * @throws InstantSearchEngineInitException
      */
     public function __construct()
     {
-        try {
-            $this->searchEngineProvider = $this->getSearchEngineProvider();
-        } catch (\Exception $e) {
-            $this->writeLog("Error while initializing the search engine provider, check the configuration parameters", $e);
-            throw new InstantSearchEngineInitException();
-        }
+        $this->searchEngineProvider = $this->getSearchEngineProvider();
     }
 
     /**

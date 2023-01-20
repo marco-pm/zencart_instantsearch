@@ -36,9 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             instantSearchInputs[i].setAttribute('autocomplete', 'off');
 
             // Hide the results container on blur
-            instantSearchInputs[i].addEventListener('blur', async function () {
-                await removeResultsDropdown();
-            });
+            instantSearchInputs[i].addEventListener('blur', async () => await removeResultsDropdown());
 
             ['input', 'focus'].forEach(event => instantSearchInputs[i].addEventListener(event, async function () {
                 // Perform the search and shows the results dropdown

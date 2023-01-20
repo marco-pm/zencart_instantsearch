@@ -206,7 +206,7 @@ class zcAjaxInstantSearch extends base
                     : '';
             } elseif (!empty($result['categories_id'])) {
                 if ($categoriesReached === false) {
-                    $dropdownResult['separator'] = 'Categories';
+                    $dropdownResult['separator'] = BOX_HEADING_CATEGORIES;
                     $categoriesReached = true;
                     $dropdownResults[] = $dropdownResult;
                     $dropdownResult = [];
@@ -221,7 +221,7 @@ class zcAjaxInstantSearch extends base
                     : '';
             } elseif (!empty($result['manufacturers_id'])) {
                 if ($manufacturersReached === false) {
-                    $dropdownResult['separator'] = 'Brands';
+                    $dropdownResult['separator'] = BOX_HEADING_MANUFACTURERS;
                     $manufacturersReached = true;
                     $dropdownResults[] = $dropdownResult;
                     $dropdownResult = [];
