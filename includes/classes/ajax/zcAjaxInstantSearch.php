@@ -262,7 +262,7 @@ class zcAjaxInstantSearch extends base
      */
     protected function formatPageResults(array $results): string
     {
-        global $zco_notifier, $current_page_base, $cPath, $request_type, $template;
+        global $zco_notifier, $current_page_base, $cPath, $request_type, $template, $db;
 
         if (empty($results)) {
             return '';
@@ -314,6 +314,22 @@ class zcAjaxInstantSearch extends base
             'number_of_rows' => count($results)
         ];
         $listing = $results;
+
+        // If we're not using MySQL as engine, we need to extract all the product fields from db, as they are
+        // needed by the product listing class
+        if (is_a($this->instantSearch, MysqlInstantSearch::class) === false) {
+            foreach ($listing as $k => $product) {
+                $sql = "
+                    SELECT *
+                    FROM " . TABLE_PRODUCTS . "
+                    WHERE products_id = :products_id
+                ";
+                $sql = $db->bindVars($sql, ':products_id', $product['products_id'], 'integer');
+                foreach ($db->Execute($sql) as $productField) {
+                    $listing[$k] = array_merge($listing[$k], $productField);
+                }
+            }
+        }
 
         // ------
         // End of variables used by the product_listing module and the listing template

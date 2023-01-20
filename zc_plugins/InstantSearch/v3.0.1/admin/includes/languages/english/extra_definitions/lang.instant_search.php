@@ -11,6 +11,7 @@ $define = [
     'BOX_CONFIGURATION_INSTANT_SEARCH_OPTIONS' => 'Instant Search',
     'TEXT_INSTANT_SEARCH_CONFIGURATION_INT_VALIDATE' => 'Value must be an integer.',
     'TEXT_INSTANT_SEARCH_CONFIGURATION_FIELDS_LIST_VALIDATE' => 'The fields list must contain only the allowed values, separated by comma (without spaces or other characters).',
+    'TEXT_INSTANT_SEARCH_CONFIGURATION_MAX_RESULTS_PAGE_VALIDATE' => 'The value must be an integer and not higher than 250.',
 ];
 
 return $define;
