@@ -25,20 +25,8 @@
         </div>
     <?php } ?>
 
-    <div id="instantSearchResults__noResultsFoundWrapper">
-        <?php echo TEXT_NO_PRODUCTS_FOUND; ?>
-    </div>
-
     <div id="productListing" class="group">
     </div>
-
-    <div id="instantSearchResults__loadingWrapper">
-        <?php echo TEXT_LOADING_RESULTS; ?>
-        <div class="spinner"></div>
-    </div>
-
-    <?php // don't remove this div ?>
-    <div id="instantSearchResults__end"></div>
 
     <div class="buttonRow back">
         <?php echo zen_back_link() . zen_image_button(BUTTON_IMAGE_BACK, BUTTON_BACK_ALT) . '</a>'; ?>
