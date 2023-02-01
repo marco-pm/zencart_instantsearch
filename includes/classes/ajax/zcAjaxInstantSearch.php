@@ -184,6 +184,10 @@ class zcAjaxInstantSearch extends base
     {
         global $template;
 
+        if (empty($results)) {
+            return '';
+        }
+
         $dropdownResults = [];
         $categoriesReached = false;
         $manufacturersReached = false;
@@ -199,7 +203,7 @@ class zcAjaxInstantSearch extends base
 
                 $dropdownResult['link']  = zen_href_link(zen_get_info_page($id), 'products_id=' . $id);
                 $dropdownResult['model'] = INSTANT_SEARCH_DROPDOWN_DISPLAY_PRODUCT_MODEL === 'true'
-                    ? (INSTANT_SEARCH_DROPDOWN_INCLUDE_PRODUCT_MODEL === 'true' ? $this->highlightSearchWords($model) : $model)
+                    ? $this->highlightSearchWords($model)
                     : '';
                 $dropdownResult['price'] = INSTANT_SEARCH_DROPDOWN_DISPLAY_PRODUCT_PRICE === 'true'
                     ? zen_get_products_display_price($id)

@@ -17,7 +17,7 @@ declare const noProductsFoundText: string;
 
 const queryClient = new QueryClient();
 
-async function fetchResults(queryText: string, resultPage: string, alphaFilterId: string, sort: string): Promise<string> {
+const fetchResults = async (queryText: string, resultPage: string, alphaFilterId: string, sort: string): Promise<string> => {
     const data = new FormData();
     data.append('keyword', queryText);
     data.append('scope', 'page');
@@ -53,9 +53,9 @@ const ResultsContainer = ({ queryText, initialResultPage, alphaFilterId, sort }:
     const [previousData, setPreviousData] = useState<Data|null>(null);
     const endResultsRef = useRef(null);
 
-    const {isLoading, isError, data, error} = useQuery<Data, Error>({
+    const {isLoading, isError, data, error} = useQuery({
         queryKey: ['results', queryText, resultPage, alphaFilterId, sort],
-        queryFn: async () => fetchResults(queryText, resultPage, alphaFilterId, sort).then(data => JSON.parse(data) as Data),
+        queryFn: () => fetchResults(queryText, resultPage, alphaFilterId, sort).then(data => JSON.parse(data) as Data),
     });
 
     useEffect(() => {

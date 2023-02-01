@@ -8,7 +8,6 @@
 
 .instantSearchInputWrapper {
     position: relative;
-    display: inline;
 }
 
 .instantSearchInputWrapper input {
@@ -33,22 +32,37 @@
     box-shadow: 4px 4px 4px #4a4a4a;
 }
 
+.instantSearchResultsDropdownContainer ul {
+    margin: initial !important;
+    padding: initial !important;
+    width: initial !important;
+    list-style-type: initial !important;
+    text-align: initial !important;
+    line-height: initial !important;
+}
+
+.instantSearchResultsDropdownContainer ul li {
+    border-right: initial !important;
+    display: initial !important;
+}
+
 .instantSearchResultsDropdownContainer a {
-    display: block;
-    color: #000;
-    background-color: #fff;
-    padding: 0.3em 0.4em;
-    text-decoration: none;
-    overflow: hidden;
+    display: block !important;
+    color: #000 !important;
+    background-color: #fff !important;
+    margin: initial !important;
+    padding: 0.3em 0.4em !important;
+    text-decoration: none !important;
+    overflow: hidden !important;
 }
 
 .instantSearchResultsDropdownContainer a:hover {
-    background-color: #eee;
-    color: #000;
+    background-color: #eee !important;
+    color: #000 !important;
 }
 
 .instantSearchResultsDropdownContainer a:not(:first-child) {
-    margin-top: .5rem;
+    margin-top: .5rem !important;
 }
 
 .instantSearchResultsDropdownContainer__separator {
@@ -172,6 +186,12 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* For the responsive classic theme */
+
+#navMainSearch .instantSearchInputWrapper {
+    display: inline;
 }
 
 /* For the bootstrap theme */

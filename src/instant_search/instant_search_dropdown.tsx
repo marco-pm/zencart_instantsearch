@@ -18,7 +18,9 @@ declare const instantSearchDropdownInputSelector: string;
 declare const instantSearchDropdownInputMinLength: number;
 declare const instantSearchDropdownInputWaitTime: number;
 
-async function fetchResults(queryTextParsed: string): Promise<string> {
+const resultsContainerSelector = 'instantSearchResultsDropdownContainer';
+
+const fetchResults = async (queryTextParsed: string): Promise<string> => {
     const data = new FormData();
     data.append('keyword', queryTextParsed);
     data.append('scope', 'dropdown');
@@ -37,40 +39,133 @@ async function fetchResults(queryTextParsed: string): Promise<string> {
 interface ResultsContainerProps {
     queryTextParsed: string;
     containerIndex: number;
+    setIsResultsContainerExpanded: (isExpanded: boolean) => void;
 }
 
-const ResultsContainer = ({ queryTextParsed, containerIndex }: ResultsContainerProps) => {
+const ResultsContainer = ({ queryTextParsed, containerIndex, setIsResultsContainerExpanded }: ResultsContainerProps) => {
     interface Data {
         results: string;
         count: number;
     }
 
-    const {isLoading, isError, data, error} = useQuery<Data, Error>({
+    const {isLoading, isError, data, error} = useQuery({
         queryKey: ['results', queryTextParsed],
-        queryFn: async () => fetchResults(queryTextParsed).then(data => JSON.parse(data) as Data)
+        queryFn: () => fetchResults(queryTextParsed).then(data => JSON.parse(data) as Data)
     });
     const [previousData, setPreviousData] = useState<Data | null>(null);
     const [isSlideDownRendered, setIsSlideDownRendered] = useState(false);
     const [additionalClass, setAdditionalClass] = useState('');
 
-    const resultsContainerSelector = 'instantSearchResultsDropdownContainer';
     const resultsContainerId = `${resultsContainerSelector}-${containerIndex}`;
 
     useEffect(() => {
         if (data) {
             setPreviousData(data);
+            setIsResultsContainerExpanded(data.count > 0);
+        } else {
+            setIsResultsContainerExpanded(false);
         }
     }, [data]);
 
+    // Set CSS class depending on the width of the container
     useEffect(() => {
-        const div = document.querySelector(`#${resultsContainerId}`);
-        if (div) {
-            if (div.clientWidth > 250) {
+        const resultsContainerDiv = document.querySelector(`#${resultsContainerId}`);
+
+        if (resultsContainerDiv) {
+            if (resultsContainerDiv.clientWidth > 250) {
                 setAdditionalClass(' instantSearchResultsDropdownContainer--lg');
             } else {
                 setAdditionalClass('');
             }
         }
+    }, [data]);
+
+    // Handle keyboard navigation (tab and arrow keys, with roving tabindex)
+    useEffect(() => {
+        const resultsContainerDiv = document.querySelector(`#${resultsContainerId}`);
+        const resultsElements = document.querySelectorAll(`#${resultsContainerId} ul li`);
+
+        const handleKeyDown = (event: Event) => {
+            const keyboardEvent = event as KeyboardEvent;
+
+            if (keyboardEvent.key !== 'ArrowDown' &&
+                keyboardEvent.key !== 'ArrowUp' &&
+                keyboardEvent.key !== 'Tab' &&
+                !(keyboardEvent.shiftKey && keyboardEvent.key === 'Tab')
+            ) {
+                return;
+            }
+
+            event.preventDefault()
+            const option = event.target as HTMLElement;
+
+            if (!option) {
+                return;
+            }
+
+            let selectedOption: Element | null = null;
+            if (keyboardEvent.key === 'ArrowDown' || (keyboardEvent.key === 'Tab' && !keyboardEvent.shiftKey)) {
+                const parent = option.parentNode as HTMLElement;
+                if (parent) {
+                    selectedOption = parent.nextElementSibling;
+                    if (!selectedOption) {
+                        const parent = option.parentNode as HTMLElement;
+                        if (parent) {
+                            const selectedOptionUl = parent.parentNode as HTMLElement;
+                            const nextUl = selectedOptionUl.nextElementSibling?.nextElementSibling; // Take into account the separator
+                            if (nextUl && nextUl.tagName === 'UL') {
+                                selectedOption = nextUl.querySelector('li');
+                            }
+                        }
+                    }
+                }
+            }
+            if (keyboardEvent.key === 'ArrowUp' || (keyboardEvent.shiftKey && keyboardEvent.key === 'Tab')) {
+                const parent = option.parentNode as HTMLElement;
+                if (parent) {
+                    selectedOption = parent.previousElementSibling;
+                    if (!selectedOption) {
+                        const parent = option.parentNode as HTMLElement;
+                        if (parent) {
+                            const selectedOptionUl = parent.parentNode as HTMLElement;
+                            const previousUl = selectedOptionUl.previousElementSibling?.previousElementSibling; // Take into account the separator
+                            if (previousUl && previousUl.tagName === 'UL') {
+                                selectedOption = previousUl.querySelector('li:last-child');
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (selectedOption) {
+                const selectedOptionA = selectedOption.querySelector('a');
+                if (selectedOptionA) {
+                    selectedOptionA.focus();
+                    resultsElements.forEach(element => element.setAttribute('tabindex', '-1'));
+                    selectedOption.setAttribute('tabindex', '0');
+                }
+            }
+        };
+
+        if (!resultsContainerDiv || !resultsElements) {
+            return;
+        }
+
+        // We set the tabindex of the first element to 0 when it has focus
+        if (resultsElements.length && resultsElements[0]) {
+            const firstResultA = resultsElements[0].querySelector('a');
+            if (firstResultA) {
+                firstResultA.addEventListener('focus', () => {
+                    resultsElements[0].setAttribute('tabindex', '0');
+                });
+            }
+        }
+
+        resultsContainerDiv.addEventListener('keydown', (event: Event) => handleKeyDown(event));
+
+        return () => {
+            resultsContainerDiv.removeEventListener('keydown', handleKeyDown);
+        };
     }, [data]);
 
     if (isLoading) {
@@ -123,6 +218,7 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
     const [queryText, setQueryText] = useState('');
     const [debouncedQueryText] = useDebounce(queryText, instantSearchDropdownInputWaitTime);
     const [showResults, setShowResults] = useState(false);
+    const [isResultsContainerExpanded, setIsResultsContainerExpanded] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const queryClient = new QueryClient();
@@ -137,6 +233,18 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
         cancelQuery().catch(console.error);
     }, [queryText]);
 
+    function checkQueryLength() {
+        if (queryTextParsed.length >= instantSearchDropdownInputMinLength) {
+            setShowResults(true);
+        } else {
+            setShowResults(false);
+        }
+    }
+
+    useEffect(() => {
+        checkQueryLength();
+    }, [queryTextParsed]);
+
     useEffect(() => {
         if (inputRef.current) {
             for (let i = 0; i < inputTextAttributes.length; i++) {
@@ -149,6 +257,30 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
         }
     }, []);
 
+    // Close dropdown on escape
+    useEffect(() => {
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === 'Escape') {
+                setShowResults(false);
+            }
+        }
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
+    function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
+        // If focus is moved to the results container, do not hide the results
+        if (event.relatedTarget && event.relatedTarget instanceof HTMLElement && event.relatedTarget.classList.contains('instantSearchResultsDropdownContainer__link')) {
+            return;
+        }
+
+        setShowResults(false);
+    }
+
     return (
         <React.StrictMode>
             <QueryClientProvider client={queryClient}>
@@ -156,14 +288,22 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
                     type="text"
                     value={queryText}
                     onChange={e => setQueryText(e.currentTarget.value)}
-                    onFocus={() => setShowResults(true)}
-                    onBlur={() => setShowResults(false)}
+                    onFocus={() => checkQueryLength()}
+                    onBlur={handleBlur}
+                    aria-expanded={showResults && isResultsContainerExpanded}
+                    autoComplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-owns={showResults ? `#${resultsContainerSelector}-${containerIndex}` : ''}
                     ref={inputRef}
                 />
                 {
                     showResults &&
-                    queryTextParsed.length >= instantSearchDropdownInputMinLength &&
-                    <ResultsContainer queryTextParsed={debouncedQueryText} containerIndex={containerIndex} />
+                    <ResultsContainer
+                        queryTextParsed={debouncedQueryText}
+                        containerIndex={containerIndex}
+                        setIsResultsContainerExpanded={setIsResultsContainerExpanded}
+                    />
                 }
             </QueryClientProvider>
         </React.StrictMode>
