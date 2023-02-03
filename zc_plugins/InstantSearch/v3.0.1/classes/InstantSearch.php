@@ -62,10 +62,6 @@ abstract class InstantSearch extends \base
         bool $addToSearchLog = false,
         string $searchLogPrefix = ''
     ): array {
-        if ($addToSearchLog === true) {
-            $this->addEntryToSearchLog($queryText, $searchLogPrefix);
-        }
-
         try {
             $results = $this->searchEngineProvider->search(
                 $queryText,
@@ -76,8 +72,13 @@ abstract class InstantSearch extends \base
                 $alphaFilter
             );
 
+            $this->addEntryToSearchLog($queryText, $searchLogPrefix, count($results));
+
             return $results;
         } catch (\Exception $e) {
+            if ($addToSearchLog === true) {
+                $this->addEntryToSearchLog($queryText, $searchLogPrefix, null);
+            }
             $this->writeLog("Error while searching for \"$queryText\"", $e);
             throw new InstantSearchEngineSearchException();
         }
@@ -91,7 +92,7 @@ abstract class InstantSearch extends \base
      * @param string $prefix
      * @return void
      */
-    protected function addEntryToSearchLog(string $query, string $prefix): void
+    protected function addEntryToSearchLog(string $query, string $prefix, ?int $resultsCount): void
     {
         global $db;
 
@@ -110,11 +111,12 @@ abstract class InstantSearch extends \base
 
         if ($check->RecordCount() > 0) {
             $sql = "
-                INSERT INTO :table_name (search_term, search_time)
-                VALUES (:search_term, NOW())
+                INSERT INTO :table_name (search_term, search_time, search_results)
+                VALUES (:search_term, NOW(), :results_count)
             ";
             $sql = $db->bindVars($sql, ':table_name', $searchLogTableName, 'noquotestring');
             $sql = $db->bindVars($sql, ':search_term', $prefix . ' ' . $query, 'string');
+            $sql = $db->bindVars($sql, ':results_count', $resultsCount, 'integer');
             $db->Execute($sql);
         }
     }
