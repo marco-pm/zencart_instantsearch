@@ -90,6 +90,7 @@ abstract class InstantSearch extends \base
      *
      * @param string $query
      * @param string $prefix
+     * @param int|null $resultsCount
      * @return void
      */
     protected function addEntryToSearchLog(string $query, string $prefix, ?int $resultsCount): void

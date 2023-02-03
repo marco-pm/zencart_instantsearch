@@ -96,24 +96,64 @@ class TypesenseZencart
     }
 
     /**
-     * Sync the collections.
+     * Recreates the collections, indexes the documents and updates the aliases.
+     * This is a full re-index that should run only once a day, or immediately after changes that require the
+     * re-creation of the collection(s).
      *
      * @return void
      * @throws HttpClientException|TypesenseClientError|\JsonException
      */
-    public function syncCollections(): void
+    public function syncFull(): void
     {
-        $this->syncProductsCollection();
-        $this->syncCategoriesCollection();
-        $this->syncBrandsCollection();
+        $productsCollectionName = self::PRODUCTS_COLLECTION_NAME . '_' . time();
+        $this->createProductsCollection($productsCollectionName);
+        $this->indexFullProductsCollection($productsCollectionName);
+        $this->updateCollectionAlias(self::PRODUCTS_COLLECTION_NAME, $productsCollectionName);
+
+        $categoriesCollectionName = self::CATEGORIES_COLLECTION_NAME . '_' . time();
+        $this->createCategoriesCollection($categoriesCollectionName);
+        $this->indexFullCategoriesCollection($categoriesCollectionName);
+        $this->updateCollectionAlias(self::CATEGORIES_COLLECTION_NAME, $categoriesCollectionName);
+
+        $brandsCollectionName = self::BRANDS_COLLECTION_NAME . '_' . time();
+        $this->createBrandsCollection($brandsCollectionName);
+        $this->indexFullBrandsCollection($brandsCollectionName);
+        $this->updateCollectionAlias(self::BRANDS_COLLECTION_NAME, $brandsCollectionName);
+    }
+
+    public function syncChanges(): void
+    {
+
     }
 
     /**
-     * Full re-index of the products collection.
+     * Creates/updates the collection alias and drops the old collection.
      *
+     * @param string $aliasName
+     * @param string $newCollectionName
+     * @return void
+     * @throws HttpClientException|TypesenseClientError
+     */
+    protected function updateCollectionAlias(string $aliasName, string $newCollectionName): void
+    {
+        try {
+            $currentCollectionName = $this->client->aliases[$aliasName]->retrieve();
+        } catch (ObjectNotFound $e) {
+            // do nothing (first sync)
+        }
+        $this->client->aliases->upsert($aliasName, ['collection_name' => $newCollectionName]);
+        if (isset($currentCollectionName['collection_name'])) {
+            $this->client->collections[$currentCollectionName['collection_name']]->delete();
+        }
+    }
+
+    /**
+     * Full-indexes the product documents.
+     *
+     * @param string $productsCollectionName
      * @throws TypesenseClientError|HttpClientException|\JsonException
      */
-    public function syncProductsCollection(): void
+    protected function indexFullProductsCollection(string $productsCollectionName): void
     {
         global $db, $currencies;
 
@@ -186,15 +226,16 @@ class TypesenseZencart
             $productsToImport[] = $productData;
         }
 
-        $this->client->collections[self::PRODUCTS_COLLECTION_NAME]->documents->import($productsToImport, ['action' => 'upsert']);
+        $this->client->collections[$productsCollectionName]->documents->import($productsToImport, ['action' => 'create']);
     }
 
     /**
-     * Full re-index of the categories collection.
+     * Full-indexes the category documents.
      *
+     * @param string $categoriesCollectionName
      * @throws TypesenseClientError|HttpClientException|\JsonException
      */
-    public function syncCategoriesCollection(): void
+    protected function indexFullCategoriesCollection(string $categoriesCollectionName): void
     {
         global $db;
 
@@ -232,15 +273,16 @@ class TypesenseZencart
             $categoriesToImport[] = $categoryData;
         }
 
-        $this->client->collections[self::CATEGORIES_COLLECTION_NAME]->documents->import($categoriesToImport, ['action' => 'upsert']);
+        $this->client->collections[$categoriesCollectionName]->documents->import($categoriesToImport, ['action' => 'create']);
     }
 
     /**
-     * Full re-index of the brands collection.
+     * Full-indexes the brands documents.
      *
+     * @param string $brandsCollectionName
      * @throws TypesenseClientError|HttpClientException|\JsonException
      */
-    public function syncBrandsCollection(): void
+    protected function indexFullBrandsCollection(string $brandsCollectionName): void
     {
         global $db;
 
@@ -261,257 +303,199 @@ class TypesenseZencart
             $brandData['name'] = $brand['manufacturers_name'];
             $brandData['image'] = $brand['manufacturers_image'] ?? '';
 
-            $manufactuerAdditionalData = $db->Execute(
+            $manufacturerAdditionalData = $db->Execute(
                 "SELECT COUNT(*) AS products_count
                  FROM " . TABLE_PRODUCTS . "
                  WHERE manufacturers_id = " . (int)$brand['manufacturers_id'] .
                 " AND products_status = 1"
             );
-            $brandData['products-count'] = (int)$manufactuerAdditionalData->fields['products_count'];
+            $brandData['products-count'] = (int)$manufacturerAdditionalData->fields['products_count'];
 
             $brandsToImport[] = $brandData;
         }
 
-        $this->client->collections[self::BRANDS_COLLECTION_NAME]->documents->import($brandsToImport, ['action' => 'upsert']);
-    }
-
-    /**
-     * Creates the collections.
-     *
-     * @throws TypesenseClientError|HttpClientException
-     */
-    public function createCollections(): void
-    {
-        $this->createProductsCollection();
-        $this->createCategoriesCollection();
-        $this->createBrandsCollection();
+        $this->client->collections[$brandsCollectionName]->documents->import($brandsToImport, ['action' => 'upsert']);
     }
 
     /**
      * Creates the products collection.
      *
+     * @param string $collectionName
      * @throws TypesenseClientError|HttpClientException
      */
-    public function createProductsCollection(): void
+    protected function createProductsCollection(string $collectionName): void
     {
-        // Create the collection only if it does not already exist
-        try {
-            $this->client->collections[self::PRODUCTS_COLLECTION_NAME]->retrieve();
-        } catch (ObjectNotFound) {
-            $schema = [
-                'name'      => self::PRODUCTS_COLLECTION_NAME,
-                'fields'    => [
-                    [
-                        'name'     => 'id',
-                    ],
-                    [
-                        'name'     => 'model',
-                        'type'     => 'string',
-                        'infix'    => true
-                    ],
-                    [
-                        'name'     => 'price',
-                        'type'     => 'float',
-                        'index'    => false,
-                        'optional' => true
-                    ],
-                    [
-                        'name'     => 'quantity',
-                        'type'     => 'float',
-                        'index'    => false,
-                        'optional' => true
-                    ],
-                    [
-                        'name'     => 'weight',
-                        'type'     => 'float',
-                        'index'    => false,
-                        'optional' => true
-                    ],
-                    [
-                        'name'     => 'image',
-                        'type'     => 'string',
-                        'index'    => false,
-                        'optional' => true
-                    ],
-                    [
-                        'name'     => 'manufacturer',
-                        'type'     => 'string',
-                        'infix'    => true
-                    ],
-                    [
-                        'name'     => 'sort-order',
-                        'type'     => 'int32',
-                        'optional' => true
-                    ],
-                    [
-                        'name'     => 'rating',
-                        'type'     => 'float',
-                        'index'    => false,
-                        'optional' => true
-                    ],
-                ]
-            ];
-
-            foreach ($this->languages as $language) {
-                $schema['fields'][] = [
-                    'name'     => 'name_' . $language['code'],
+        $schema = [
+            'name'      =>  $collectionName,
+            'fields'    => [
+                [
+                    'name'     => 'id',
+                ],
+                [
+                    'name'     => 'model',
                     'type'     => 'string',
                     'infix'    => true
-                ];
-                $schema['fields'][] = [
-                    'name'     => 'description_' . $language['code'],
-                    'type'     => 'string',
-                    'infix'    => true
-                ];
-                $schema['fields'][] = [
-                    'name'     => 'meta-keywords_' . $language['code'],
-                    'type'     => 'string',
-                    'infix'    => true
-                ];
-                $schema['fields'][] = [
-                    'name'     => 'views_' . $language['code'],
-                    'type'     => 'int32',
+                ],
+                [
+                    'name'     => 'price',
+                    'type'     => 'float',
+                    'index'    => false,
                     'optional' => true
-                ];
-                $schema['fields'][] = [
-                    'name'     => 'category_' . $language['code'],
-                    'type'     => 'string',
-                    'infix'    => true
-                ];
-            }
-
-            foreach ($this->currencies as $currency) {
-                $schema['fields'][] = [
-                    'name'     => 'displayed-price_' . $currency['code'],
+                ],
+                [
+                    'name'     => 'quantity',
+                    'type'     => 'float',
+                    'index'    => false,
+                    'optional' => true
+                ],
+                [
+                    'name'     => 'weight',
+                    'type'     => 'float',
+                    'index'    => false,
+                    'optional' => true
+                ],
+                [
+                    'name'     => 'image',
                     'type'     => 'string',
                     'index'    => false,
                     'optional' => true
-                ];
-            }
+                ],
+                [
+                    'name'     => 'manufacturer',
+                    'type'     => 'string',
+                    'infix'    => true
+                ],
+                [
+                    'name'     => 'sort-order',
+                    'type'     => 'int32',
+                    'optional' => true
+                ],
+                [
+                    'name'     => 'rating',
+                    'type'     => 'float',
+                    'index'    => false,
+                    'optional' => true
+                ],
+            ]
+        ];
 
-            $this->client->collections->create($schema);
+        foreach ($this->languages as $language) {
+            $schema['fields'][] = [
+                'name'     => 'name_' . $language['code'],
+                'type'     => 'string',
+                'infix'    => true
+            ];
+            $schema['fields'][] = [
+                'name'     => 'description_' . $language['code'],
+                'type'     => 'string',
+                'infix'    => true
+            ];
+            $schema['fields'][] = [
+                'name'     => 'meta-keywords_' . $language['code'],
+                'type'     => 'string',
+                'infix'    => true
+            ];
+            $schema['fields'][] = [
+                'name'     => 'views_' . $language['code'],
+                'type'     => 'int32',
+                'optional' => true
+            ];
+            $schema['fields'][] = [
+                'name'     => 'category_' . $language['code'],
+                'type'     => 'string',
+                'infix'    => true
+            ];
         }
+
+        foreach ($this->currencies as $currency) {
+            $schema['fields'][] = [
+                'name'     => 'displayed-price_' . $currency['code'],
+                'type'     => 'string',
+                'index'    => false,
+                'optional' => true
+            ];
+        }
+
+        $this->client->collections->create($schema);
     }
 
     /**
      * Creates the categories collection.
      *
+     * @param string $categoriesCollectionName
      * @throws TypesenseClientError|HttpClientException
      */
-    public function createCategoriesCollection(): void
+    protected function createCategoriesCollection(string $categoriesCollectionName): void
     {
-        // Create the collection only if it does not already exist
-        try {
-            $this->client->collections[self::CATEGORIES_COLLECTION_NAME]->retrieve();
-        } catch (ObjectNotFound) {
-            $schema = [
-                'name'      => self::CATEGORIES_COLLECTION_NAME,
-                'fields'    => [
-                    [
-                        'name'     => 'id',
-                    ],
-                    [
-                        'name'     => 'image',
-                        'type'     => 'string',
-                        'index'    => false,
-                        'optional' => true
-                    ],
-                    [
-                        'name'     => 'products-count',
-                        'type'     => 'int32',
-                        'index'    => false,
-                        'optional' => true
-                    ]
+        $schema = [
+            'name'      => $categoriesCollectionName,
+            'fields'    => [
+                [
+                    'name'     => 'id',
+                ],
+                [
+                    'name'     => 'image',
+                    'type'     => 'string',
+                    'index'    => false,
+                    'optional' => true
+                ],
+                [
+                    'name'     => 'products-count',
+                    'type'     => 'int32',
+                    'index'    => false,
+                    'optional' => true
                 ]
+            ]
+        ];
+
+        foreach ($this->languages as $language) {
+            $schema['fields'][] = [
+                'name'  => 'name_' . $language['code'],
+                'type'  => 'string',
+                'sort'  => true,
+                'infix' => true
             ];
-
-            foreach ($this->languages as $language) {
-                $schema['fields'][] = [
-                    'name'  => 'name_' . $language['code'],
-                    'type'  => 'string',
-                    'sort'  => true,
-                    'infix' => true
-                ];
-            }
-
-            $this->client->collections->create($schema);
         }
+
+        $this->client->collections->create($schema);
     }
 
     /**
      * Creates the brands collection.
      *
+     * @param string $brandsCollectionName
      * @throws TypesenseClientError|HttpClientException
      */
-    public function createBrandsCollection(): void
+    protected function createBrandsCollection(string $brandsCollectionName): void
     {
-        // Create the collection only if it does not already exist
-        try {
-            $this->client->collections[self::BRANDS_COLLECTION_NAME]->retrieve();
-        } catch (ObjectNotFound) {
-            $schema = [
-                'name'      => self::BRANDS_COLLECTION_NAME,
-                'fields'    => [
-                    [
-                        'name'     => 'id',
-                    ],
-                    [
-                        'name'     => 'name',
-                        'type'     => 'string',
-                        'sort'     => true,
-                        'infix'    => true
-                    ],
-                    [
-                        'name'     => 'image',
-                        'type'     => 'string',
-                        'index'    => false,
-                        'optional' => true
-                    ],
-                    [
-                        'name'     => 'products-count',
-                        'type'     => 'int32',
-                        'index'    => false,
-                        'optional' => true
-                    ]
+        $schema = [
+            'name'      => $brandsCollectionName,
+            'fields'    => [
+                [
+                    'name'     => 'id',
+                ],
+                [
+                    'name'     => 'name',
+                    'type'     => 'string',
+                    'sort'     => true,
+                    'infix'    => true
+                ],
+                [
+                    'name'     => 'image',
+                    'type'     => 'string',
+                    'index'    => false,
+                    'optional' => true
+                ],
+                [
+                    'name'     => 'products-count',
+                    'type'     => 'int32',
+                    'index'    => false,
+                    'optional' => true
                 ]
-            ];
+            ]
+        ];
 
-            $this->client->collections->create($schema);
-        }
-    }
-
-    /**
-     * Deletes the collections.
-     *
-     * @throws TypesenseClientError|HttpClientException
-     */
-    public function deleteCollections(): void
-    {
-        foreach ([
-            self::PRODUCTS_COLLECTION_NAME,
-            self::CATEGORIES_COLLECTION_NAME,
-            self::BRANDS_COLLECTION_NAME
-        ] as $collectionName) {
-            $this->client->collections[$collectionName]->delete();
-        }
-    }
-
-    /**
-     * Deletes a collection.
-     *
-     * @param string $name The name of the collection to delete
-     *
-     * @throws TypesenseClientError|HttpClientException
-     */
-    public function deleteCollection($name): void
-    {
-        try {
-            $this->client->collections[$name]->retrieve();
-        } catch (ObjectNotFound) {
-            return;
-        }
-
-        $this->client->collections[$name]->delete();
+        $this->client->collections->create($schema);
     }
 
     /**
