@@ -36,13 +36,6 @@ class TypesenseSearchEngineProvider extends \base implements SearchEngineProvide
     ];
 
     /**
-     * The Typesense collection name to use in searches.
-     *
-     * @var string
-     */
-    protected string $collectionName;
-
-    /**
      * The Typesense PHP client.
      *
      * @var Client
@@ -65,7 +58,6 @@ class TypesenseSearchEngineProvider extends \base implements SearchEngineProvide
     {
         $typesense = new TypesenseZencart();
         $this->client = $typesense->getClient();
-        $this->collectionName = $typesense::COLLECTION_NAME;
         $this->results = [];
     }
 
@@ -75,6 +67,8 @@ class TypesenseSearchEngineProvider extends \base implements SearchEngineProvide
      * @param string $queryText
      * @param array $productFieldsList
      * @param int $productsLimit
+     * @param int $categoriesLimit
+     * @param int $manufacturersLimit
      * @param int|null $alphaFilter
      * @return array
      * @throws TypesenseClientError|HttpClientException
@@ -83,6 +77,8 @@ class TypesenseSearchEngineProvider extends \base implements SearchEngineProvide
         string $queryText,
         array $productFieldsList,
         int $productsLimit,
+        int $categoriesLimit = 0,
+        int $manufacturersLimit = 0,
         int $alphaFilter = null
     ): array {
         global $db;
@@ -91,8 +87,7 @@ class TypesenseSearchEngineProvider extends \base implements SearchEngineProvide
         $sql = $db->bindVars($sql, ':languages_id', (int)$_SESSION['languages_id'], 'integer');
         $languageCode = $db->Execute($sql)->fields['code'];
 
-        $searchParameters = [
-            'q'          => $queryText,
+        $productsSearch = [
             'query_by'   => '',
             'prefix'     => '',
             'infix'      => '',
@@ -100,30 +95,110 @@ class TypesenseSearchEngineProvider extends \base implements SearchEngineProvide
             'per_page'   => $productsLimit
         ];
 
+        $categoriesSearch = [
+            'query_by'   => "name_$languageCode",
+            'prefix'     => 'true',
+            'infix'      => 'fallback',
+            'sort_by'    => "_text_match:desc,name_$languageCode:asc",
+            'per_page'   => $categoriesLimit
+        ];
+
+        $brandsSearch = [
+            'query_by'   => "name",
+            'prefix'     => 'true',
+            'infix'      => 'fallback',
+            'sort_by'    => "_text_match:desc,name:asc",
+            'per_page'   => $manufacturersLimit
+        ];
+
         foreach ($productFieldsList as $productField) {
-            $searchParameters['query_by'] .= str_replace('<lang>', $languageCode, self::FIELDS_TO_PARAMETERS[$productField][0]) . ',';
-            $searchParameters['prefix']   .= self::FIELDS_TO_PARAMETERS[$productField][1] . ',';
-            $searchParameters['infix']    .= self::FIELDS_TO_PARAMETERS[$productField][2] . ',';
-            $searchParameters['num_typos'] = self::FIELDS_TO_PARAMETERS[$productField][3];
+            $productsSearch['query_by'] .= str_replace('<lang>', $languageCode, self::FIELDS_TO_PARAMETERS[$productField][0]) . ',';
+            $productsSearch['prefix']   .= self::FIELDS_TO_PARAMETERS[$productField][1] . ',';
+            $productsSearch['infix']    .= self::FIELDS_TO_PARAMETERS[$productField][2] . ',';
+            $productsSearch['num_typos'] = self::FIELDS_TO_PARAMETERS[$productField][3];
         }
 
         if ($alphaFilter !== null) {
-            $searchParameters['filter_by'] = "name_$languageCode: " . chr($alphaFilter);
+            $productsSearch['filter_by']   = "name_$languageCode: " . chr($alphaFilter);
         }
 
-        $typesenseResults = $this->client->collections[$this->collectionName]->documents->search($searchParameters);
+        $searchRequests = [
+            'searches' => [
+                [
+                    'collection' => TypesenseZencart::PRODUCTS_COLLECTION_NAME,
+                    ...$productsSearch
+                ],
+                [
+                    'collection' => TypesenseZencart::CATEGORIES_COLLECTION_NAME,
+                    ...$categoriesSearch
+                ],
+                [
+                    'collection' => TypesenseZencart::BRANDS_COLLECTION_NAME,
+                    ...$brandsSearch
+                ]
+            ]
+        ];
 
-        foreach ($typesenseResults['hits'] as $hit) {
-            $document = $hit['document'];
-            $result['products_id']    = $document['id'];
-            $result['products_name']  = $document["name_$languageCode"];
-            $result['products_image'] = $document['image'];
-            $result['products_model'] = $document['model'];
-            $result['products_price'] = $document['price'];
+        $commonSearchParams =  [
+            'q' => $queryText,
+        ];
 
-            $this->results[] = $result;
+        try {
+            $typesenseResults = $this->client->multiSearch->perform($searchRequests, $commonSearchParams);
+        } catch (\Exception $e) {
+            $this->writeTypesenseSearchLog('Error while performing search: ' . $e->getMessage());
+            $this->results = [];
+        }
+
+        foreach ($typesenseResults['results'] as $result) {
+            if (isset($result['error'])) {
+                $this->writeTypesenseSearchLog('Error while performing search: ' . $result['error']);
+                continue;
+            }
+            if ($result['found'] === 0) {
+                continue;
+            }
+            $collectionName = $result['request_params']['collection_name'];
+            foreach ($result['hits'] as $hit) {
+                $document = $hit['document'];
+
+                if ($collectionName === TypesenseZencart::PRODUCTS_COLLECTION_NAME) {
+                    $result['products_id']              = $document['id'];
+                    $result['products_name']            = $document["name_$languageCode"];
+                    $result['products_image']           = $document['image'];
+                    $result['products_model']           = $document['model'];
+                    $result['products_price']           = $document['price'];
+                    $result['products_displayed_price'] = $document['displayed-price_' . $_SESSION['currency']] ?? '';
+
+                } elseif ($collectionName === TypesenseZencart::CATEGORIES_COLLECTION_NAME) {
+                    $result['categories_id']    = $document['id'];
+                    $result['categories_name']  = $document["name_$languageCode"];
+                    $result['categories_image'] = $document['image'];
+                    $result['categories_count'] = $document['products-count'];
+
+                } elseif ($collectionName === TypesenseZencart::BRANDS_COLLECTION_NAME) {
+                    $result['manufacturers_id']    = $document['id'];
+                    $result['manufacturers_name']  = $document['name'];
+                    $result['manufacturers_image'] = $document['image'];
+                    $result['manufacturers_count'] = $document['products-count'];
+                }
+
+                $this->results[] = $result;
+            }
         }
 
         return $this->results;
+    }
+
+    /**
+     * Write an entry in the log.
+     *
+     * @param string $message
+     * @return void
+     */
+    function writeTypesenseSearchLog(string $message): void
+    {
+        $logName = DIR_FS_LOGS . "/instantsearch_typesense_search-" . date('Y-m-d') . ".log";
+        error_log(date('Y-m-d H:i:s') . " $message" . PHP_EOL, 3, $logName);
     }
 }

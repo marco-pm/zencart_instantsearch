@@ -34,15 +34,15 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
                                               ->onlyMethods([
                                                   'execQuery', 'buildSqlProductModel', 'buildSqlProductName',
                                                   'buildSqlProductNameDescription', 'buildSqlProductMetaKeywords',
-                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer'
+                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer',
+                                                  'searchCategories', 'searchManufacturers'
                                               ])
                                               ->getMock();
 
         $mysqlInstantSearchMock = $this->getMockBuilder(MysqlInstantSearch::class)
                                        ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true', $mysqlSearchEngineProviderMock])
                                        ->onlyMethods([
-                                           'getSearchEngineProvider', 'addEntryToSearchLog',
-                                           'searchCategories', 'searchManufacturers'
+                                           'getSearchEngineProvider', 'addEntryToSearchLog'
                                        ])
                                        ->getMock();
         $mysqlInstantSearchMock->method('getSearchEngineProvider')
@@ -77,11 +77,11 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
         $mysqlSearchEngineProviderMock->expects($this->once())
                                       ->method('buildSqlProductManufacturer');
 
-        $mysqlInstantSearchMock->expects($this->once())
-                               ->method('searchCategories');
+        $mysqlSearchEngineProviderMock->expects($this->once())
+                                      ->method('searchCategories');
 
-        $mysqlInstantSearchMock->expects($this->once())
-                               ->method('searchManufacturers');
+        $mysqlSearchEngineProviderMock->expects($this->once())
+                                      ->method('searchManufacturers');
 
         $_POST['keyword'] = 'whatever';
         $_POST['scope']   = 'dropdown';
@@ -99,15 +99,15 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
                                               ->onlyMethods([
                                                   'execQuery', 'buildSqlProductModel', 'buildSqlProductName',
                                                   'buildSqlProductNameDescription', 'buildSqlProductMetaKeywords',
-                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer'
+                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer',
+                                                  'searchCategories', 'searchManufacturers'
                                               ])
                                               ->getMock();
 
         $mysqlInstantSearchMock = $this->getMockBuilder(MysqlInstantSearch::class)
                                        ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true', $mysqlSearchEngineProviderMock])
                                        ->onlyMethods([
-                                           'getSearchEngineProvider', 'addEntryToSearchLog',
-                                           'searchCategories', 'searchManufacturers'
+                                           'getSearchEngineProvider', 'addEntryToSearchLog'
                                        ])
                                        ->getMock();
         $mysqlInstantSearchMock->method('getSearchEngineProvider')
@@ -141,12 +141,12 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
                                       ->method('buildSqlProductManufacturer');
 
         // categories should be ignored when scope is page
-        $mysqlInstantSearchMock->expects($this->never())
-                               ->method('searchCategories');
+        $mysqlSearchEngineProviderMock->expects($this->never())
+                                      ->method('searchCategories');
 
         // manufacturer should be ignored when scope is page
-        $mysqlInstantSearchMock->expects($this->never())
-                               ->method('searchManufacturers');
+        $mysqlSearchEngineProviderMock->expects($this->never())
+                                      ->method('searchManufacturers');
 
         $_POST['keyword'] = 'whatever';
         $_POST['scope']   = 'page';
@@ -161,14 +161,16 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
 
         $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
-                                              ->onlyMethods(['execQuery', 'buildSqlProductNameDescription', 'buildSqlProductName'])
+                                              ->onlyMethods([
+                                                  'execQuery', 'buildSqlProductNameDescription', 'buildSqlProductName',
+                                                  'searchCategories', 'searchManufacturers'
+                                              ])
                                               ->getMock();
 
         $mysqlInstantSearchMock = $this->getMockBuilder(MysqlInstantSearch::class)
                                        ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
                                        ->onlyMethods([
                                            'getSearchEngineProvider', 'addEntryToSearchLog',
-                                           'searchCategories', 'searchManufacturers'
                                        ])
                                        ->getMock();
         $mysqlInstantSearchMock->method('getSearchEngineProvider')
@@ -204,15 +206,15 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
                                               ->onlyMethods([
                                                   'execQuery', 'buildSqlProductName', 'buildSqlProductNameDescription',
-                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer'
+                                                  'buildSqlProductCategory', 'buildSqlProductManufacturer',
+                                                  'searchCategories', 'searchManufacturers'
                                               ])
                                               ->getMock();
 
         $mysqlInstantSearchMock = $this->getMockBuilder(MysqlInstantSearch::class)
                                        ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true', $mysqlSearchEngineProviderMock])
                                        ->onlyMethods([
-                                           'getSearchEngineProvider', 'addEntryToSearchLog',
-                                           'searchCategories', 'searchManufacturers'
+                                           'getSearchEngineProvider', 'addEntryToSearchLog'
                                        ])
                                        ->getMock();
         $mysqlInstantSearchMock->method('getSearchEngineProvider')
@@ -224,10 +226,10 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
                                       ->onlyMethods(['formatDropdownResults', 'formatPageResults'])
                                       ->getMock();
 
-        $mysqlInstantSearchMock->expects($this->never())
-                               ->method('searchCategories');
+        $mysqlSearchEngineProviderMock->expects($this->never())
+                                      ->method('searchCategories');
 
-        $mysqlInstantSearchMock->expects($this->never())
-                               ->method('searchManufacturers');
+        $mysqlSearchEngineProviderMock->expects($this->never())
+                                      ->method('searchManufacturers');
     }
 }

@@ -71,6 +71,8 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
      * @param string $queryText
      * @param array $productFieldsList
      * @param int $productsLimit
+     * @param int $categoriesLimit
+     * @param int $manufacturersLimit
      * @param int|null $alphaFilter
      * @return array
      */
@@ -78,6 +80,8 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
         string $queryText,
         array $productFieldsList,
         int $productsLimit,
+        int $categoriesLimit = 0,
+        int $manufacturersLimit = 0,
         int $alphaFilter = null
     ): array {
         $this->alphaFilter = $alphaFilter ?? 0;
@@ -90,6 +94,20 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                 break;
             }
             $result = $this->execQuery($sql, $queryText, $productsLimit - count($this->results));
+            if (!empty($result)) {
+                array_push($this->results, ...$result);
+            }
+        }
+
+        if ($categoriesLimit > 0) {
+            $result = $this->searchCategories($queryText, $categoriesLimit);
+            if (!empty($result)) {
+                array_push($this->results, ...$result);
+            }
+        }
+
+        if ($manufacturersLimit > 0) {
+            $result = $this->searchManufacturers($queryText, $manufacturersLimit);
             if (!empty($result)) {
                 array_push($this->results, ...$result);
             }
@@ -472,5 +490,96 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
             LIMIT
                 :resultsLimit
         ";
+    }
+
+    /**
+     * Search the categories' names.
+     *
+     * @param string $queryText
+     * @param int $limit
+     * @return array
+     */
+    protected function searchCategories(string $queryText, int $limit): array
+    {
+        global $db;
+
+        $searchQueryPreg = preg_replace('/\s+/', ' ', preg_quote($queryText, '&'));
+        $searchQueryRegexp = str_replace(' ', '|', $searchQueryPreg);
+
+        $sql = "
+            SELECT
+                c.categories_id,
+                cd.categories_name,
+                c.categories_image
+            FROM
+                " . TABLE_CATEGORIES . " c
+                LEFT JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON cd.categories_id = c.categories_id
+            WHERE
+                c.categories_status <> 0
+                AND (cd.categories_name REGEXP :regexpQuery)
+                AND cd.language_id = :languageId
+            ORDER BY
+                c.sort_order,
+                cd.categories_name
+            LIMIT
+                :resultsLimit
+        ";
+
+        $sql = $db->bindVars($sql, ':regexpQuery', $searchQueryRegexp, 'string');
+        $sql = $db->bindVars($sql, ':languageId', $_SESSION['languages_id'], 'integer');
+        $sql = $db->bindVars($sql, ':resultsLimit', $limit, 'integer');
+
+        $dbResults = $db->Execute($sql);
+
+        $results = [];
+        foreach ($dbResults as $dbResult) {
+            $results[] = $dbResult;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Search the manufacturers' names.
+     *
+     * @param string $queryText
+     * @param int $limit
+     * @return array
+     */
+    protected function searchManufacturers(string $queryText, int $limit): array
+    {
+        global $db;
+
+        $searchQueryPreg = preg_replace('/\s+/', ' ', preg_quote($queryText, '&'));
+        $searchQueryRegexp = str_replace(' ', '|', $searchQueryPreg);
+
+        $sql = "
+            SELECT
+                DISTINCT m.manufacturers_id,
+                m.manufacturers_name,
+                m.manufacturers_image
+            FROM
+                " . TABLE_PRODUCTS . " p
+                LEFT JOIN " . TABLE_MANUFACTURERS . " m ON m.manufacturers_id = p.manufacturers_id
+            WHERE
+                p.products_status <> 0
+                AND (m.manufacturers_name REGEXP :regexpQuery)
+            ORDER BY
+                m.manufacturers_name
+            LIMIT
+                :resultsLimit
+        ";
+
+        $sql = $db->bindVars($sql, ':regexpQuery', $searchQueryRegexp, 'string');
+        $sql = $db->bindVars($sql, ':resultsLimit', $limit, 'integer');
+
+        $dbResults = $db->Execute($sql);
+
+        $results = [];
+        foreach ($dbResults as $dbResult) {
+            $results[] = $dbResult;
+        }
+
+        return $results;
     }
 }

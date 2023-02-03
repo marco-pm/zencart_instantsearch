@@ -206,7 +206,9 @@ class zcAjaxInstantSearch extends base
                     ? $this->highlightSearchWords($model)
                     : '';
                 $dropdownResult['price'] = INSTANT_SEARCH_DROPDOWN_DISPLAY_PRODUCT_PRICE === 'true'
-                    ? zen_get_products_display_price($id)
+                    ? !empty($result['products_displayed_price'])
+                        ? $result['products_displayed_price']
+                        : zen_get_products_display_price($id)
                     : '';
             } elseif (!empty($result['categories_id'])) {
                 if ($categoriesReached === false) {
@@ -221,7 +223,9 @@ class zcAjaxInstantSearch extends base
 
                 $dropdownResult['link']  = zen_href_link(FILENAME_DEFAULT, 'cPath=' . $id);
                 $dropdownResult['count'] = INSTANT_SEARCH_DROPDOWN_DISPLAY_CATEGORIES_COUNT === 'true'
-                    ? zen_count_products_in_category($id)
+                    ? !empty($result['categories_count'])
+                        ? $result['categories_count']
+                        : zen_count_products_in_category($id)
                     : '';
             } elseif (!empty($result['manufacturers_id'])) {
                 if ($manufacturersReached === false) {
@@ -236,7 +240,9 @@ class zcAjaxInstantSearch extends base
 
                 $dropdownResult['link']  = zen_href_link(FILENAME_DEFAULT, 'manufacturers_id=' . $id);
                 $dropdownResult['count'] = INSTANT_SEARCH_DROPDOWN_DISPLAY_MANUFACTURERS_COUNT === 'true'
-                    ? zen_count_products_for_manufacturer((int)$id)
+                    ? !empty($result['manufacturers_count'])
+                        ? $result['manufacturers_count']
+                        : zen_count_products_for_manufacturer((int)$id)
                     : '';
             } else {
                 continue;

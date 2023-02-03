@@ -19,6 +19,8 @@ interface SearchEngineProviderInterface
      * @param string $queryText
      * @param array $productFieldsList
      * @param int $productsLimit
+     * @param int $categoriesLimit
+     * @param int $manufacturersLimit
      * @param int|null $alphaFilter
      * @return array
      */
@@ -26,6 +28,8 @@ interface SearchEngineProviderInterface
         string $queryText,
         array $productFieldsList,
         int $productsLimit,
+        int $categoriesLimit = 0,
+        int $manufacturersLimit = 0,
         int $alphaFilter = null
     ): array;
 }
