@@ -2,21 +2,27 @@
 /**
  * @package  Instant Search Plugin for Zen Cart
  * @author   marco-pm
- * @version  3.0.1
+ * @version  4.0.0
  * @see      https://github.com/marco-pm/zencart_instantsearch
  * @license  GNU Public License V2.0
  */
 
 declare(strict_types=1);
 
-use Zencart\Plugins\Catalog\InstantSearch\Exceptions\InstantSearchEngineInitException;
-use Zencart\Plugins\Catalog\InstantSearch\Exceptions\InstantSearchEngineSearchException;
 use Zencart\Plugins\Catalog\InstantSearch\InstantSearch;
+use Zencart\Plugins\Catalog\InstantSearch\InstantSearchLogger;
 use Zencart\Plugins\Catalog\InstantSearch\MysqlInstantSearch;
-use Zencart\Plugins\Catalog\InstantSearch\TypesenseInstantSearch;
+use Zencart\Plugins\Catalog\Typesense\TypesenseInstantSearch;
 
 class zcAjaxInstantSearch extends base
 {
+    /**
+     * The name of the TypesenseInstantSearch class.
+     *
+     * @var string
+     */
+    protected const TYPESENSE_INSTANT_SEARCH_CLASS_NAME = TypesenseInstantSearch::class;
+
     /**
      * The search query.
      *
@@ -39,6 +45,11 @@ class zcAjaxInstantSearch extends base
     protected InstantSearch $instantSearch;
 
     /**
+     * @var InstantSearchLogger
+     */
+    protected InstantSearchLogger $logger;
+
+    /**
      * Constructor.
      *
      * @param InstantSearch|null $instantSearch
@@ -46,18 +57,31 @@ class zcAjaxInstantSearch extends base
     public function __construct(InstantSearch $instantSearch = null)
     {
         $this->results = [];
+        $this->logger = new InstantSearchLogger('instantsearch-ajax');
 
         if ($instantSearch !== null) {
             $this->instantSearch = $instantSearch;
         } else {
-            if (INSTANT_SEARCH_ENGINE === 'Typesense') {
-                try {
-                    $this->instantSearch = new TypesenseInstantSearch();
-                } catch (InstantSearchEngineInitException $e) {
-                    // Fallback to MySQL
-                    $this->instantSearch = new MysqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
+            $useMySql = false;
+
+            if (defined('INSTANT_SEARCH_ENGINE') && INSTANT_SEARCH_ENGINE === 'Typesense') {
+                if (!class_exists(self::TYPESENSE_INSTANT_SEARCH_CLASS_NAME)) {
+                    $this->logger->writeErrorLog('TypesenseInstantSearch class not found, falling back to MySQL');
+                    $useMySql = true;
+                } else {
+                    try {
+                        $className = self::TYPESENSE_INSTANT_SEARCH_CLASS_NAME;
+                        $this->instantSearch = new $className();
+                    } catch (Exception $e) {
+                        $this->logger->writeErrorLog('TypesenseInstantSearch class not found, falling back to MySQL', $e);
+                        $useMySql = true;
+                    }
                 }
             } else {
+                $useMySql = true;
+            }
+
+            if ($useMySql) {
                 $this->instantSearch = new MysqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
             }
         }
@@ -105,8 +129,7 @@ class zcAjaxInstantSearch extends base
             $searchLogPrefix    = TEXT_SEARCH_LOG_ENTRY_DROPDOWN_PREFIX;
             $categoriesLimit    = (int)INSTANT_SEARCH_DROPDOWN_MAX_CATEGORIES;
             $manufacturersLimit = (int)INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS;
-
-        } elseif ($_POST['scope'] === 'page') {
+        } else {
             $resultPage = !empty($_POST['resultPage']) && (int)$_POST['resultPage'] > 0
                 ? $_POST['resultPage']
                 : 1;
@@ -150,12 +173,16 @@ class zcAjaxInstantSearch extends base
                 $addToSearchLog,
                 $searchLogPrefix,
             );
-        } catch (InstantSearchEngineSearchException $e) {
-            if (INSTANT_SEARCH_ENGINE === 'Typesense' && is_a($this->instantSearch, TypesenseInstantSearch::class)) {
+        } catch (Exception $e) {
+            if (defined('INSTANT_SEARCH_ENGINE') && INSTANT_SEARCH_ENGINE === 'Typesense' && is_a($this->instantSearch, self::TYPESENSE_INSTANT_SEARCH_CLASS_NAME)) {
                 // Fallback to MySQL
+                $this->logger->writeErrorLog('Typesense search error, falling back to MySQL', $e);
                 $this->instantSearch = new MysqlInstantSearch(INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true');
                 return $this->instantSearch();
             }
+
+            $this->logger->writeErrorLog('MySQL search error', $e);
+            return json_encode(['count' => 0, 'results' => []]);
         }
 
         $this->results = $results;
@@ -170,6 +197,7 @@ class zcAjaxInstantSearch extends base
                     : $this->formatPageResults($results),
             ], JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
+            $this->logger->writeErrorLog('JSON encoding error', $e);
             return json_encode(['count' => 0, 'results' => []]);
         }
     }
@@ -355,10 +383,12 @@ class zcAjaxInstantSearch extends base
             $sortCol     = $_GET['sort'][0];
             $sortOrder   = substr($_GET['sort'], -1);
             $sortDbField = DEFINE_DB_FIELDS[$column_list[$sortCol - 1]];
-            usort($results, static fn($prod1, $prod2) =>
-            $sortOrder === 'd'
-                ? [$prod2[$sortDbField]] <=> [$prod1[$sortDbField]]
-                : [$prod1[$sortDbField]] <=> [$prod2[$sortDbField]]
+            usort(
+                $results,
+                static fn ($prod1, $prod2) =>
+                $sortOrder === 'd'
+                    ? [$prod2[$sortDbField]] <=> [$prod1[$sortDbField]]
+                    : [$prod1[$sortDbField]] <=> [$prod2[$sortDbField]]
             );
             $listing = $results;
         }

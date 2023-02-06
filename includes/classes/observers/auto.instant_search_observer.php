@@ -1,4 +1,13 @@
 <?php
+/**
+ * @package  Instant Search Plugin for Zen Cart
+ * @author   marco-pm
+ * @version  4.0.0
+ * @see      https://github.com/marco-pm/zencart_instantsearch
+ * @license  GNU Public License V2.0
+ */
+
+declare(strict_types=1);
 
 class zcObserverInstantSearchObserver extends base
 {
@@ -38,21 +47,21 @@ class zcObserverInstantSearchObserver extends base
 
         if (defined('INSTANT_SEARCH_PAGE_ENABLED') && INSTANT_SEARCH_PAGE_ENABLED === 'true') {
             $instantSearchZcSearchResultPageName = zen_get_zcversion() >= '1.5.8' ? FILENAME_SEARCH_RESULT : FILENAME_ADVANCED_SEARCH_RESULT;
-            $instantSearchFormSelector = "form[action*=${instantSearchZcSearchResultPageName}]:not([name=search]):not([name=advanced_search])";
+            $instantSearchFormSelector = "form[action*=$instantSearchZcSearchResultPageName]:not([name=search]):not([name=advanced_search])";
 
             // Replace the search forms' action"
             echo "
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
                         // Replace the search forms' action
-                        const instantSearchFormPageInputs = document.querySelectorAll(`{$instantSearchFormSelector} input[value=\"{$instantSearchZcSearchResultPageName}\"]`);
+                        const instantSearchFormPageInputs = document.querySelectorAll(`$instantSearchFormSelector input[value=\"$instantSearchZcSearchResultPageName\"]`);
                         instantSearchFormPageInputs.forEach(input => input.value = \"" . FILENAME_INSTANT_SEARCH_RESULT . "\");
 
-                        const instantSearchFormSearchDescrInputs = document.querySelectorAll(`{$instantSearchFormSelector} input[name=\"search_in_description\"]`);
+                        const instantSearchFormSearchDescrInputs = document.querySelectorAll(`$instantSearchFormSelector input[name=\"search_in_description\"]`);
                         instantSearchFormSearchDescrInputs.forEach(input => input.remove());
 
-                        const instantSearchForms = document.querySelectorAll(`{$instantSearchFormSelector}`);
-                        instantSearchForms.forEach(form => form.action = form.action.replace('{$instantSearchZcSearchResultPageName}', '" . FILENAME_INSTANT_SEARCH_RESULT . "'));
+                        const instantSearchForms = document.querySelectorAll(`$instantSearchFormSelector`);
+                        instantSearchForms.forEach(form => form.action = form.action.replace('$instantSearchZcSearchResultPageName', '" . FILENAME_INSTANT_SEARCH_RESULT . "'));
                     });
                 </script>
             ";
