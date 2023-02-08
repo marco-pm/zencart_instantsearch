@@ -20,7 +20,7 @@ declare const instantSearchDropdownInputWaitTime: number;
 
 const resultsContainerSelector = 'instantSearchResultsDropdownContainer';
 
-const fetchResults = async (queryTextParsed: string): Promise<string> => {
+const fetchResults = async (queryTextParsed: string, signal: AbortSignal): Promise<string> => {
     const data = new FormData();
     data.append('keyword', queryTextParsed);
     data.append('scope', 'dropdown');
@@ -31,7 +31,8 @@ const fetchResults = async (queryTextParsed: string): Promise<string> => {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
         },
-        body: data
+        body: data,
+        signal,
     });
     return await response.json() as string;
 }
@@ -48,9 +49,21 @@ const ResultsContainer = ({ queryTextParsed, containerIndex, setIsResultsContain
         count: number;
     }
 
+    const [previousController, setPreviousController] = useState<AbortController | null>(null);
+
     const {isLoading, isError, data, error} = useQuery({
         queryKey: ['results', queryTextParsed],
-        queryFn: () => fetchResults(queryTextParsed).then(data => JSON.parse(data) as Data)
+        queryFn: () => {
+            if (previousController) {
+                previousController.abort();
+            }
+
+            const controller = new AbortController();
+            const signal = controller.signal;
+            setPreviousController(controller);
+
+            return fetchResults(queryTextParsed, signal).then(data => JSON.parse(data) as Data);
+        },
     });
     const [previousData, setPreviousData] = useState<Data | null>(null);
     const [isSlideDownRendered, setIsSlideDownRendered] = useState(false);
@@ -224,14 +237,6 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
     const queryClient = new QueryClient();
 
     const queryTextParsed = debouncedQueryText.replace(/^\s+/, "").replace(/  +/g, ' ');
-
-    useEffect(() => {
-        const cancelQuery = async () => {
-            await queryClient.cancelQueries({queryKey: ['results']});
-        }
-
-        cancelQuery().catch(console.error);
-    }, [queryText]);
 
     function checkQueryLength() {
         if (queryTextParsed.length >= instantSearchDropdownInputMinLength) {
