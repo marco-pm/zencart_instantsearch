@@ -49,4 +49,17 @@ class InstantSearchLogger
         }
         error_log($logLine, 3, $fullLogName);
     }
+
+    /**
+     * Writes a log message to the Instant Search debug log.
+     *
+     * @param string $message
+     * @return void
+     */
+    public function writeDebugLog(string $message): void
+    {
+        $fullLogName = DIR_FS_LOGS . "/" . $this->logName . "-debug-" . date('Y-m-d') . ".log";
+        $logLine = date('Y-m-d H:i:s') . " [DEBUG] $message" . PHP_EOL;
+        error_log($logLine, 3, $fullLogName);
+    }
 }
