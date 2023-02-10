@@ -93,7 +93,7 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
             if (count($this->results) >= $productsLimit) {
                 break;
             }
-            $result = $this->execQuery($sql, $queryText, $productsLimit - count($this->results));
+            $result = $this->searchProducts($sql, $queryText, $productsLimit - count($this->results));
             if (!empty($result)) {
                 array_push($this->results, ...$result);
             }
@@ -138,14 +138,14 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
     }
 
     /**
-     * Prepares the query, runs it and saves the results in $results.
+     * Search the products' fields.
      *
      * @param string $sql
      * @param string $queryText
      * @param int $limit
      * @return array
      */
-    protected function execQuery(string $sql, string $queryText, int $limit): array
+    protected function searchProducts(string $sql, string $queryText, int $limit): array
     {
         global $db;
 
@@ -167,7 +167,7 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
         $sql = $db->bindVars($sql, ':alphaFilter', chr($this->alphaFilter) . '%', 'string');
         $sql = $db->bindVars($sql, ':resultsLimit', $limit, 'integer');
 
-        $this->notify('NOTIFY_INSTANT_SEARCH_MYSQL_ENGINE_BEFORE_SQL', $queryText, $sql, $productsLimit, $this->alphaFilter);
+        $this->notify('NOTIFY_INSTANT_SEARCH_MYSQL_PRODUCTS_BEFORE_SQL', $queryText, $sql, $limit, $this->alphaFilter);
 
         // Run the sql
         $dbResults = $db->Execute($sql);
@@ -529,6 +529,8 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
         $sql = $db->bindVars($sql, ':languageId', $_SESSION['languages_id'], 'integer');
         $sql = $db->bindVars($sql, ':resultsLimit', $limit, 'integer');
 
+        $this->notify('NOTIFY_INSTANT_SEARCH_MYSQL_CATEGORIES_BEFORE_SQL', $queryText, $sql, $limit);
+
         $dbResults = $db->Execute($sql);
 
         $results = [];
@@ -572,6 +574,8 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
 
         $sql = $db->bindVars($sql, ':regexpQuery', $searchQueryRegexp, 'string');
         $sql = $db->bindVars($sql, ':resultsLimit', $limit, 'integer');
+
+        $this->notify('NOTIFY_INSTANT_SEARCH_MYSQL_MANUFACTURERS_BEFORE_SQL', $queryText, $sql, $limit);
 
         $dbResults = $db->Execute($sql);
 

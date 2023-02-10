@@ -32,7 +32,7 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
         $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
                                               ->onlyMethods([
-                                                  'execQuery', 'buildSqlProductModel', 'buildSqlProductName',
+                                                  'searchProducts', 'buildSqlProductModel', 'buildSqlProductName',
                                                   'buildSqlProductNameDescription', 'buildSqlProductMetaKeywords',
                                                   'buildSqlProductCategory', 'buildSqlProductManufacturer',
                                                   'searchCategories', 'searchManufacturers'
@@ -97,7 +97,7 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
         $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
                                               ->onlyMethods([
-                                                  'execQuery', 'buildSqlProductModel', 'buildSqlProductName',
+                                                  'searchProducts', 'buildSqlProductModel', 'buildSqlProductName',
                                                   'buildSqlProductNameDescription', 'buildSqlProductMetaKeywords',
                                                   'buildSqlProductCategory', 'buildSqlProductManufacturer',
                                                   'searchCategories', 'searchManufacturers'
@@ -162,7 +162,7 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
         $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
                                               ->onlyMethods([
-                                                  'execQuery', 'buildSqlProductNameDescription', 'buildSqlProductName',
+                                                  'searchProducts', 'buildSqlProductNameDescription', 'buildSqlProductName',
                                                   'searchCategories', 'searchManufacturers'
                                               ])
                                               ->getMock();
@@ -205,7 +205,7 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
         $mysqlSearchEngineProviderMock = $this->getMockBuilder(MysqlSearchEngineProvider::class)
                                               ->setConstructorArgs([INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION === 'true'])
                                               ->onlyMethods([
-                                                  'execQuery', 'buildSqlProductName', 'buildSqlProductNameDescription',
+                                                  'searchProducts', 'buildSqlProductName', 'buildSqlProductNameDescription',
                                                   'buildSqlProductCategory', 'buildSqlProductManufacturer',
                                                   'searchCategories', 'searchManufacturers'
                                               ])
