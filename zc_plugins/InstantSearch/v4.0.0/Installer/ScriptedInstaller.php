@@ -30,16 +30,22 @@ class ScriptedInstaller extends ScriptedInstallBase
             return false;
         }
 
-        // Get configuration group
         $sql = $this->dbConn->Execute("
-            SELECT configuration_group_id
-            FROM " . TABLE_CONFIGURATION_GROUP . "
-            WHERE configuration_group_title = '" . self::CONFIGURATION_GROUP_TITLE . "'
-            LIMIT 1
+            SELECT
+                configuration_group_id
+            FROM
+                " . TABLE_CONFIGURATION_GROUP . "
+            WHERE
+                configuration_group_title = '" . self::CONFIGURATION_GROUP_TITLE . "'
+            LIMIT
+                1
         ");
         if ($sql->RecordCount() === 0) {
+            $errorMsg = 'Instant Search plugin is not installed properly. Uninstall and re-install the plugin.';
+            $this->errorContainer->addError(1, $errorMsg, true, $errorMsg);
             return false;
         }
+
         $configurationGroupId = (int)$sql->fields['configuration_group_id'];
 
         $this->createIndexes();
@@ -62,21 +68,40 @@ class ScriptedInstaller extends ScriptedInstallBase
 
         // Add configuration group, if not already present
         $sql = $this->dbConn->Execute("
-            SELECT configuration_group_id
-            FROM " . TABLE_CONFIGURATION_GROUP . "
-            WHERE configuration_group_title = '" . self::CONFIGURATION_GROUP_TITLE . "'
-            LIMIT 1
+            SELECT
+                configuration_group_id
+            FROM
+                " . TABLE_CONFIGURATION_GROUP . "
+            WHERE
+                configuration_group_title = '" . self::CONFIGURATION_GROUP_TITLE . "'
+            LIMIT
+                1
         ");
         if ($sql->RecordCount() === 0) {
             $this->dbConn->Execute("
-                INSERT INTO " . TABLE_CONFIGURATION_GROUP . " (configuration_group_title, configuration_group_description, sort_order, visible)
-                VALUES ('" . self::CONFIGURATION_GROUP_TITLE . "', '" . self::CONFIGURATION_GROUP_TITLE . "', 1, 1);
+                INSERT INTO
+                    " . TABLE_CONFIGURATION_GROUP . " (
+                        configuration_group_title,
+                        configuration_group_description,
+                        sort_order,
+                        visible
+                    )
+                VALUES
+                    (
+                        '" . self::CONFIGURATION_GROUP_TITLE . "',
+                        '" . self::CONFIGURATION_GROUP_TITLE . "',
+                        1,
+                        1
+                    )
             ");
             $configurationGroupId = (int)($this->dbConn->Insert_ID());
             $this->executeInstallerSql("
-                UPDATE " . TABLE_CONFIGURATION_GROUP . "
-                SET sort_order = $configurationGroupId
-                WHERE configuration_group_id = $configurationGroupId
+                UPDATE
+                    " . TABLE_CONFIGURATION_GROUP . "
+                SET
+                    sort_order = $configurationGroupId
+                WHERE
+                    configuration_group_id = $configurationGroupId
             ");
         } else {
             $configurationGroupId = (int)($sql->fields['configuration_group_id']);
@@ -102,22 +127,32 @@ class ScriptedInstaller extends ScriptedInstallBase
         zen_deregister_admin_pages(['configInstantSearch']);
 
         // Remove configuration settings
-        $sql = "DELETE FROM " . TABLE_CONFIGURATION . "
-                WHERE configuration_key LIKE 'INSTANT_SEARCH_%'";
+        $sql = "
+            DELETE FROM
+                " . TABLE_CONFIGURATION . "
+            WHERE
+                configuration_key LIKE 'INSTANT_SEARCH_%'
+        ";
         $this->executeInstallerSql($sql);
 
         // Remove configuration group
-        $sql = "DELETE FROM " . TABLE_CONFIGURATION_GROUP . "
-                WHERE configuration_group_title = '" . self::CONFIGURATION_GROUP_TITLE . "'";
+        $sql = "
+            DELETE FROM
+                " . TABLE_CONFIGURATION_GROUP . "
+            WHERE
+                configuration_group_title = '" . self::CONFIGURATION_GROUP_TITLE . "'
+        ";
         $this->executeInstallerSql($sql);
 
         // Remove FULLTEXT indexes from products_description table
         $index = $this->dbConn->Execute("
             SHOW INDEX
-            FROM " . TABLE_PRODUCTS_DESCRIPTION . "
-            WHERE key_name = 'idx_products_name'
-            AND column_name = 'products_name'
-            AND index_type = 'FULLTEXT'
+            FROM
+                " . TABLE_PRODUCTS_DESCRIPTION . "
+            WHERE
+                key_name = 'idx_products_name'
+                AND column_name = 'products_name'
+                AND index_type = 'FULLTEXT'
         ");
         if (!$index->EOF) {
             $this->executeInstallerSql("
@@ -128,10 +163,12 @@ class ScriptedInstaller extends ScriptedInstallBase
 
         $index = $this->dbConn->Execute("
             SHOW INDEX
-            FROM " . TABLE_PRODUCTS_DESCRIPTION . "
-            WHERE key_name = 'idx_products_description'
-            AND column_name = 'products_description'
-            AND index_type = 'FULLTEXT'
+            FROM
+                " . TABLE_PRODUCTS_DESCRIPTION . "
+            WHERE
+                key_name = 'idx_products_description'
+                AND column_name = 'products_description'
+                AND index_type = 'FULLTEXT'
         ");
         if (!$index->EOF) {
             $this->executeInstallerSql("
@@ -156,9 +193,11 @@ class ScriptedInstaller extends ScriptedInstallBase
 
         $index = $this->dbConn->Execute("
             SHOW INDEX
-            FROM " . TABLE_PRODUCTS_DESCRIPTION . "
-            WHERE column_name = 'products_name'
-            AND index_type = 'FULLTEXT'
+            FROM
+                " . TABLE_PRODUCTS_DESCRIPTION . "
+            WHERE
+                column_name = 'products_name'
+                AND index_type = 'FULLTEXT'
         ");
         if ($index->EOF) {
             $this->executeInstallerSql("
@@ -169,9 +208,11 @@ class ScriptedInstaller extends ScriptedInstallBase
 
         $index = $this->dbConn->Execute("
             SHOW INDEX
-            FROM " . TABLE_PRODUCTS_DESCRIPTION . "
-            WHERE column_name = 'products_description'
-            AND index_type = 'FULLTEXT'
+            FROM
+                " . TABLE_PRODUCTS_DESCRIPTION . "
+            WHERE
+                column_name = 'products_description'
+                AND index_type = 'FULLTEXT'
         ");
         if ($index->EOF) {
             $this->executeInstallerSql("
@@ -193,8 +234,12 @@ class ScriptedInstaller extends ScriptedInstallBase
     protected function createConfigurationSettings(int $configurationGroupId): void
     {
         // Remove any previous configuration settings
-        $sql = "DELETE FROM " . TABLE_CONFIGURATION . "
-                WHERE configuration_key LIKE 'INSTANT_SEARCH_%'";
+        $sql = "
+            DELETE FROM
+                " . TABLE_CONFIGURATION . "
+            WHERE
+                configuration_key LIKE 'INSTANT_SEARCH_%'
+        ";
         $this->executeInstallerSql($sql);
 
         // Insert configuration settings with default values
@@ -238,58 +283,74 @@ class ScriptedInstaller extends ScriptedInstallBase
      */
     public function restorePreviousConfigurationValues(int $configurationGroupId, string $oldPluginVersion = ''): void
     {
-        if (strpos($oldPluginVersion, 'v2') === 0) {
+        if (strpos($oldPluginVersion, 'v2') === 0 || strpos($oldPluginVersion, 'v3') === 0) {
+            // some old settings have different names than v4's
+            if (strpos($oldPluginVersion, 'v2') === 0) {
+                $oldSettingNames = [
+                    'INSTANT_SEARCH_DROPDOWN_MAX_PRODUCTS'                => 'INSTANT_SEARCH_MAX_NUMBER_OF_RESULTS',
+                    'INSTANT_SEARCH_DROPDOWN_MIN_WORDSEARCH_LENGTH'       => 'INSTANT_SEARCH_MIN_WORDSEARCH_LENGTH',
+                    'INSTANT_SEARCH_DROPDOWN_MAX_WORDSEARCH_LENGTH'       => 'INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH',
+                    'INSTANT_SEARCH_DROPDOWN_DISPLAY_IMAGE'               => 'INSTANT_SEARCH_DISPLAY_IMAGE',
+                    'INSTANT_SEARCH_DROPDOWN_DISPLAY_PRODUCT_PRICE'       => 'INSTANT_SEARCH_DISPLAY_PRODUCT_PRICE',
+                    'INSTANT_SEARCH_DROPDOWN_DISPLAY_PRODUCT_MODEL'       => 'INSTANT_SEARCH_DISPLAY_PRODUCT_MODEL',
+                    'INSTANT_SEARCH_DROPDOWN_DISPLAY_CATEGORIES_COUNT'    => 'INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT',
+                    'INSTANT_SEARCH_DROPDOWN_DISPLAY_MANUFACTURERS_COUNT' => 'INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT',
+                ];
+            } elseif (strpos($oldPluginVersion, 'v3') === 0) {
+                $oldSettingNames = [
+                    'INSTANT_SEARCH_PRODUCT_FIELDS_LIST'       => 'INSTANT_SEARCH_DROPDOWN_FIELDS_LIST',
+                    'INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION' => 'INSTANT_SEARCH_DROPDOWN_USE_QUERY_EXPANSION',
+                ];
+            }
 
-            // v2 settings have different names than v3's
-            $v2settingNames = [
-                'INSTANT_SEARCH_DROPDOWN_MAX_PRODUCTS' => 'INSTANT_SEARCH_MAX_NUMBER_OF_RESULTS',
-                'INSTANT_SEARCH_DROPDOWN_MIN_WORDSEARCH_LENGTH' => 'INSTANT_SEARCH_MIN_WORDSEARCH_LENGTH',
-                'INSTANT_SEARCH_DROPDOWN_MAX_WORDSEARCH_LENGTH' => 'INSTANT_SEARCH_MAX_WORDSEARCH_LENGTH',
-                'INSTANT_SEARCH_DROPDOWN_DISPLAY_IMAGE' => 'INSTANT_SEARCH_DISPLAY_IMAGE',
-                'INSTANT_SEARCH_DROPDOWN_DISPLAY_PRODUCT_PRICE' => 'INSTANT_SEARCH_DISPLAY_PRODUCT_PRICE',
-                'INSTANT_SEARCH_DROPDOWN_DISPLAY_PRODUCT_MODEL' => 'INSTANT_SEARCH_DISPLAY_PRODUCT_MODEL',
-                'INSTANT_SEARCH_DROPDOWN_DISPLAY_CATEGORIES_COUNT' => 'INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT',
-                'INSTANT_SEARCH_DROPDOWN_DISPLAY_MANUFACTURERS_COUNT' => 'INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT',
-            ];
-
-            foreach ($v2settingNames as $k => $v2settingName) {
-                if (defined($v2settingName)) {
+            foreach ($oldSettingNames as $k => $oldSettingName) {
+                if (defined($oldSettingName)) {
                     $sql = "
-                        UPDATE " . TABLE_CONFIGURATION . "
-                        SET configuration_value = :value
-                        WHERE configuration_key = :key
+                        UPDATE
+                            " . TABLE_CONFIGURATION . "
+                        SET
+                            configuration_value = :value
+                        WHERE
+                            configuration_key = :key
                     ";
-                    $sql = $this->dbConn->bindVars($sql, ':value', constant($v2settingName), 'string');
+                    $sql = $this->dbConn->bindVars($sql, ':value', constant($oldSettingName), 'string');
                     $sql = $this->dbConn->bindVars($sql, ':key', $k, 'string');
                     $this->executeInstallerSql($sql);
                 }
             }
 
             // Keep the dropdown wait time setting if it was changed from the v2 default, otherwise leave the
-            // "new" v3 value
+            // "new" v4 value
             if (defined('INSTANT_SEARCH_INPUT_WAIT_TIME') && INSTANT_SEARCH_INPUT_WAIT_TIME !== '150') {
                 $sql = "
-                    UPDATE " . TABLE_CONFIGURATION . "
-                    SET configuration_value = :value
-                    WHERE configuration_key = 'INSTANT_SEARCH_DROPDOWN_INPUT_WAIT_TIME'
+                    UPDATE
+                        " . TABLE_CONFIGURATION . "
+                    SET
+                        configuration_value = :value
+                    WHERE
+                        configuration_key = 'INSTANT_SEARCH_DROPDOWN_INPUT_WAIT_TIME'
                 ";
                 $sql = $this->dbConn->bindVars($sql, ':value', INSTANT_SEARCH_INPUT_WAIT_TIME, 'string');
                 $this->executeInstallerSql($sql);
             }
-
         } else {
-
             $confSettings = $this->dbConn->Execute("
-                SELECT configuration_key
-                FROM " . TABLE_CONFIGURATION . "
-                WHERE configuration_group_id = $configurationGroupId
+                SELECT
+                    configuration_key
+                FROM
+                    " . TABLE_CONFIGURATION . "
+                WHERE
+                    configuration_group_id = $configurationGroupId
             ");
             foreach ($confSettings as $confSetting) {
                 if (defined($confSetting['configuration_key'])) {
                     $sql = "
-                        UPDATE " . TABLE_CONFIGURATION . "
-                        SET configuration_value = :value
-                        WHERE configuration_key = :key
+                        UPDATE
+                            " . TABLE_CONFIGURATION . "
+                        SET
+                            configuration_value = :value
+                        WHERE
+                            configuration_key = :key
                     ";
                     $sql = $this->dbConn->bindVars($sql, ':value', constant($confSetting['configuration_key']), 'string');
                     $sql = $this->dbConn->bindVars($sql, ':key', $confSetting['configuration_key'], 'string');
