@@ -17,6 +17,9 @@ module.exports = [
                 },
             ],
         },
+        resolve: {
+            extensions: ['.tsx', '.ts', '.js', '.jsx']
+        }
     },
     {
         name: 'instant_search_results',
@@ -34,5 +37,8 @@ module.exports = [
                 },
             ],
         },
+        resolve: {
+            extensions: ['.tsx', '.ts', '.js', '.jsx']
+        }
     }
 ];

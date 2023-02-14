@@ -6,7 +6,7 @@
  * @license  GNU Public License V2.0
  */
 
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useDebounce } from 'use-debounce';
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
