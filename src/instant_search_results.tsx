@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import parse from 'html-react-parser';
 
 declare const instantSearchResultSecurityToken: string;
@@ -93,9 +93,9 @@ const ResultsContainer = ({ queryText, initialResultPage, alphaFilterId, sort }:
         return (
             <>
                 {previousData && previousData.results ? parse(previousData.results) : ''}
-                <div id="instantSearchResults__loadingWrapper">
+                <div id='instantSearchResults__loadingWrapper'>
                     {loadingResultsText}
-                    <div className="spinner"></div>
+                    <div className='spinner'></div>
                 </div>
             </>
         )
@@ -113,7 +113,7 @@ const ResultsContainer = ({ queryText, initialResultPage, alphaFilterId, sort }:
             instantSearchFilterDiv.style.display = 'none';
         }
         return (
-            <div id="instantSearchResults__noResultsFoundWrapper">
+            <div id='instantSearchResults__noResultsFoundWrapper'>
                 {noProductsFoundText}
             </div>
         )
@@ -133,7 +133,7 @@ const ResultsContainer = ({ queryText, initialResultPage, alphaFilterId, sort }:
     return  (
         <>
             {parse(data.results)}
-            <div ref={endResultsRef} aria-hidden="true" />
+            <div ref={endResultsRef} aria-hidden='true' />
         </>
     )
 }

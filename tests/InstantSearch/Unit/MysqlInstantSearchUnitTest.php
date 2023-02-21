@@ -221,11 +221,6 @@ class MysqlInstantSearchUnitTest extends InstantSearchUnitTest
                                ->willReturn($mysqlSearchEngineProviderMock);
         $mysqlInstantSearchMock->setSearchEngineProvider($mysqlSearchEngineProviderMock);
 
-        $ajaxInstantSearchMock = $this->getMockBuilder('zcAjaxInstantSearch')
-                                      ->setConstructorArgs([$mysqlInstantSearchMock])
-                                      ->onlyMethods(['formatDropdownResults', 'formatPageResults'])
-                                      ->getMock();
-
         $mysqlSearchEngineProviderMock->expects($this->never())
                                       ->method('searchCategories');
 

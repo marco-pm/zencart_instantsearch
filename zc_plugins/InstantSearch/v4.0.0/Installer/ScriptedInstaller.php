@@ -296,7 +296,7 @@ class ScriptedInstaller extends ScriptedInstallBase
                     'INSTANT_SEARCH_DROPDOWN_DISPLAY_CATEGORIES_COUNT'    => 'INSTANT_SEARCH_DISPLAY_CATEGORIES_COUNT',
                     'INSTANT_SEARCH_DROPDOWN_DISPLAY_MANUFACTURERS_COUNT' => 'INSTANT_SEARCH_DISPLAY_MANUFACTURERS_COUNT',
                 ];
-            } elseif (strpos($oldPluginVersion, 'v3') === 0) {
+            } else {
                 $oldSettingNames = [
                     'INSTANT_SEARCH_PRODUCT_FIELDS_LIST'       => 'INSTANT_SEARCH_DROPDOWN_FIELDS_LIST',
                     'INSTANT_SEARCH_MYSQL_USE_QUERY_EXPANSION' => 'INSTANT_SEARCH_DROPDOWN_USE_QUERY_EXPANSION',

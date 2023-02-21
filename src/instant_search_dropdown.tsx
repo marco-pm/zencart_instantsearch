@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useDebounce } from 'use-debounce';
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import parse from 'html-react-parser';
 import { SlideDown } from 'react-slidedown';
 
@@ -236,7 +236,7 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
 
     const queryClient = new QueryClient();
 
-    const queryTextParsed = debouncedQueryText.replace(/^\s+/, "").replace(/  +/g, ' ');
+    const queryTextParsed = debouncedQueryText.replace(/^\s+/, '').replace(/  +/g, ' ');
 
     function checkQueryLength() {
         if (queryTextParsed.length >= instantSearchDropdownInputMinLength) {
@@ -290,15 +290,15 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
         <React.StrictMode>
             <QueryClientProvider client={queryClient}>
                 <input
-                    type="text"
+                    type='text'
                     value={queryText}
                     onChange={e => setQueryText(e.currentTarget.value)}
                     onFocus={() => checkQueryLength()}
                     onBlur={handleBlur}
                     aria-expanded={showResults && isResultsContainerExpanded}
-                    autoComplete="off"
-                    role="combobox"
-                    aria-autocomplete="list"
+                    autoComplete='off'
+                    role='combobox'
+                    aria-autocomplete='list'
                     aria-owns={showResults ? `#${resultsContainerSelector}-${containerIndex}` : ''}
                     ref={inputRef}
                 />
