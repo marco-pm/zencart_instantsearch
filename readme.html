@@ -39,7 +39,7 @@
     <header>
         <nav id="navbar-header" class="navbar position-fixed navbar-light bg-light shadow-sm justify-content-center align-items-center container-fluid py-3">
             <div class="container">
-            <h1 class="mb-1 fs-4">Instant Search plugin 3.0.1 for Zen Cart 1.5.7 and 1.5.8</h1>
+            <h1 class="mb-1 fs-4">Instant Search plugin 4.0.0 for Zen Cart 1.5.7 and 1.5.8</h1>
                 <div class="float-md-right text-center text-md-right mt-2 mt-md-0">
                     <i class="bi-github me-1 align-top"></i> <a href="https://github.com/marco-pm/zencart_instantsearch" target="_blank" class="link-secondary text-decoration-none me-4">GitHub Repository</a>
                     <i class="bi-layout-text-sidebar-reverse me-1 align-top"></i> <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" class="link-secondary text-decoration-none">Support Thread</a>
@@ -63,8 +63,10 @@
                         </nav>
                         <a class="nav-link link-secondary" href="#item-configuration">Configuration</a>
                         <nav class="nav nav-pills flex-column">
-                            <a class="nav-link link-secondary ms-3 my-1" href="#item-fields-to-search-and-order">Fields to search and order</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-product-fields-to-search-and-order">Fields to search and order</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-categories-brands">Categories and brands</a>
                             <a class="nav-link link-secondary ms-3 my-1" href="#item-query-expansion">Query Expansion</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-using-typesense">Using Typesense as search engine</a>
                         </nav>
                         <a class="nav-link link-secondary" href="#item-faq">FAQs & Troubleshooting</a>
                         <a class="nav-link link-secondary" href="#item-list-of-notifiers">(For developers) List of Notifiers</a>
@@ -78,6 +80,7 @@
                 <section>
                     <h1 id="item-introduction" class="display-1 fs-2 pb-2">Introduction</h1>
                     <p>This plugin uses a combination of MySQL Full-Text Search and LIKE/REGEXP queries to quickly find and sort products, brands, and categories based on their relevance to the user query.</p>
+                    <p>With the <a href="https://github.com/marco-pm/zencart_typesense" target="_blank" class="link-secondary">Typesense add-on</a>, Typesense can be used as a search engine in place of MySQL.</p>
                     <p>The results can be displayed in an autocomplete dropdown as the user types in a search box and/or as a search results page with a sortable product list and infinite scroll once the user submits the search form, providing an alternative to the classic Zen Cart search results page.</p>
                 </section>
 
@@ -107,18 +110,24 @@
 
                 <section>
                     <h2 id="item-upgrade-2" class="fs-4 pt-4 pb-3">Upgrading from versions 2.x or 3.x</h2>
+                    <h3 class="fs-5 py-1">Remove old files</h3>
+                    REMOVE any of the following plugin files from your site's filesystem before upgrading (depending on which version you're upgrading from, some of these files may not exist):
+                    <ul class="text-break mt-3">
+                        <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearchDropdown.php</span></li>
+                        <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearchPage.php</span></li>
+                        <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
+                        <li><span class="font-monospace">includes/modules/pages/instant_search_result/jscript_instant_search_result.php</span></li>
+                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/instant_search.js</span></li>
+                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/instant_search_result.js</span></li>
+                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_dom-slider.js</span></li>
+                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/jscript/jscript_instant_search.php</span></li>
+                        <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
+                    </ul>
                     <h3 class="fs-5 py-1">Zen Cart 1.5.8</h3>
                     <ol>
-                        <li>(only for versions 2.x) REMOVE the following plugin files from your site's filesystem before installing:
-                            <ul class="text-break mt-3">
-                                <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
-                                <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
-                                <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
-                            </ul>
-                        </li>
                         <li class="mt-2">Copy the <a href="#item-files-list" class="link-secondary">plugin files</a> to your site's filesystem.<br>
                             Rename <span class="font-monospace">YOUR_TEMPLATE</span> to match the name of your site's template.<br>
-                            DON'T rename any subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v3.0.1</span>.</li>
+                            DON'T rename any subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v4.0.0</span>.</li>
                         <li class="mt-2">If you're using the Bootstrap template on your store, copy the content of the <span class="font-monospace">bootstrap template files</span> directory to your site's filesystem (overwrite files if asked).</li>
                         <li class="mt-2">In the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em>, click the <em>Upgrade Available</em> button and then <em>Upgrade</em>.</li>
                         <li class="mt-2">In the same Admin page, click <em>Clean Up</em> to remove the previous plugin version files from the filesystem.</li>
@@ -126,13 +135,6 @@
                     </ol>
                     <h3 class="fs-5 py-1">Zen Cart 1.5.7</h3>
                     <ol>
-                        <li>(only for versions 2.x) REMOVE the following plugin files from your site's filesystem before installing:
-                            <ul class="text-break mt-3">
-                                <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
-                                <li><span class="font-monospace">includes/languages/english/extra_definitions/YOUR_TEMPLATE/instant_search.php</span></li>
-                                <li><span class="font-monospace">includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results.php</span></li>
-                            </ul>
-                        </li>
                         <li class="mt-2">Write down your current Instant Search settings in the admin (<em>Configuration > Instant Search</em>), because they will be lost once you uninstall the current plugin.</li>
                         <li class="mt-2">Uninstall the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Uninstall</em> button.</li>
                         <li class="mt-2">Do a <a href="#item-first-time-install" class="link-secondary">first-time install</a>.</li>
@@ -145,7 +147,7 @@
                     <ol>
                         <li>Copy the <a href="#item-files-list" class="link-secondary">plugin files</a> to your site's file system.<br>
                             Rename <span class="font-monospace">YOUR_TEMPLATE</span> to match the name of your site's template.<br>
-                            DON'T rename any subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v3.0.1</span>.
+                            DON'T rename any subdirectory under <span class="font-monospace">zc_plugins/InstantSearch/v4.0.0</span>.
                         <li class="mt-2">If you're using the Bootstrap template on your store, copy the content of the <span class="font-monospace">bootstrap template files</span> directory to your site's filesystem (overwrite files if asked).</li>
                         <li class="mt-2">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
                         <li class="mt-2">
@@ -170,127 +172,200 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <th scope="row">Dropdown - Enable</th>
-                                <td class="align-middle">When the user types into an input search box, display a dropdown with autocomplete search results.</td>
+                                <th class="align-middle" scope="row">Product Fields to Search and Order</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">See <a href="#item-product-fields-to-search-and-order" class="link-secondary">Product fields to search and order</a>.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace text-break">model-exact,name-description,model-broad,meta-keywords,category,manufacturer</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Enable</th>
-                                <td class="align-middle">When the user types into an input search box, display a dropdown with autocomplete search results.</td>
+                                <th class="align-middle" scope="row">[MySQL] Include Related Products in the Results (Query Expansion)</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">true </span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Listing Page - Enable</th>
-                                <td class="align-middle">When the user submits a search form (excluding the advanced search form), display the search results on a product listing page with infinite scroll.</td>
+                                <th class="align-middle" scope="row">Dropdown - Enable</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">When the user types into an input search box, display a dropdown with autocomplete search results.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">true</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Search Delay</th>
-                                <td class="align-middle">Delay the execution of the instant search by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries to the database while the user is typing.</td>
+                                <th class="align-middle" scope="row">Dropdown - Search Delay</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Delay the execution of the instant search by this time period (in milliseconds), after a character is entered, to prevent unnecessary queries to the database while the user is typing.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">50</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Maximum Number of Results</th>
-                                <td class="align-middle">Maximum number of results displayed in the dropdown.</td>
+                                <th class="align-middle" scope="row">Dropdown - Maximum Number of Results</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Maximum number of results displayed in the dropdown.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">5</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Minimum Length of Search Query</th>
-                                <td class="align-middle">Minimum number of characters requested for the dropdown to be displayed.</td>
+                                <th class="align-middle" scope="row">Dropdown - Minimum Length of Search Query</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Minimum number of characters requested for the dropdown to be displayed.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">3</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Maximum Length of Search Query</th>
-                                <td class="align-middle">Maximum number of characters requested for the dropdown to be displayed.</td>
+                                <th class="align-middle" scope="row">Dropdown - Maximum Length of Search Query</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Maximum number of characters requested for the dropdown to be displayed.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">100</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Fields to Search and Order</th>
-                                <td class="align-middle">See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</td>
+                                <th class="align-middle" scope="row">Dropdown - Display Images</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Display the product/category/manufacturer's image.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">true</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Include Related Products in the Results (Query Expansion)</th>
-                                <td class="align-middle">See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</td>
+                                <th class="align-middle" scope="row">Dropdown - Display Product Price</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Display the product's price.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">true</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Display Images</th>
-                                <td class="align-middle">Display the product/category/manufacturer's image.</td>
+                                <th class="align-middle" scope="row">Dropdown - Display Product Model</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Display the product's model.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">false</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Display Product Price</th>
-                                <td class="align-middle">Display the product's price.</td>
+                                <th class="align-middle" scope="row">Dropdown - Maximum Number of Categories</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Maximum number of categories (matched by name) displayed in the dropdown. Set to 0 if you don't want to include categories in the results.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">2</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Display Product Model</th>
-                                <td class="align-middle">Display the product's model.</td>
+                                <th class="align-middle" scope="row">Dropdown - Display Category Count</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Display the number of products for the matched categories.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">true</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Display Category Count</th>
-                                <td class="align-middle">Display the number of products for the matched categories.</td>
+                                <th class="align-middle" scope="row">Dropdown - Maximum Number of Manufacturers</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Maximum number of manufacturers (matched by name) displayed in the dropdown. Set to 0 if you don't want to include manufacturers in the results.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">2</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Display Manufacturer Count</th>
-                                <td class="align-middle">Display the number of products for the matched manufacturers.</td>
+                                <th class="align-middle" scope="row">Dropdown - Display Manufacturer Count</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Display the number of products for the matched manufacturers.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">true</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Image Width</th>
-                                <td class="align-middle">Width of the product/category/manufacturer's image</td>
+                                <th class="align-middle" scope="row">Dropdown - Image Width</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Width of the product/category/manufacturer's image</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">100</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Image Height</th>
-                                <td class="align-middle">Height of the product/category/manufacturer's image.</td>
+                                <th class="align-middle" scope="row">Dropdown - Image Height</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Height of the product/category/manufacturer's image.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">80</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Highlight Search Terms in Bold</th>
-                                <td class="align-middle">Set to <span class="font-monospace">none</span> for no highlight,<span class="font-monospace">query</span> to highlight the user search terms,<span class="font-monospace">autocomplete</span> to highlight the autocompleted text.</td>
+                                <th class="align-middle" scope="row">Dropdown - Highlight Search Terms in Bold</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Set to <span class="font-monospace">none</span> for no highlight,<span class="font-monospace">query</span> to highlight the user search terms,<span class="font-monospace">autocomplete</span> to highlight the autocompleted text.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">autocomplete</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Input Box Selector</th>
-                                <td class="align-middle">CSS selector of the search input box(es). You might need to change it if you're using a custom template and the results dropdown is not showing.</td>
+                                <th class="align-middle" scope="row">Dropdown - Input Box Selector</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">CSS selector of the search input box(es). You might need to change it if you're using a custom template and the results dropdown is not showing.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">input[name="keyword"]</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Dropdown - Add Entry to Search Log</th>
-                                <td class="align-middle">Add the searched terms to the Search Log report (if Search Log plugin is installed).</td>
+                                <th class="align-middle" scope="row">Dropdown - Add Entry to Search Log</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Add the searched terms to the Search Log report (if Search Log plugin is installed).</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">false</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Listing Page - Number of Results per Ajax Call</th>
-                                <td class="align-middle">Number of products displayed every time a new "batch" (Ajax page) of search results is loaded while scrolling the page.</td>
+                                <th class="align-middle" scope="row">Listing Page - Enable</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">When the user submits a search form (excluding the advanced search form), display the search results on a product listing page with infinite scroll.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">true</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Listing Page - Maximum Number of Results</th>
-                                <td class="align-middle">Maximum number of search results for the listing page.</td>
+                                <th class="align-middle" scope="row">Listing Page - Number of Results per Ajax Call</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Number of products displayed every time a new "batch" (Ajax page) of search results is loaded while scrolling the page.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">10</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Listing Page - Fields to Search and Order</th>
-                                <td class="align-middle">See <a href="#item-fields-to-search-and-order" class="link-secondary">Fields to search and order</a>.</td>
+                                <th class="align-middle" scope="row">Listing Page - Maximum Number of Results</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Maximum number of search results for the listing page.</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">250</span></p>
+                                </td>
                             </tr>
                             <tr>
-                                <th scope="row">Listing Page - Include Related Products in the Results (Query Expansion)</th>
-                                <td class="align-middle">See <a href="#item-query-expansion" class="link-secondary">Query Expansion</a>.</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Listing Page - Add Entry to Search Log</th>
-                                <td class="align-middle">Add the searched terms to the Search Log report (if Search Log plugin is installed).</td>
+                                <th class="align-middle" scope="row">Listing Page - Add Entry to Search Log</th>
+                                <td class="align-middle">
+                                    <p class="mb-1">Add the searched terms to the Search Log report (if Search Log plugin is installed).</p>
+                                    <p class="mb-0">Default: <span class="font-monospace">true</span></p>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <h2 id="item-fields-to-search-and-order" class="fs-4 pt-3 pb-3">Fields to search and order</h2>
-                    <p>With the <em>Fields to Search and Order</em> setting, you can decide which fields to search and in what order. The possible fields are:</p>
+                    <h2 id="item-product-fields-to-search-and-order" class="fs-4 pt-3 pb-3">Product fields to search and order</h2>
+                    <p>With the <em>Product fields to Search and Order</em> setting, you can decide which product fields to search and in what order. The possible fields are:</p>
                     <ul>
                         <li><span class="font-monospace">name</span>: product name</li>
                         <li><span class="font-monospace">name-description</span>: product name and description; name matches have higher priority than description matches</li>
                         <li><span class="font-monospace">model-exact</span>: product model, exact match (the query contains only and exactly the model)
                         <li><span class="font-monospace">model-broad</span>: product model, broad match (the query contains also the model or part of it)
                         <li><span class="font-monospace">meta-keywords</span>: product keywords meta tag
-                        <li>(dropdown only) <span class="font-monospace">category</span>: category name
-                        <li>(dropdown only) <span class="font-monospace">manufacturer</span>: manufacturer name
+                        <li>(dropdown only) <span class="font-monospace">category</span>: product category
+                        <li>(dropdown only) <span class="font-monospace">manufacturer</span>: product manufacturer
                     </ul>
                     <p>The fields are listed in order of search, separated by a comma. You should put the fields that you think are most relevant for your store, and/or that could provide the best matches, first. You can omit a field if you don't want to include it in the search.</p>
                     <p>For example, if the setting value is <span class="font-monospace">category,name-description,model-exact</span> then:</p>
                     <ol>
-                        <li>First, the category names are searched, the matches are sorted by relevancy, and then added on top of the results.</li>
+                        <li>First, the product category names are searched, the matches are sorted by relevancy, and then added on top of the results.</li>
                         <li>If the maximum number of results to display has not been reached, the product names and descriptions are searched, the matches are sorted by relevancy, and then added at the end of the current results.</li>
                         <li>If the maximum number of results to display has not been reached, the product models are searched, the matches are sorted by relevancy, and then added at the end of the current results.</li>
                     </ol>
                     <p><strong>You must pick only one field between <span class="font-monospace">name</span> and <span class="font-monospace">name-description</span></strong>. If you don't want to include the product description in the search, or the search is too slow/inconsistent, use <span class="font-monospace">name</span>.</p>
                     <p>The <span class="font-monospace">meta-keywords</span> field refers to the keywords meta tag field that you can set per-product via the <a href="https://docs.zen-cart.com/user/admin_pages/catalog/products_meta_tags_editor/" target="_blank" class="link-secondary">Meta Tags Editor</a>. This is useful if you want to add some keywords that are not present in the product's name/description but you still want to associate with the product in the search.<br>Note: Meta keywords are no longer used by search engines (Google & co.) since a long time ago, so don't be afraid to affect your website's SEO ranking by editing that field. Any value it contains is ignored by search engines.</p>
 
+                    <h2 id="item-categories-brands" class="fs-4 pt-3 pb-3">Categories and brands</h2>
+                    <p>Up to v3 of the plugin, the meaning of "search in categories and brands" was a bit confusing. With version 4 this aspect has been made clearer and more consistent:</p>
+                    <ul>
+                        <li>The <span class="font-monospace">category</span> field of the <em>Product fields to Search and Order</em> setting now refers to the <strong>product category</strong>, i.e. the category name is another field that can be included while searching for products.<br>Note: with MySQL only the immediate parent category name is searched, while with Typesense all the "ancestor" categories of the product are searched up to the root.</li>
+                        <li>Same as above for the <span class="font-monospace">manufacturer</span> product field.</li>
+                        <li>Categories and brands appear separately in the dropdown, below the product list. You can set whether to include them in the results and how many results to display, with the <em>Dropdown - Maximum Number of Categories</em> and <em>Dropdown - Maximum Number of Manufacturers</em> settings.</li>
+                    </ul>
+
                     <h2 id="item-query-expansion" class="fs-4 pt-3 pb-3">Query Expansion</h2>
-                    <p>Enable Query Expansion to show also related products in the results.</p>
+                    <p>Enable Query Expansion to show also related products in the results. This option is used only with the MySQL search engine.</p>
                     <p>Suppose you have three products with names:</p>
                     <ul>
                         <li>Microsoft Mouse and Keyboard set</li>
@@ -300,6 +375,10 @@
                     <p>The user searches <em>logitech</em>.<br>If Query Expansion is disabled, only the second product (the one with <em>logitech</em> in the name) will be shown.<br>If Query Expansion is enabled, the other two products will also be shown (with less priority), because they contain the word <em>mouse</em>, which is present in the matched product, so they could be relevant for the user.</p>
                     <p>Query Expansion also applies to the product description (if included in the fields list).</p>
                     <p>Note: this option is not equivalent to a typo-tolerance or synonym support feature (e.g. <em>Did you mean...?</em>). A search with the keyword <em>logiech</em> (typo), or <em>logitechs</em>, or <em>mice</em> would return no matches.</p>
+
+                    <h2 id="item-using-typesense" class="fs-4 pt-3 pb-3">Using Typesense as search engine</h2>
+                    <p>With the <a href="https://github.com/marco-pm/zencart_typesense" target="_blank" class="link-secondary">Typesense add-on</a>, Typesense can be used as a search engine in place of MySQL.</p>
+                    <p>Compared to MySQL, searching with Typesense is faster (especially when searching in product descriptions), typo-tolerant, and the results are more relevant to the search query. It also allows you to set synonyms.</p>
                 </section>
 
                 <section>
@@ -313,7 +392,7 @@
                     <p>Aside from a visual difference (Bootstrap Ajax search shows results in a modal instead of a dropdown), both use Ajax (no page reload) and only look for matches on specific product fields (product's name and model, also product's description and meta keywords – if enabled – in the case of Instant Search).<br>The difference is that Bootstrap Ajax Search is still partially based on the storefront Search algorithm. It retrieves all the results first to count them, and it doesn't sort them by relevance. Compared to the storefront Search though, it's very fast.<br>Depending on your needs, if you're using the Bootstrap template you may prefer the Bootstrap Ajax Search to Instant Search. You can easily switch between them in the configuration settings.</p>
 
                     <h2 class="fs-5 pt-3 pb-1">The search is slow</h2>
-                    <p>Ideally, the results should be returned in less than 1 second.<br>If that's not the case, disable the search in product descriptions (i.e. in the admin <em>Fields to Search and Order</em> setting, use <span class="font-monospace">name</span> instead of <span class="font-monospace">name-description</span>).<br>If the search is still slow, disable Query Expansion.</p>
+                    <p>Ideally, the results should be returned in less than 1 second.<br>If that's not the case, disable the search in product descriptions (i.e. in the admin <em>Fields to Search and Order</em> setting, use <span class="font-monospace">name</span> instead of <span class="font-monospace">name-description</span>).<br>If the search is still slow, disable Query Expansion. Otherwise, consider using Typesense instead of MySQL as search engine.</p>
 
                     <h2 class="fs-5 pt-3 pb-1">The autocomplete dropdown does not appear</h2>
                     <p>If you have enabled dropdown results and nothing happens when the user types, you may be using a custom template and your search entry boxes have a different CSS selector. You can set the CSS selector in the admin <em>Dropdown - Input Box Selector</em> setting.</p>
@@ -333,7 +412,7 @@
                     <p>A custom sort (e.g. sort by price) in the product list basically negates the speed advantage of Instant Search, because it has to find and load all products first in order to sort them.</p>
 
                     <h2 class="fs-5 pt-3 pb-1">Does the search include typo-tolerance and synonym support (e.g. <em>Did you mean...?</em>)</h2>
-                    <p>Not yet (work in progress!).</p>
+                    <p>Only when using Typesense (instead of MySQL) as search engine.</p>
 
                     <h2 class="fs-5 pt-3 pb-1">I need more help</h2>
                     <p>Feel free to ask your question in the <a href="https://www.zen-cart.com/showthread.php?189289-Instant-Search" target="_blank" class="link-secondary">Support Thread</a> on Zen Cart forums.</p>
@@ -342,9 +421,11 @@
                 <section>
                     <h1 id="item-list-of-notifiers" class="display-1 fs-2 mt-6 pb-2 pt-5">(For developers) Notifiers list</h1>
                     <ul>
-                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_BEFORE_SQL</span> (<span class="font-monospace text-break">InstantSearch.php</span>)</li>
-                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_BEFORE_FORMAT_RESULTS</span> (<span class="font-monospace text-break">InstantSearch.php</span>)</li>
-                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_DROPDOWN_ADD_DROPDOWN_RESULT</span> (<span class="font-monospace text-break">zcAjaxInstantSearchDropdown.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_MYSQL_PRODUCTS_BEFORE_SQL</span> (<span class="font-monospace text-break">MysqlSearchEngineProvider.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_MYSQL_CATEGORIES_BEFORE_SQL</span> (<span class="font-monospace text-break">MysqlSearchEngineProvider.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_MYSQL_MANUFACTURERS_BEFORE_SQL</span> (<span class="font-monospace text-break">MysqlSearchEngineProvider.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_BEFORE_FORMAT_RESULTS</span> (<span class="font-monospace text-break">zcAjaxInstantSearch.php</span>)</li>
+                        <li><span class="font-monospace text-break">NOTIFY_INSTANT_SEARCH_DROPDOWN_ADD_DROPDOWN_RESULT</span> (<span class="font-monospace text-break">zcAjaxInstantSearch.php</span>)</li>
                         <li><span class="font-monospace text-break">NOTIFY_HEADER_START_INSTANT_SEARCH_RESULTS_PAGE</span> (<span class="font-monospace text-break">instant_search_result/header_php.php</span>)</li>
                         <li><span class="font-monospace text-break">NOTIFY_HEADER_END_INSTANT_SEARCH_RESULTS_PAGE</span> (<span class="font-monospace text-break">instant_search_result/header_php.php</span>)</li>
                         <li><span class="font-monospace text-break">NOTIFY_MODULE_INSTANT_SEARCH_LISTING_RESULTCOUNT</span> (<span class="font-monospace text-break">product_listing_instant_search.php</span>)</li>
@@ -364,32 +445,34 @@
                 <section>
                     <h1 id="item-files-list" class="display-1 fs-2 pb-2 pt-4">Files list</h1>
                         <ul class="mt-2 text-break">
-                            <li><span class="font-monospace">/includes/classes/ajax/zcAjaxInstantSearchDropdown.php</span></li>
-                            <li><span class="font-monospace">/includes/classes/ajax/zcAjaxInstantSearchPage.php</span></li>
+                            <li><span class="font-monospace">/includes/classes/ajax/zcAjaxInstantSearch.php</span></li>
+                            <li><span class="font-monospace">/includes/classes/observers/auto.instant_search_observer.php</span></li>
                             <li><span class="font-monospace">/includes/modules/YOUR_TEMPLATE/product_listing_instant_search.php</span></li>
-                            <li><span class="font-monospace">/includes/modules/pages/instant_search_result/jscript_instant_search_result.php</span></li>
                             <li><span class="font-monospace">/includes/modules/pages/instant_search_result/header_php.php</span></li>
+                            <li><span class="font-monospace">/includes/languages/english/lang.instant_search_result.php</span></li>
                             <li><span class="font-monospace">/includes/languages/english/extra_definitions/lang.instant_search.php</span></li>
                             <li><span class="font-monospace">/includes/languages/english/extra_definitions/instant_search.php</span></li>
-                            <li><span class="font-monospace">/includes/languages/english/lang.instant_search_result.php</span></li>
                             <li><span class="font-monospace">/includes/languages/english/instant_search_result.php</span></li>
                             <li><span class="font-monospace">/includes/functions/extra_functions/instant_search_functions.php</span></li>
-                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/jscript_dom-slider.js</span></li>
-                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/instant_search.js</span></li>
-                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/instant_search_result.js</span></li>
-                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/jscript_instant_search.php</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/instant_search_dropdown.min.js</span></li>
+                            <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/jscript/instant_search_results.min.js</span></li>
                             <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/css/stylesheet_instant_search.css</span></li>
                             <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/templates/tpl_instant_search_result_default.php</span></li>
                             <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results_listing.php</span></li>
                             <li><span class="font-monospace">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_instant_search_results_dropdown.php</span></li>
-                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.1/classes/InstantSearch.php</span></li>
-                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.1/classes/admin/InstantSearchConfigurationValidation.php</span></li>
-                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.1/classes/Exceptions/InstantSearchConfigurationException.php</span></li>
-                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.1/Installer/ScriptedInstaller.php</span></li>
-                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.1/admin/includes/languages/english/extra_definitions/lang.instant_search.php</span></li>
-                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.1/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
-                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.1/catalog/includes/extra_datafiles/instant_search_filenames.php</span></li>
-                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v3.0.1/manifest.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/classes/InstantSearch.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/classes/SearchEngineProviders/SearchEngineProviderInterface.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/classes/SearchEngineProviders/MysqlSearchEngineProvider.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/classes/admin/InstantSearchConfigurationValidation.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/classes/MysqlInstantSearch.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/classes/InstantSearchLogger.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/classes/Exceptions/InstantSearchEngineSearchException.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/classes/Exceptions/InstantSearchEngineInitException.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/Installer/ScriptedInstaller.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/admin/includes/languages/english/extra_definitions/lang.instant_search.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/admin/includes/languages/english/extra_definitions/instant_search.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/catalog/includes/extra_datafiles/instant_search_filenames.php</span></li>
+                            <li><span class="font-monospace">/zc_plugins/InstantSearch/v4.0.0/manifest.php</span></li>
                         </ul>
                     <p>Bootstrap template files:</p>
                     <ul class="mt-2 text-break">
