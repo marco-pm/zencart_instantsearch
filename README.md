@@ -13,9 +13,9 @@ The results can be displayed in an autocomplete dropdown as the user types in a 
 results page with a sortable product list and infinite scroll once the user submits the search form, providing an 
 alternative to the classic Zen Cart search results page.
 
-Version 4.0 brings new and improved features to previous versions:
-- Refactoring of the search class to make it possible to use different search engines (with automatic fallback to MySQL 
-  if the search engine is not available)
+Version 4.0 of the plugin brings new and improved features:
+- Refactor of the search class to allow the use of different search engines (with automatic fallback to MySQL 
+  if the search engine is unavailable)
 - Support for using Typesense as a search engine (with the [Typesense add-on](https://github.com/marco-pm/zencart_typesense))
 - Improved display of categories and brands in the dropdown
 - Search in the product category and brand
@@ -23,17 +23,17 @@ Version 4.0 brings new and improved features to previous versions:
 - Improved dropdown accessibility and keyboard navigation
 - Various bug fixes and improvements
 
-Version 3.0 of the plugin brings new features and substantial improvements to previous versions.
+These add to the features and improvements of version 3.0:
 - Faster and better searches, with MySQL Full-Text search and Query Expansion
 - New, additional search results page with sortable product list and infinite scroll
-- New admin settings, including control of which fields to search and their order
+- New admin settings, including control of which product fields to search and their order
 - More robust dropdown auto-positioning
 - Support for Zen Cart 1.5.8 language files and plugin upgrade functionality
 - Integration with Search Log plugin
 - Responsive Classic and Bootstrap template files included
 - Code almost entirely rewritten, removed jQuery dependency, and many other improvements
-- No modifications to Zen Cart core files
-- More features coming in the next versions!
+
+There are no modifications to Zen Cart core files.
 
 # Prerequisites
 - Zen Cart 1.5.7 or 1.5.8
