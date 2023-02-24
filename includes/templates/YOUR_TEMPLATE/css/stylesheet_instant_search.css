@@ -1,46 +1,82 @@
 /**
  * @package  Instant Search Plugin for Zen Cart
  * @author   marco-pm
- * @version  3.0.1
+ * @version  4.0.0
  * @see      https://github.com/marco-pm/zencart_instantsearch
  * @license  GNU Public License V2.0
  */
 
+.instantSearchInputWrapper {
+    position: relative;
+}
+
+.instantSearchInputWrapper input {
+    margin-bottom: 0;
+}
+
 .instantSearchResultsDropdownContainer {
     box-sizing: border-box;
-    display: none;
     position: absolute;
     z-index: 10000;
     text-align: left;
-    float: left;
+    left: 0;
+    right: 0;
     vertical-align: bottom;
     font-size: .8rem;
     background: #fff;
     min-width: 250px;
     border: 1px solid #ccc;
+    border-top: none;
     margin: 0;
     padding: .31rem;
-    -moz-box-shadow: 0 2px 8px #000;
-    -webkit-box-shadow: 0 2px 8px #000;
-    box-shadow: 0 2px 8px #000;
+    box-shadow: 4px 4px 4px #4a4a4a;
+}
+
+.instantSearchResultsDropdownContainer ul {
+    margin: initial !important;
+    padding: initial !important;
+    width: initial !important;
+    list-style-type: initial !important;
+    text-align: initial !important;
+    line-height: initial !important;
+}
+
+.instantSearchResultsDropdownContainer ul li {
+    border-right: initial !important;
+    display: initial !important;
 }
 
 .instantSearchResultsDropdownContainer a {
-    display: block;
-    color: #000;
-    background-color: #fff;
-    padding: 0.3em 0.4em;
-    text-decoration: none;
-    overflow: hidden;
+    display: block !important;
+    color: #000 !important;
+    background-color: #fff !important;
+    margin: initial !important;
+    padding: 0.3em 0.4em !important;
+    text-decoration: none !important;
+    overflow: hidden !important;
 }
 
 .instantSearchResultsDropdownContainer a:hover {
-    background-color: #eee;
-    color: #000;
+    background-color: #eee !important;
+    color: #000 !important;
 }
 
 .instantSearchResultsDropdownContainer a:not(:first-child) {
-    margin-top: .5rem;
+    margin-top: .5rem !important;
+}
+
+.instantSearchResultsDropdownContainer__separator {
+    background-color: #525050;
+    color: #fff;
+    font-size: .95rem;
+    padding: .4rem .6rem;
+    margin: 1rem -.35rem .6rem -.35rem;
+    font-variant: small-caps;
+    letter-spacing: .05rem;
+}
+
+.instantSearchResultsDropdownContainer__separator:first-child {
+    margin-top: -.3rem;
 }
 
 .instantSearchResultsDropdownContainer__resultWrapper {
@@ -126,7 +162,6 @@
     text-align: center;
     font-weight: bold;
     font-size: 1.1rem;
-    display: none;
 }
 
 #instantsearchresultBody .list-more {
@@ -151,4 +186,37 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* For the responsive classic theme */
+
+#navMainSearch .instantSearchInputWrapper {
+    display: inline;
+}
+
+/* For the bootstrap theme */
+
+#navbarSupportedContent {
+    overflow-y: visible !important;
+}
+
+.input-group:not(.has-validation) .instantSearchInputWrapper input.form-control:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* Code from react-slidedown */
+
+.react-slidedown {
+    height: 0;
+    transition-property: none;
+    transition-duration: .09s;
+}
+
+.react-slidedown.transitioning {
+    overflow-y: hidden;
+}
+
+.react-slidedown.closed {
+    display: none;
 }
