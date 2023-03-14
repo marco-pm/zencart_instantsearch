@@ -278,7 +278,7 @@ class zcAjaxInstantSearch extends base
 
             $dropdownResult['id']   = (int)$id;
             $dropdownResult['name'] = $this->highlightSearchWords(strip_tags($name));
-            $dropdownResult['img'] = INSTANT_SEARCH_DROPDOWN_DISPLAY_IMAGE === 'true' && $img !== ''
+            $dropdownResult['img'] = INSTANT_SEARCH_DROPDOWN_DISPLAY_IMAGE === 'true' && !empty($img)
                 ? zen_image(DIR_WS_IMAGES . strip_tags($img), strip_tags($img), INSTANT_SEARCH_DROPDOWN_IMAGE_WIDTH, INSTANT_SEARCH_DROPDOWN_IMAGE_HEIGHT)
                 : '';
 
