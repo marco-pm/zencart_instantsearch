@@ -131,7 +131,7 @@ class zcAjaxInstantSearch extends base
             $manufacturersLimit = (int)INSTANT_SEARCH_DROPDOWN_MAX_MANUFACTURERS;
         } else {
             $resultPage = !empty($_POST['resultPage']) && (int)$_POST['resultPage'] > 0
-                ? $_POST['resultPage']
+                ? (int)$_POST['resultPage']
                 : 1;
 
             // If a custom sort is applied, set the sql limit to the maximum value (we need to fetch all
