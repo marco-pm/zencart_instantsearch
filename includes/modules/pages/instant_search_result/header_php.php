@@ -18,5 +18,8 @@ require(DIR_WS_MODULES . zen_get_module_directory('require_languages.php'));
 require(zen_get_index_filters_directory('default_filter.php'));
 
 $breadcrumb->add(NAVBAR_TITLE);
+if (!empty($_GET['keyword'])) {
+    $breadcrumb->add(zen_output_string_protected($_GET['keyword']));
+}
 
 $zco_notifier->notify('NOTIFY_HEADER_END_INSTANT_SEARCH_RESULTS_PAGE');

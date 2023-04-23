@@ -14,7 +14,8 @@ class zcObserverInstantSearchObserver extends base
     public function __construct()
     {
         $this->attach($this, [
-            'NOTIFY_FOOTER_END'
+            'NOTIFY_FOOTER_END',
+            'NOTIFY_MODULE_META_TAGS_UNSPECIFIEDPAGE'
         ]);
     }
 
@@ -65,6 +66,18 @@ class zcObserverInstantSearchObserver extends base
                     });
                 </script>
             ";
+        }
+    }
+
+    public function updateNotifyModuleMetaTagsUnspecifiedpage(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6)
+    {
+        global $current_page_base;
+
+        if ($current_page_base === FILENAME_INSTANT_SEARCH_RESULT && !empty($_GET['keyword'])) {
+            $p3 = true;
+            define('META_TAG_TITLE', NAVBAR_TITLE . ' -> ' . zen_output_string_protected($_GET['keyword']) . ' ' . PRIMARY_SECTION . TITLE . TAGLINE);
+            define('META_TAG_DESCRIPTION', $p5);
+            define('META_TAG_KEYWORDS', $p6);
         }
     }
 }
