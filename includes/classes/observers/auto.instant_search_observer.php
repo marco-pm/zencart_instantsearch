@@ -75,9 +75,7 @@ class zcObserverInstantSearchObserver extends base
 
         if ($current_page_base === FILENAME_INSTANT_SEARCH_RESULT && !empty($_GET['keyword'])) {
             $p3 = true;
-            define('META_TAG_TITLE', NAVBAR_TITLE . ' -> ' . zen_output_string_protected($_GET['keyword']) . ' ' . PRIMARY_SECTION . TITLE . TAGLINE);
-            define('META_TAG_DESCRIPTION', $p5);
-            define('META_TAG_KEYWORDS', $p6);
+            $p4 = NAVBAR_TITLE . ' -> ' . zen_output_string_protected($_GET['keyword']) . ' ' . PRIMARY_SECTION . TITLE . TAGLINE;
         }
     }
 }
