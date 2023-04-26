@@ -5,7 +5,7 @@
  *
  * @package   Instant Search Plugin for Zen Cart
  * @author    marco-pm
- * @version   4.0.0
+ * @version   4.0.1
  * @see       https://github.com/marco-pm/zencart_instantsearch
  * @copyright Copyright 2003-2022 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
