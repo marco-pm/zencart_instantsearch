@@ -58,7 +58,7 @@
                         <a class="nav-link link-secondary" href="#item-installation">Installation</a>
                         <nav class="nav nav-pills flex-column">
                             <a class="nav-link link-secondary ms-3 my-1" href="#item-upgrade-1">Upgrading from versions 1.x</a>
-                            <a class="nav-link link-secondary ms-3 my-1" href="#item-upgrade-2">Upgrading from versions 2.x or 3.x</a>
+                            <a class="nav-link link-secondary ms-3 my-1" href="#item-upgrade-2">Upgrading from versions 2.x, 3.x or 4.x</a>
                             <a class="nav-link link-secondary ms-3 my-1" href="#item-first-time-install">First-time install</a>
                         </nav>
                         <a class="nav-link link-secondary" href="#item-configuration">Configuration</a>
@@ -109,9 +109,10 @@
                 </section>
 
                 <section>
-                    <h2 id="item-upgrade-2" class="fs-4 pt-4 pb-3">Upgrading from versions 2.x or 3.x</h2>
+                    <h2 id="item-upgrade-2" class="fs-4 pt-4 pb-3">Upgrading from versions 2.x, 3.x or 4.x</h2>
                     <h3 class="fs-5 py-1">Remove old files</h3>
-                    REMOVE any of the following plugin files from your site's filesystem before upgrading (depending on which version you're upgrading from, some of these files may not exist):
+                    <p><em>NOTE: not needed if you're upgrading from version 4.0.0 or later.</em><br>
+                    REMOVE any of the following plugin files from your site's filesystem before upgrading (depending on which version you're upgrading from, some of these files may not exist):</p>
                     <ul class="text-break mt-3">
                         <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearchDropdown.php</span></li>
                         <li><span class="font-monospace">includes/classes/ajax/zcAjaxInstantSearchPage.php</span></li>
@@ -131,7 +132,7 @@
                         <li class="mt-2">If you're using the Bootstrap template on your store, copy the content of the <span class="font-monospace">bootstrap template files</span> directory to your site's filesystem (overwrite files if asked).</li>
                         <li class="mt-2">In the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em>, click the <em>Upgrade Available</em> button and then <em>Upgrade</em>.</li>
                         <li class="mt-2">In the same Admin page, click <em>Clean Up</em> to remove the previous plugin version files from the filesystem.</li>
-                        <li class="mt-2 text-break">In the file <span class="font-monospace">/includes/extra_configures/robots_pages_to_skip.php</span>, add the line<br><span class="font-monospace">instant_search_result,</span><br>under the line<br><span class="font-monospace">info_shopping_cart,</span></li>
+                        <li class="mt-2 text-break">(if not already done before) In the file <span class="font-monospace">/includes/extra_configures/robots_pages_to_skip.php</span>, add the line<br><span class="font-monospace">instant_search_result,</span><br>under the line<br><span class="font-monospace">info_shopping_cart,</span></li>
                     </ol>
                     <h3 class="fs-5 py-1">Zen Cart 1.5.7</h3>
                     <ol>
@@ -151,7 +152,7 @@
                         <li class="mt-2">If you're using the Bootstrap template on your store, copy the content of the <span class="font-monospace">bootstrap template files</span> directory to your site's filesystem (overwrite files if asked).</li>
                         <li class="mt-2">Install the plugin via the Plugin Manager: in the Admin, go to <em>Modules > Plugin Manager</em>, select <em>Instant Search</em> and click the <em>Install</em> button.</li>
                         <li class="mt-2">
-                            Add the results listing page to the <span class="font-monospace">ROBOTS_PAGES_TO_SKIP</span> value:
+                            (if not already done before) Add the results listing page to the <span class="font-monospace">ROBOTS_PAGES_TO_SKIP</span> value:
                             <ul class="text-break mt-3">
                                 <li class="mt-2">Zen Cart 1.5.8: in the file <span class="font-monospace">/includes/extra_configures/robots_pages_to_skip.php</span>, add the line<br><span class="font-monospace">instant_search_result,</span><br>under the line<br><span class="font-monospace">info_shopping_cart,</span></li>
                                 <li class="mt-2">Zen Cart 1.5.7: in your template's version of the file <span class="font-monospace">/includes/languages/english/meta_tags.php</span>, in the line that begins with <span class="font-monospace">define('ROBOTS_PAGES_TO_SKIP'</span>, add<br><span class="font-monospace">instant_search_result,</span><br>right after<br><span class="font-monospace">info_shopping_cart,</span><br></li>
