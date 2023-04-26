@@ -132,6 +132,7 @@ class ScriptedInstaller extends ScriptedInstallBase
                 " . TABLE_CONFIGURATION . "
             WHERE
                 configuration_key LIKE 'INSTANT_SEARCH_%'
+                AND configuration_key != 'INSTANT_SEARCH_ENGINE'
         ";
         $this->executeInstallerSql($sql);
 
@@ -239,6 +240,7 @@ class ScriptedInstaller extends ScriptedInstallBase
                 " . TABLE_CONFIGURATION . "
             WHERE
                 configuration_key LIKE 'INSTANT_SEARCH_%'
+                AND configuration_key != 'INSTANT_SEARCH_ENGINE'
         ";
         $this->executeInstallerSql($sql);
 
