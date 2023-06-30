@@ -41,9 +41,10 @@ interface ResultsContainerProps {
     queryTextParsed: string;
     containerIndex: number;
     setIsResultsContainerExpanded: (isExpanded: boolean) => void;
+    setLinkClicked: (isExpanded: boolean) => void;
 }
 
-const ResultsContainer = ({ queryTextParsed, containerIndex, setIsResultsContainerExpanded }: ResultsContainerProps) => {
+const ResultsContainer = ({ queryTextParsed, containerIndex, setIsResultsContainerExpanded, setLinkClicked }: ResultsContainerProps) => {
     interface Data {
         results: string;
         count: number;
@@ -174,9 +175,19 @@ const ResultsContainer = ({ queryTextParsed, containerIndex, setIsResultsContain
             }
         }
 
+        const handleLinkClick = () => {
+            setLinkClicked(true);
+        };
+
+        resultsContainerDiv.addEventListener('mousedown', () => handleLinkClick());
+        resultsContainerDiv.addEventListener('touchstart', () => handleLinkClick());
+
         resultsContainerDiv.addEventListener('keydown', (event: Event) => handleKeyDown(event));
 
         return () => {
+            resultsContainerDiv.removeEventListener('mousedown', handleLinkClick);
+            resultsContainerDiv.removeEventListener('touchstart', handleLinkClick);
+
             resultsContainerDiv.removeEventListener('keydown', handleKeyDown);
         };
     }, [data]);
@@ -231,6 +242,7 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
     const [queryText, setQueryText] = useState('');
     const [debouncedQueryText] = useDebounce(queryText, instantSearchDropdownInputWaitTime);
     const [showResults, setShowResults] = useState(false);
+    const [linkClicked, setLinkClicked] = useState(false);
     const [isResultsContainerExpanded, setIsResultsContainerExpanded] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -278,8 +290,13 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
     }, []);
 
     function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
-        // If focus is moved to the results container, do not hide the results
-        if (event.relatedTarget && event.relatedTarget instanceof HTMLElement && event.relatedTarget.classList.contains('instantSearchResultsDropdownContainer__link')) {
+        // if a result link has been clicked, or focus has moved to the results container, do not hide the results
+        if (linkClicked || (
+            event.relatedTarget &&
+            event.relatedTarget instanceof HTMLElement &&
+            event.relatedTarget.classList.contains('instantSearchResultsDropdownContainer__link')
+            )
+        ) {
             return;
         }
 
@@ -308,6 +325,7 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
                         queryTextParsed={debouncedQueryText}
                         containerIndex={containerIndex}
                         setIsResultsContainerExpanded={setIsResultsContainerExpanded}
+                        setLinkClicked={setLinkClicked}
                     />
                 }
             </QueryClientProvider>
