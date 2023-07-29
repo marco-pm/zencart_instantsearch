@@ -256,27 +256,30 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                 p.*,
                 pd.products_name,
                 m.manufacturers_name,
-                SUM(cpv.views) AS total_views
+                IFNULL(cpv.total_views, 0) AS total_views
             FROM
                 " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
                 LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
-                LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (
-                    p.products_id = cpv.product_id
-                    AND cpv.language_id = :languageId
-                )
+                LEFT JOIN (
+                    SELECT
+                        product_id,
+                        SUM(views) AS total_views
+                    FROM
+                        " . TABLE_COUNT_PRODUCT_VIEWS . "
+                    WHERE
+                        language_id = :languageId
+                    GROUP BY
+                        product_id
+                ) cpv ON (p.products_id = cpv.product_id)
             WHERE
                 p.products_status <> 0 " .
                 ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : " ") . "
                 AND pd.products_name " . ($beginsWith === true ? " LIKE :searchBeginsQuery " : " REGEXP :regexpQuery ") . "
                 AND pd.language_id = :languageId
                 AND p.products_id NOT IN (:foundIds)
-            GROUP BY
-                p.products_id,
-                pd.products_name,
-                m.manufacturers_name
             ORDER BY
-                total_views DESC,
+                IFNULL(cpv.total_views, 0) DESC,
                 p.products_sort_order,
                 pd.products_name
             LIMIT
@@ -317,27 +320,30 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                 p.*,
                 pd.products_name,
                 m.manufacturers_name,
-                SUM(cpv.views) AS total_views
+                IFNULL(cpv.total_views, 0) AS total_views
             FROM
                 " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
                 LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
-                LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (
-                    p.products_id = cpv.product_id
-                    AND cpv.language_id = :languageId
-                )
+                LEFT JOIN (
+                    SELECT
+                        product_id,
+                        SUM(views) AS total_views
+                    FROM
+                        " . TABLE_COUNT_PRODUCT_VIEWS . "
+                    WHERE
+                        language_id = :languageId
+                    GROUP BY
+                        product_id
+                ) cpv ON (p.products_id = cpv.product_id)
             WHERE
                 p.products_status <> 0 " .
                 ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : " ") . "
                 AND p.products_model " . ($exactMatch === true ? "= :searchQuery" : "REGEXP :regexpQuery") . "
                 AND pd.language_id = :languageId
                 AND p.products_id NOT IN (:foundIds)
-            GROUP BY
-                p.products_id,
-                pd.products_name,
-                m.manufacturers_name
             ORDER BY
-                total_views DESC,
+                IFNULL(cpv.total_views, 0) DESC,
                 p.products_sort_order,
                 pd.products_name
             LIMIT
@@ -377,7 +383,7 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                 p.*,
                 pd.products_name,
                 m.manufacturers_name,
-                SUM(cpv.views) AS total_views
+                IFNULL(cpv.total_views, 0) AS total_views
             FROM
                 " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
@@ -386,22 +392,25 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                     AND mtpd.language_id = :languageId
                 )
                 LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
-                LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (
-                    p.products_id = cpv.product_id
-                    AND cpv.language_id = :languageId
-                )
+                LEFT JOIN (
+                    SELECT
+                        product_id,
+                        SUM(views) AS total_views
+                    FROM
+                        " . TABLE_COUNT_PRODUCT_VIEWS . "
+                    WHERE
+                        language_id = :languageId
+                    GROUP BY
+                        product_id
+                ) cpv ON (p.products_id = cpv.product_id)
             WHERE
                 p.products_status <> 0 " .
                 ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : " ") . "
                 AND (mtpd.metatags_keywords REGEXP :regexpQuery)
                 AND pd.language_id = :languageId
                 AND p.products_id NOT IN (:foundIds)
-            GROUP BY
-                p.products_id,
-                pd.products_name,
-                m.manufacturers_name
             ORDER BY
-                total_views DESC,
+                IFNULL(cpv.total_views, 0) DESC,
                 p.products_sort_order,
                 pd.products_name
             LIMIT
@@ -422,16 +431,23 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                 p.*,
                 pd.products_name,
                 m.manufacturers_name,
-                SUM(cpv.views) AS total_views
+                IFNULL(cpv.total_views, 0) AS total_views
             FROM
                 " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
                 LEFT JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON cd.categories_id = p.master_categories_id
                 LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
-                LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (
-                    p.products_id = cpv.product_id
-                    AND cpv.language_id = :languageId
-                )
+                LEFT JOIN (
+                    SELECT
+                        product_id,
+                        SUM(views) AS total_views
+                    FROM
+                        " . TABLE_COUNT_PRODUCT_VIEWS . "
+                    WHERE
+                        language_id = :languageId
+                    GROUP BY
+                        product_id
+                ) cpv ON (p.products_id = cpv.product_id)
             WHERE
                 p.products_status <> 0 " .
                 ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : " ") . "
@@ -439,12 +455,8 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                 AND cd.language_id = :languageId
                 AND pd.language_id = :languageId
                 AND p.products_id NOT IN (:foundIds)
-            GROUP BY
-                p.products_id,
-                pd.products_name,
-                m.manufacturers_name
             ORDER BY
-                total_views DESC,
+                IFNULL(cpv.total_views, 0) DESC,
                 p.products_sort_order,
                 pd.products_name
             LIMIT
@@ -464,27 +476,30 @@ class MysqlSearchEngineProvider extends \base implements SearchEngineProviderInt
                 p.*,
                 pd.products_name,
                 m.manufacturers_name,
-                SUM(cpv.views) AS total_views
+                IFNULL(cpv.total_views, 0) AS total_views
             FROM
                 " . TABLE_PRODUCTS . " p
                 JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (p.products_id = pd.products_id)
                 LEFT JOIN " . TABLE_MANUFACTURERS . " m ON (m.manufacturers_id = p.manufacturers_id)
-                LEFT JOIN " . TABLE_COUNT_PRODUCT_VIEWS . " cpv ON (
-                    p.products_id = cpv.product_id
-                    AND cpv.language_id = :languageId
-                )
+                LEFT JOIN (
+                    SELECT
+                        product_id,
+                        SUM(views) AS total_views
+                    FROM
+                        " . TABLE_COUNT_PRODUCT_VIEWS . "
+                    WHERE
+                        language_id = :languageId
+                    GROUP BY
+                        product_id
+                ) cpv ON (p.products_id = cpv.product_id)
             WHERE
                 p.products_status <> 0 " .
                 ($this->alphaFilter > 0 ? " AND pd.products_name LIKE :alphaFilter " : " ") . "
                 AND (m.manufacturers_name REGEXP :regexpQuery)
                 AND pd.language_id = :languageId
                 AND p.products_id NOT IN (:foundIds)
-            GROUP BY
-                p.products_id,
-                pd.products_name,
-                m.manufacturers_name
             ORDER BY
-                total_views DESC,
+                IFNULL(cpv.total_views, 0) DESC,
                 p.products_sort_order,
                 pd.products_name
             LIMIT
