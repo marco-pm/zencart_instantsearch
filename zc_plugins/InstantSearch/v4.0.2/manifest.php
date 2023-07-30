@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'pluginVersion'     => 'v4.0.1',
+    'pluginVersion'     => 'v4.0.2',
     'pluginName'        => 'Instant Search',
     'pluginDescription' => 'Show autocomplete search results while the user is typing. Show relevant search results in a listing page with infinite scroll.',
     'pluginAuthor'      => 'marcopm',

@@ -1,6 +1,6 @@
 {
   "name": "instant-search-plugin-zen-cart",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Instant Search plugin for Zen Cart",
   "scripts": {
     "build-instant_search_dropdown-dev": "npx webpack --config-name instant_search_dropdown --mode=development",
