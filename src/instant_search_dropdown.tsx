@@ -193,7 +193,7 @@ const ResultsContainer = ({ queryTextParsed, containerIndex, setIsResultsContain
     }, [data]);
 
     if (isLoading) {
-        if (previousData && previousData.results) {
+        if (previousData && previousData.results && previousData.count) {
             if (!isSlideDownRendered) {
                 setIsSlideDownRendered(true);
             }
@@ -215,7 +215,7 @@ const ResultsContainer = ({ queryTextParsed, containerIndex, setIsResultsContain
         return <></>;
     }
 
-    if (!data || !data.results) {
+    if (!data || !data.results || !data.count) {
         return <></>;
     }
 
