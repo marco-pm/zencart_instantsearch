@@ -316,7 +316,7 @@ const InstantSearchDropdown = ({ inputTextAttributes, containerIndex }: InstantS
                     autoComplete='off'
                     role='combobox'
                     aria-autocomplete='list'
-                    aria-owns={showResults ? `#${resultsContainerSelector}-${containerIndex}` : ''}
+                    {...(showResults ? { 'aria-owns': `${resultsContainerSelector}-${containerIndex}` } : {})}
                     ref={inputRef}
                 />
                 {
