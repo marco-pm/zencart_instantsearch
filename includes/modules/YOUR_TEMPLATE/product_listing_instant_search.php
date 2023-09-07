@@ -449,7 +449,7 @@ if ($num_products_count > 0) {
     $list_box_contents = [];
     $list_box_contents[0][] = [
         'params' => 'class="productListing-data"',
-        'text' => TEXT_NO_PRODUCTS,
+        'text' => '', // marcopm instant-search edit
     ];
     $error_categories = true;
 }

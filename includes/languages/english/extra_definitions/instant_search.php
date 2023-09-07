@@ -9,7 +9,6 @@
 
 define('TEXT_INSTANT_SEARCH_PRODUCTS_TEXT', 'products');
 define('TEXT_INSTANT_SEARCH_CONFIGURATION_ERROR', 'Configuration error for %s');
-define('TEXT_NO_PRODUCTS', '');
 define('TEXT_SEARCH_LOG_ENTRY_DROPDOWN_PREFIX', '[Instant Search Autocomplete]');
 define('TEXT_SEARCH_LOG_ENTRY_PAGE_PREFIX', '[Instant Search Page]');
 
