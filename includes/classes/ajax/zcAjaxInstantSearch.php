@@ -307,7 +307,7 @@ class zcAjaxInstantSearch extends base
         }
 
         // ------
-        // Begin of constant and variables used by the product_listing module and the listing template
+        // Begin of constants and variables used by the product_listing module and the listing template
         // ------
 
         // Association between displayed fields and their column position in the listing
@@ -370,7 +370,7 @@ class zcAjaxInstantSearch extends base
         }
 
         // ------
-        // End of variables used by the product_listing module and the listing template
+        // End of constants and variables used by the product_listing module and the listing template
         // ------
 
 
