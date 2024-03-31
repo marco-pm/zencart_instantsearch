@@ -180,7 +180,7 @@ const ResultsContainer = ({ queryTextParsed, containerIndex, setIsResultsContain
         };
 
         resultsContainerDiv.addEventListener('mousedown', () => handleLinkClick());
-        resultsContainerDiv.addEventListener('touchstart', () => handleLinkClick());
+        resultsContainerDiv.addEventListener('touchstart', () => handleLinkClick(), { passive: true });
 
         resultsContainerDiv.addEventListener('keydown', (event: Event) => handleKeyDown(event));
 
