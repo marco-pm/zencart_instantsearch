@@ -16,7 +16,7 @@
     <coverage>
         <include>
             <file>./includes/classes/ajax/zcAjaxInstantSearch.php</file>
-            <directory>./zc_plugins/InstantSearch/v4.0.2/classes</directory>
+            <directory>./zc_plugins/InstantSearch/v4.0.3/classes</directory>
         </include>
     </coverage>
     <php>
